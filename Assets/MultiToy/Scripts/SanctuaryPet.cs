@@ -1,9 +1,8 @@
+// Copyright(c) Meta Platforms, Inc. and affiliates.
+
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using TMPro;
-using UnityEngine.Audio;
 
 public class SanctuaryPet : MonoBehaviour
 {

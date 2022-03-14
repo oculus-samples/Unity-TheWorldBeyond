@@ -1,9 +1,8 @@
-using System.Collections;
+// Copyright(c) Meta Platforms, Inc. and affiliates.
+
 using System.Collections.Generic;
 using Audio.Scripts;
 using UnityEngine;
-using UnityEngine.Serialization;
-using UnityEngine.UIElements;
 
 [System.Serializable]
 

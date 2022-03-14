@@ -1,4 +1,5 @@
-﻿
+﻿// Copyright(c) Meta Platforms, Inc. and affiliates.
+
 using UnityEngine;
 
 public class BoneSimManager : MonoBehaviour

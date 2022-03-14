@@ -1,10 +1,11 @@
+// Copyright(c) Meta Platforms, Inc. and affiliates.
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using OVR;
 using UnityEngine;
 using UnityEngine.Audio;
-using UnityEngine.UIElements;
 using Random = UnityEngine.Random;
 
 // this is designed for fire-and-forget, non-looping sounds

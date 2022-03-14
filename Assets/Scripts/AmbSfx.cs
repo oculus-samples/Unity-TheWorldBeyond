@@ -1,8 +1,7 @@
-using System;
-using System.Collections;
+// Copyright(c) Meta Platforms, Inc. and affiliates.
+
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 public class AmbSfx : MonoBehaviour

@@ -1,7 +1,6 @@
-using System;
+// Copyright(c) Meta Platforms, Inc. and affiliates.
+
 using System.Collections;
-using System.Collections.Generic;
-using Oculus.Platform.Samples.VrHoops;
 using UnityEngine;
 
 public class MusicManager : MonoBehaviour

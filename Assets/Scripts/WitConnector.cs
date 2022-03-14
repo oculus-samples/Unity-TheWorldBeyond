@@ -1,9 +1,10 @@
+// Copyright(c) Meta Platforms, Inc. and affiliates.
+
 using UnityEngine;
 using UnityEngine.Events;
 using Oculus.Voice;
 using Facebook.WitAi.Lib;
 using Facebook.WitAi;
-using UnityEngine.Events;
 
 #if PLATFORM_ANDROID
 using UnityEngine.Android;

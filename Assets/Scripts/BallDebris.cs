@@ -1,5 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
+// Copyright(c) Meta Platforms, Inc. and affiliates.
+
 using UnityEngine;
 
 public class BallDebris : MonoBehaviour

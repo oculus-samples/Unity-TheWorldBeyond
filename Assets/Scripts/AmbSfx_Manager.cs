@@ -1,3 +1,5 @@
+// Copyright(c) Meta Platforms, Inc. and affiliates.
+
 using System;
 using UnityEngine;
 using Color = UnityEngine.Color;

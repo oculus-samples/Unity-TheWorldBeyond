@@ -1,7 +1,7 @@
+// Copyright(c) Meta Platforms, Inc. and affiliates.
+
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Audio;
 using Color = UnityEngine.Color;

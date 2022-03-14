@@ -1,7 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
+// Copyright(c) Meta Platforms, Inc. and affiliates.
+
 using UnityEngine;
-using TMPro;
 
 public class MultiToy : MonoBehaviour
 {

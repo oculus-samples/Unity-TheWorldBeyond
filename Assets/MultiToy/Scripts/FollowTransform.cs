@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿// Copyright(c) Meta Platforms, Inc. and affiliates.
+
+using UnityEngine;
 using System.Collections;
 
 public class FollowTransform : MonoBehaviour

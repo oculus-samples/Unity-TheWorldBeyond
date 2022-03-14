@@ -1,10 +1,9 @@
-using System;
-using System.Collections;
+// Copyright(c) Meta Platforms, Inc. and affiliates.
+
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.Serialization;
-using UnityEngine.UIElements;
 
 // Definition for a sound class to add to prefabs. Contains clips, parameters and source
 public class SoundEntry : MonoBehaviour
