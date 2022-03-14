@@ -1,0 +1,9 @@
+{
+    "name": "PlayModeTests",
+    "references": [
+        "Oculus.VR"
+    ],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ]
+}

@@ -1,0 +1,62 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5530764773816838671
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7184627296051865953}
+  - component: {fileID: 1709619729886659979}
+  m_Layer: 0
+  m_Name: sfx_ball_bounce
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7184627296051865953
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5530764773816838671}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1709619729886659979
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5530764773816838671}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 742196d74016d264d993f6a424559f7a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  displayName: sfx_ball_bounce
+  MixerGroupChoice: {fileID: 5530978701186346847, guid: 7389918f17108844bbf62c06ef6bcb8c, type: 2}
+  AudioSourceComponent: {fileID: 0}
+  IsLooping: 0
+  UseAmbiancePool: 0
+  FadeInMs: 0
+  FadeOutMs: 0
+  DelayMs: 0
+  Volume: 1
+  VolumeVariance: 0
+  Pitch: 1
+  PitchVariance: 0.1
+  AudioClips:
+  - {fileID: 8300000, guid: f63dac9fa6fc6e546866158ecae0b079, type: 3}
+  - {fileID: 8300000, guid: 878b7a3105a2760408a2ffb78fac931c, type: 3}
+  - {fileID: 8300000, guid: 8c8f72fa1210de049838247af502e49b, type: 3}
+  - {fileID: 8300000, guid: 54f085aaf1bbed74484eebcaf607375a, type: 3}

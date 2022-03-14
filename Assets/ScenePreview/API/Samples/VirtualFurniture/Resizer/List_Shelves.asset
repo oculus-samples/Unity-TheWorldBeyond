@@ -1,0 +1,63 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43e964dbe5366754d9023e4de7fd0398, type: 3}
+  m_Name: List_Shelves
+  m_EditorClassIdentifier: 
+  classification:
+    labels:
+    - SHELF
+    - CABINET
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+  objects:
+  - objectName: Shelf_1
+    prefab: {fileID: 3665657598546664777, guid: d337383c696e6474889cc43bdbcfc4b1,
+      type: 3}
+  - objectName: Shelf_2
+    prefab: {fileID: 3277007706991153221, guid: 7cff0cd3999aac84b824ba593ebc136b,
+      type: 3}
+  - objectName: Shelf_3
+    prefab: {fileID: 6590037023334451249, guid: d0f944ceab2500d41892ce5272ee48ee,
+      type: 3}
+  - objectName: Shelf_4
+    prefab: {fileID: 2181674887907830611, guid: 64f9d9bb4af9f214680f38845b9eb35b,
+      type: 3}
+  - objectName: Shelf_5
+    prefab: {fileID: 2690240222386528130, guid: 3599ea85c786c2d4bb4f0be6a409ebf6,
+      type: 3}
+  - objectName: Shelf 6
+    prefab: {fileID: 2439333289382360210, guid: 0ee81b7f9afd96347a834918fadb6200,
+      type: 3}
+  - objectName: Shelf_7
+    prefab: {fileID: 2284983519876906349, guid: 98b80d9cac0cfc0498168971c4b28468,
+      type: 3}
+  - objectName: Shelf_8
+    prefab: {fileID: 1005512879442463387, guid: fc2ab5cbd587d9d4390c3ccd58baab28,
+      type: 3}
+  - objectName: Shelf_9
+    prefab: {fileID: 1005512879442463387, guid: 238a2768b47362841b5744bc7c7dccf7,
+      type: 3}
+  - objectName: SciFi_Book_Shelf
+    prefab: {fileID: 7846610112145369130, guid: e80c4d1b8cde4984db307af1ce907eee,
+      type: 3}

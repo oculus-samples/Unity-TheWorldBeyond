@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Minecraft_Grass
+  m_Shader: {fileID: 4800000, guid: 59339c685054ec54ca68db20999ef07e, type: 3}
+  m_ShaderKeywords: _MASK_ENABLE_ON _MASK_PROCEDURAL_ON
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _Detail_Mask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Mask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _Detail_Texture: 0
+    - _Detail_Tiling: 8.4
+    - _L_FADE_Alpha: 0
+    - _L_FADE_Depth_Toggle: 0
+    - _L_FADE_Falloff: 0
+    - _L_FADE_Height_Toggle: 0
+    - _L_FADE_Position: 0.5719495
+    - _Mask_Bleeding: 0.3
+    - _Mask_Enable: 1
+    - _Mask_Opacity: 1
+    - _Mask_Procedural: 1
+    - _PixelSize: 32
+    - _TilingX: 2.2
+    - _TilingY: 6.52
+    - _TilingZ: 1
+    m_Colors:
+    - _Base_Color1: {r: 0.3455882, g: 0.230731, b: 0.05844506, a: 1}
+    - _Base_Color2: {r: 0.6029412, g: 0.4513167, b: 0.1330017, a: 1}
+    - _Detail_Color: {r: 0.4245283, g: 0.2006013, b: 0, a: 1}
+    - _Mask_Color1: {r: 0.4214473, g: 0.6029412, b: 0.1330017, a: 1}
+    - _Mask_Color2: {r: 0.2483227, g: 0.427451, b: 0.04693579, a: 1}
+    - _Mask_Offset: {r: 1, g: 1, b: 1, a: 1}

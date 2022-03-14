@@ -1,0 +1,91 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8999845180316542267
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1132682185376712905}
+  - component: {fileID: 8013016026686888416}
+  - component: {fileID: 2355935253564119056}
+  m_Layer: 9
+  m_Name: FurnitureSpawnerVolume
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1132682185376712905
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8999845180316542267}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8013016026686888416
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8999845180316542267}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ab3ec25e32ce0c4380714d75e39cb05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  classification:
+    labels:
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+  dimensions: {x: 0, y: 0, z: 0}
+--- !u!114 &2355935253564119056
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8999845180316542267}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3396219b7b28774aacf69bec4e74cc4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  objectList:
+  - {fileID: 11400000, guid: 2477d5446ba620540b98676b8951f722, type: 2}
+  - {fileID: 11400000, guid: 1372c7d21c666374fb7788d385167a2f, type: 2}
+  - {fileID: 11400000, guid: 7918756cdd6f8d148a6ecf6a01f6d63f, type: 2}
+  - {fileID: 11400000, guid: 2ee06306e88af1641a1fda7be308745b, type: 2}
+  - {fileID: 11400000, guid: 1906668b5c680db4eb7a4f4a033dc106, type: 2}
+  - {fileID: 11400000, guid: e9a45a4fcde4b5d479fa8ee5eae8751a, type: 2}
+  - {fileID: 11400000, guid: d95f52fb8165d8049abe8306f8f7dd7f, type: 2}
+  - {fileID: 11400000, guid: aca7a5295b250ec4aaae01ac0fa73d23, type: 2}
+  - {fileID: 11400000, guid: 9af481d15e1953f429fbe1ce8293227f, type: 2}
+  roomLightPrefab: {fileID: 4058753717224557943, guid: 68f993c7592c04b47abce2ba335d886c,
+    type: 3}
+  resizerPrefab: {fileID: 6720946288033271088, guid: 44ff48f6b5db55f4e8e27912bab508af,
+    type: 3}

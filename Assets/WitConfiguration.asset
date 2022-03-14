@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae5a46bda3295124c99b0e6537ac7252, type: 3}
+  m_Name: WitConfiguration
+  m_EditorClassIdentifier: 
+  application:
+    witConfiguration: {fileID: 0}
+    name: sanctuary
+    id: 337396604604055
+    lang: en
+    isPrivate: 1
+    createdAt: 2021-07-21T12:29:52-0700
+  clientAccessToken: H7OFRYEHUMD667UD7RCYW2LPQT7A4TZ2
+  entities:
+  - witConfiguration: {fileID: 11400000}
+    id: 186765573429346
+    name: oz_action
+    lookups:
+    - free-text
+    - keywords
+    roles:
+    - 
+    keywords:
+    - witConfiguration: {fileID: 11400000}
+      keyword: come
+      synonyms:
+      - come
+    - witConfiguration: {fileID: 11400000}
+      keyword: jump
+      synonyms:
+      - jump
+  - witConfiguration: {fileID: 11400000}
+    id: 344691504036929
+    name: oz_location
+    lookups:
+    - free-text
+    - keywords
+    roles:
+    - 
+    keywords:
+    - witConfiguration: {fileID: 11400000}
+      keyword: here
+      synonyms:
+      - here
+  intents:
+  - witConfiguration: {fileID: 11400000}
+    id: 549316173173156
+    name: change_oz_animation
+    entities:
+    - witConfiguration: {fileID: 0}
+      id: 965160667602649
+      name: oz_action:oz_action
+      lookups: []
+      roles: []
+      keywords: []
+    - witConfiguration: {fileID: 0}
+      id: 545266403487894
+      name: oz_location:oz_location
+      lookups: []
+      roles: []
+      keywords: []

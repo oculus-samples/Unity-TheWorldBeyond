@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43e964dbe5366754d9023e4de7fd0398, type: 3}
+  m_Name: List_Sofas
+  m_EditorClassIdentifier: 
+  classification:
+    labels:
+    - COUCH
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+  objects:
+  - objectName: Standard_Couch
+    prefab: {fileID: 4992389983117443685, guid: 74acedd43bcb79d4487a45f73b668187,
+      type: 3}
+  - objectName: Elegant_Couch
+    prefab: {fileID: 4992389983117443685, guid: a72b73b333a47d74d95fc50cb81e18fc,
+      type: 3}
+  - objectName: Blue_Couch
+    prefab: {fileID: 4992389983117443685, guid: 5edd33a1cf744054dabf60102660081b,
+      type: 3}
+  - objectName: Yellow_Couch
+    prefab: {fileID: 4992389983117443685, guid: 5037f0eddf13a42409cd11a4d5fff0c2,
+      type: 3}
+  - objectName: SciFi_Couch
+    prefab: {fileID: 4992389983117443685, guid: 89431904abfbdf148b4e8ea38a291890,
+      type: 3}
+  - objectName: Bed
+    prefab: {fileID: 4992389983117443685, guid: a57dc67c576945e4fa8b88ece2cb1caf,
+      type: 3}

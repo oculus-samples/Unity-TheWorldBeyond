@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43e964dbe5366754d9023e4de7fd0398, type: 3}
+  m_Name: List_Tables
+  m_EditorClassIdentifier: 
+  classification:
+    labels:
+    - DESK
+    - TABLETOP
+    - TABLE
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+  objects:
+  - objectName: Standard_Table
+    prefab: {fileID: 7632768963236195002, guid: 3a09e31b8ffc3644a87317b4208d3136,
+      type: 3}
+  - objectName: Office_Desk
+    prefab: {fileID: 6706926381567319552, guid: ed7980e73800447489410a1ca99d6c6b,
+      type: 3}
+  - objectName: Glass_Table
+    prefab: {fileID: 6594590357253825333, guid: 72c4d6df75d77544c9333101402d54c3,
+      type: 3}
+  - objectName: Modern_Dining_Table
+    prefab: {fileID: 7072556184294909435, guid: f46dba30e07292a4eaf02d769bccc251,
+      type: 3}
+  - objectName: Coffee_Table
+    prefab: {fileID: 7506099939006691539, guid: bac15bb7b18cccf46b2310422a9a5b32,
+      type: 3}
+  - objectName: Coffee Table
+    prefab: {fileID: 7980096403685710232, guid: 917a3b7e5687a1847beeec0ec80e7702,
+      type: 3}
+  - objectName: Coffee_Table
+    prefab: {fileID: 6982919228754202249, guid: 9799189706b196645b228f9ea6a29cb3,
+      type: 3}
+  - objectName: Cartoon_Wooden_Table
+    prefab: {fileID: 8267376399027321634, guid: 6c3f709a7bb86ff41b1560e807b6eac2,
+      type: 3}
+  - objectName: SciFi_Table
+    prefab: {fileID: 5488521526082777392, guid: fbbd46d7cb1308647982f39596bc7da9,
+      type: 3}

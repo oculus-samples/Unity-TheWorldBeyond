@@ -1,0 +1,16 @@
+{
+  "name": "com.oculus.integration.interaction.earlyaccess",
+  "displayName": "[SDK] Oculus Interaction Early Access",
+  "version": "0.39.0",
+  "unity": "2019.4",
+  "description": "[Early Access] Oculus Interaction SDK",
+  "keywords": [
+    "Oculus",
+    "Interaction",
+    "SDK",
+    "Early Access"
+  ],
+  "dependencies": {
+    "com.oculus.integration.interaction": "0.39.0"
+  }
+}

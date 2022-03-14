@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43e964dbe5366754d9023e4de7fd0398, type: 3}
+  m_Name: List_Generic
+  m_EditorClassIdentifier: 
+  classification:
+    labels:
+    - GENERIC
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+  objects:
+  - objectName: Default_Cube
+    prefab: {fileID: 8267376399027321634, guid: bcd60667b3254534d8311e9c20f669ba,
+      type: 3}
+  - objectName: Grass_Block
+    prefab: {fileID: 8267376399027321634, guid: e54c12edd0fd1a549a1f1dc6b723ccde,
+      type: 3}
+  - objectName: Stone_Block
+    prefab: {fileID: 8267376399027321634, guid: ece391dc293ad0a428932dd389646798,
+      type: 3}
+  - objectName: Colored_Block
+    prefab: {fileID: 8267376399027321634, guid: e476ca8fba70b684292c5a1f995d042c,
+      type: 3}

@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43e964dbe5366754d9023e4de7fd0398, type: 3}
+  m_Name: List_Doors
+  m_EditorClassIdentifier: 
+  classification:
+    labels:
+    - DOOR_FRAME
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+  objects:
+  - objectName: SciFi_Door
+    prefab: {fileID: 7263728261558370963, guid: e9e460bc1c0b3e441b0fc0ef028dfb84,
+      type: 3}
+  - objectName: SciFi_Door2
+    prefab: {fileID: 7275074557883528119, guid: b7e59c856d33a7f41a974d0d4f0a8d91,
+      type: 3}
+  - objectName: Door_1
+    prefab: {fileID: 8930273390264835165, guid: 677af4118c46a2d4cb352d2e7936d6bd,
+      type: 3}
+  - objectName: Door_2
+    prefab: {fileID: 5399180475441985574, guid: a6515ec1c072c7f4fa48dc91335a9534,
+      type: 3}
+  - objectName: Door_3
+    prefab: {fileID: 8456398200362062137, guid: dd9191a0a58a0034384f29f322dcb26a,
+      type: 3}
+  - objectName: Door_4
+    prefab: {fileID: 4845959107712704589, guid: 3e1459ce04b49ea4a83368d6443c7a5f,
+      type: 3}

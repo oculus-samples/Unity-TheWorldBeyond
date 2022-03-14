@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43e964dbe5366754d9023e4de7fd0398, type: 3}
+  m_Name: List_Windows
+  m_EditorClassIdentifier: 
+  classification:
+    labels:
+    - WINDOW_FRAME
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+  objects:
+  - objectName: Window_Default
+    prefab: {fileID: 8930273390264835165, guid: 07799a5503202ae47b826607d8ee1919,
+      type: 3}
+  - objectName: Handle_Window
+    prefab: {fileID: 8930273390264835165, guid: 4b84cfdd76bd46240b7e91123a16ca31,
+      type: 3}
+  - objectName: Beveled_Window
+    prefab: {fileID: 8930273390264835165, guid: 74bcd092d7ae1474096236aab6c00b24,
+      type: 3}
+  - objectName: Round_Window
+    prefab: {fileID: 8930273390264835165, guid: c28d315fb148d06458eb1dfdbc9a975e,
+      type: 3}
+  - objectName: Sliding_Window
+    prefab: {fileID: 8930273390264835165, guid: 755b162cc9675a5439249d166e890feb,
+      type: 3}
+  - objectName: Double_Window
+    prefab: {fileID: 8930273390264835165, guid: cb4765bee2166a2469fcc892ec930457,
+      type: 3}
+  - objectName: Rounded_Corners_Window
+    prefab: {fileID: 8930273390264835165, guid: d579f4d10577ce045beb298ac82ae842,
+      type: 3}
+  - objectName: SciFi_Window
+    prefab: {fileID: 2166467777057631566, guid: 33f43e923dc83724d89c6402b2bf5b68,
+      type: 3}
