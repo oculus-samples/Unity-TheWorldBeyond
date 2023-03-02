@@ -1,0 +1,18 @@
+{
+    "name": "Facebook.WitAI",
+    "rootNamespace": "",
+    "references": [
+        "GUID:f02292e638368584080af0193f81ff5c",
+        "GUID:fe36bfc007f38a54c96a409801c53f52",
+        "GUID:70c988d11fbc4814db519eecb47cca75"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

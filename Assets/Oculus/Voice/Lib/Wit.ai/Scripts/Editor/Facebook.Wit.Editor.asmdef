@@ -1,0 +1,20 @@
+{
+    "name": "Facebook.Wit.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:4504b1a6e0fdcc3498c30b266e4a63bf",
+        "GUID:f02292e638368584080af0193f81ff5c",
+        "GUID:70c988d11fbc4814db519eecb47cca75"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

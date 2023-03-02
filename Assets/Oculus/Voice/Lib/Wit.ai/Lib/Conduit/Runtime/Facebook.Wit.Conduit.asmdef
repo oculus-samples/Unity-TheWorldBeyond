@@ -1,0 +1,17 @@
+{
+    "name": "Facebook.Wit.Conduit",
+    "rootNamespace": "",
+    "references": [
+        "GUID:fe36bfc007f38a54c96a409801c53f52",
+        "GUID:07d52870abb2972488970771fb159cc4"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

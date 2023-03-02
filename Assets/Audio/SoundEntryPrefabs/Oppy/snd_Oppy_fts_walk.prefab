@@ -1,0 +1,63 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1744795325588488382
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2080918587787381182}
+  - component: {fileID: -299549240544946488}
+  m_Layer: 0
+  m_Name: snd_Oppy_fts_walk
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2080918587787381182
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1744795325588488382}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &-299549240544946488
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1744795325588488382}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 742196d74016d264d993f6a424559f7a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  displayName: fts_wallk
+  MixerGroupChoice: {fileID: -8900434418520127893, guid: 7389918f17108844bbf62c06ef6bcb8c, type: 2}
+  AudioSourceComponent: {fileID: 0}
+  IsLooping: 0
+  FadeInMs: 0
+  FadeOutMs: 0
+  DelayMs: 0
+  Volume: 1
+  VolumeVariance: 0
+  Pitch: 1
+  PitchVariance: 0
+  AudioClips:
+  - {fileID: 8300000, guid: e226581478e50864e90c8509fea0d99f, type: 3}
+  - {fileID: 8300000, guid: 182a2cbe589a27244bf68b5a0da55548, type: 3}
+  - {fileID: 8300000, guid: 632b599343cd34b4ba564248e3799ad7, type: 3}
+  - {fileID: 8300000, guid: 0e78ee3e67229524f8e9199b4433cb7d, type: 3}
+  - {fileID: 8300000, guid: aace6ef05f46c634b9dfbf53f419fb69, type: 3}
+  - {fileID: 8300000, guid: 0cc1ab3996bd1d244be08e089afbe9d2, type: 3}

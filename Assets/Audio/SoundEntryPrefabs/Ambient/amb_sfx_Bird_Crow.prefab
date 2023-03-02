@@ -1,0 +1,61 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &53427706357726987
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1138067660253717194}
+  - component: {fileID: 2658018020892224236}
+  m_Layer: 0
+  m_Name: amb_sfx_Bird_Crow
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1138067660253717194
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 53427706357726987}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2658018020892224236
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 53427706357726987}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 742196d74016d264d993f6a424559f7a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  displayName: amb_sfx_Bird_Crow
+  MixerGroupChoice: {fileID: -1766926642007511301, guid: 7389918f17108844bbf62c06ef6bcb8c, type: 2}
+  AudioSourceComponent: {fileID: 0}
+  IsLooping: 0
+  UseAmbiancePool: 1
+  FadeInMs: 0
+  FadeOutMs: 0
+  DelayMs: 0
+  Volume: 0.1
+  VolumeVariance: 0.05
+  Pitch: 1
+  PitchVariance: 0.1
+  AudioClips:
+  - {fileID: 8300000, guid: aee90bfe4bd6cbf4792c8ed32ac04b4b, type: 3}
+  - {fileID: 8300000, guid: 2d21a1bd779caa741b965eda04931c56, type: 3}
+  - {fileID: 8300000, guid: 2d21a1bd779caa741b965eda04931c56, type: 3}
