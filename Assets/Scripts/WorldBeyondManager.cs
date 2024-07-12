@@ -125,10 +125,10 @@ public class WorldBeyondManager : MonoBehaviour
     public OnHand OnHandDelegate;
     [HideInInspector]
     public float _fistValue = 0.0f;
-    public Oculus.Interaction.HandVisual _leftHandVisual;
-    public Oculus.Interaction.HandVisual _rightHandVisual;
-    public Oculus.Interaction.HandWristOffset _leftPointerOffset;
-    public Oculus.Interaction.HandWristOffset _rightPointerOffset;
+    public HandVisual _leftHandVisual;
+    public HandVisual _rightHandVisual;
+    public HandWristOffset _leftPointerOffset;
+    public HandWristOffset _rightPointerOffset;
 
     public DistantInteractionLineVisual _interactionLineLeft;
     public DistantInteractionLineVisual _interactionLineRight;
@@ -1134,6 +1134,7 @@ public class WorldBeyondManager : MonoBehaviour
                 randomPositions.Add(bestPos);
                 matchingWallID.Add(bestID);
             }
+            Debug.Log("TWB found ball position: " + foundSurface);
         }
 
         // default position, on the floor

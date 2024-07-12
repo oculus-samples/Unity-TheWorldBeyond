@@ -34,8 +34,8 @@ public class SampleVirtualFrames : MonoBehaviour
     // drop the virtual world this far below the floor anchor
     const float _groundDelta = 0.02f;
 
-    public SimpleResizable _doorPrefab;
-    public SimpleResizable _windowPrefab;
+    //public SimpleResizable _doorPrefab;
+    //public SimpleResizable _windowPrefab;
     public GameObject _butterflyPrefab;
 
     void Awake()
@@ -83,8 +83,8 @@ public class SampleVirtualFrames : MonoBehaviour
                 {
                     windows.Add(instance.transform);
 
-                    SimpleResizer resizer = new SimpleResizer();
-                    SimpleResizable prefab = classification.Contains(OVRSceneManager.Classification.DoorFrame) ? _doorPrefab : _windowPrefab;
+                    //SimpleResizer resizer = new SimpleResizer();
+                    //SimpleResizable prefab = classification.Contains(OVRSceneManager.Classification.DoorFrame) ? _doorPrefab : _windowPrefab;
                     Vector3 dimensions = instance.transform.GetChild(0).localScale;
 
                     // cache all the door objects, to correctly place the floor fade object
@@ -106,11 +106,11 @@ public class SampleVirtualFrames : MonoBehaviour
                     // the Resizer scales the mesh so that the bounds are flush with the window extents
                     // in this case, we want the mesh frame to extend "outside" of the extents, so we adjust it
                     // as well, the vines on the door also require special treatment
-                    if (prefab.GetComponent<ResizablePadding>())
-                    {
-                        dimensions += prefab.GetComponent<ResizablePadding>().dimensionPadding;
-                    }
-                    resizer.CreateResizedObject(dimensions, sceneAnchors[i].gameObject, prefab);
+                    //if (prefab.GetComponent<ResizablePadding>())
+                    //{
+                    //    dimensions += prefab.GetComponent<ResizablePadding>().dimensionPadding;
+                    //}
+                    //resizer.CreateResizedObject(dimensions, sceneAnchors[i].gameObject, prefab);
                 }
             }
 

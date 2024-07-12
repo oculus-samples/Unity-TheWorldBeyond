@@ -21,8 +21,8 @@
 using UnityEngine;
 using UnityEngine.Events;
 using Oculus.Voice;
-using Facebook.WitAi.Lib;
-using Facebook.WitAi;
+using Meta.WitAi.Json;
+using Meta.WitAi;
 
 #if PLATFORM_ANDROID
 using UnityEngine.Android;

@@ -240,6 +240,7 @@ public class BallCollectable : MonoBehaviour
 
     public void PlaceHiddenBall(Vector3 worldPos, int owningSurface)
     {
+        Debug.Log("TWB placing ball: " + worldPos);
         _wallID = owningSurface;
         transform.position = worldPos;
         Vector3 facingCam = (WorldBeyondManager.Instance._mainCamera.transform.position - worldPos).normalized;
@@ -250,6 +251,7 @@ public class BallCollectable : MonoBehaviour
         _shellObject.enabled = true;
         SetState(BallStatus.Hidden);
         WorldBeyondManager.Instance.AddBallToWorld(this);
+        Debug.Log("TWB placed ball: " + transform.position);
     }
 
     public void Shoot(Vector3 pos, Vector3 shootForce)

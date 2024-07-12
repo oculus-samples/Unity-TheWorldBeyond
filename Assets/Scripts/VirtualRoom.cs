@@ -231,6 +231,10 @@ public class VirtualRoom : MonoBehaviour
         for (int i = 0; i < sceneAnchors.Length; i++)
         {
             OVRSceneAnchor instance = sceneAnchors[i];
+            if (instance.GetComponent<OVRSceneRoom>())
+            {
+                continue;
+            }
             OVRSemanticClassification classification = instance.GetComponent<OVRSemanticClassification>();
             if (classification) Debug.Log(string.Format("TWB Anchor {0}: {1}", i, classification.Labels[0]));
             WorldBeyondRoomObject wbro = instance.GetComponent<WorldBeyondRoomObject>();
@@ -275,16 +279,14 @@ public class VirtualRoom : MonoBehaviour
                     wbro.GetComponent<BoxCollider>().size = new Vector3(wbro._dimensions.x, wbro._dimensions.y, 0.01f);
                 }
             }
-            else if (classification.Contains(OVRSceneManager.Classification.Desk) ||
-                classification.Contains(OVRSceneManager.Classification.Couch) ||
-                classification.Contains(OVRSceneManager.Classification.Other))
+            else if (instance.GetComponent<OVRSceneVolume>())
             {
                 wbro._isFurniture = true;
                 _roomboxFurnishings.Add(wbro);
 
                 // add as navmesh obstacles
                 BoxCollider bc = wbro._passthroughMesh.GetComponent<BoxCollider>();
-                if (bc)
+                if (bc && bc.gameObject.GetComponent<NavMeshObstacle>() == null)
                 {
                     NavMeshObstacle obstacle = bc.gameObject.AddComponent<NavMeshObstacle>();
                     obstacle.carving = true;
@@ -329,7 +331,7 @@ public class VirtualRoom : MonoBehaviour
         for (int i = 0; i < _roomboxWalls.Count; i++)
         {
            for (int j = 0; j < _roomboxWalls[i].wallEdges.Count; j++)
-           {
+            {
                 FindSiblingEdge(_roomboxWalls[i].wallEdges[j]);
            }
         }
@@ -407,9 +409,7 @@ public class VirtualRoom : MonoBehaviour
         for (int i = 0; i < worldBeyondObjects.Length; i++)
         {
             OVRSemanticClassification classification = worldBeyondObjects[i].GetComponent<OVRSemanticClassification>();
-            if (classification.Contains(OVRSceneManager.Classification.Desk) ||
-                classification.Contains(OVRSceneManager.Classification.Couch) ||
-                classification.Contains(OVRSceneManager.Classification.Other))
+            if (worldBeyondObjects[i].GetComponent<OVRSceneVolume>())
             {
                 // any child will have correct scale
                 cubeFurniture.Add(worldBeyondObjects[i].transform.GetChild(0));
@@ -760,7 +760,7 @@ public class VirtualRoom : MonoBehaviour
     /// </summary>
     void CreateNavMeshObstacle(WorldBeyondRoomObject wallObject)
     {
-        if (wallObject._passthroughMesh)
+        if (wallObject._passthroughMesh && wallObject._passthroughMesh.gameObject.GetComponent<NavMeshObstacle>() == null)
         {
             NavMeshObstacle obstacle = wallObject._passthroughMesh.gameObject.AddComponent<NavMeshObstacle>();
             obstacle.carving = true;
