@@ -47,7 +47,7 @@ public class SampleBoundaryDebris : MonoBehaviour
     void CreateDebris()
     {
         OVRSceneAnchor[] sceneAnchors = FindObjectsOfType<OVRSceneAnchor>();
-        if (sceneAnchors!= null)
+        if (sceneAnchors != null)
         {
             for (int i = 0; i < sceneAnchors.Length; i++)
             {

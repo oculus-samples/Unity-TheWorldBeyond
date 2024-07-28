@@ -129,10 +129,10 @@ public class VirtualPet : MonoBehaviour
         {
             _mainCam = WorldBeyondManager.Instance._mainCamera.transform;
         }
-        
+
         _animator.SetBool("Running", _agent.velocity.magnitude > Mathf.Epsilon);
         // agent.velocity.magnitude is animator.speed (between 1 and 2, set in DoChaseBehavior)
-        _animator.SetFloat("Speed", Mathf.Clamp01(_agent.velocity.magnitude*0.25f+0.5f));
+        _animator.SetFloat("Speed", Mathf.Clamp01(_agent.velocity.magnitude * 0.25f + 0.5f));
 
         if (_glowOvershoot > 0.0f)
         {
@@ -317,8 +317,8 @@ public class VirtualPet : MonoBehaviour
         if (ballBC)
         {
             // put Oppy target "behind" ball so we get a good view of her eating it
-            Vector3 ballDirectionToOppy = Vector3.Scale(transform.position - ballBC.gameObject.transform.position, new Vector3(1,0,1));
-            Vector3 viewDirectionToBall = Vector3.Scale(ballBC.gameObject.transform.position - _mainCam.position, new Vector3(1,0,1));
+            Vector3 ballDirectionToOppy = Vector3.Scale(transform.position - ballBC.gameObject.transform.position, new Vector3(1, 0, 1));
+            Vector3 viewDirectionToBall = Vector3.Scale(ballBC.gameObject.transform.position - _mainCam.position, new Vector3(1, 0, 1));
             float currentAngle = Vector3.Angle(ballDirectionToOppy, viewDirectionToBall);
             if (ballDirectionToOppy.magnitude > 0.5f)
             {
@@ -496,7 +496,8 @@ public class VirtualPet : MonoBehaviour
         }
 
         //NOTE: after eating, Oppy will try to listen again, if it doesn't have user's focus or can't enable voice somehow, Oppy moves away.
-        if (CanListen() && WitConnector.Instance.currentFocus) {
+        if (CanListen() && WitConnector.Instance.currentFocus)
+        {
             bool reactivateWit = WitConnector.Instance.WitSwitcher(true);
             if (!reactivateWit) MoveAway();
         }
@@ -680,12 +681,14 @@ public class VirtualPet : MonoBehaviour
         {
             _thoughtBubble.ShowHint();
         }
-        else {
+        else
+        {
             _thoughtBubble.UpdateText(thought);
         }
     }
 
-    public void HideThought() {
+    public void HideThought()
+    {
         _thoughtBubble.gameObject.SetActive(false);
     }
 
@@ -695,26 +698,29 @@ public class VirtualPet : MonoBehaviour
         _animator.SetBool("Listening", false);
         _animator.SetBool("ListenFail", false);
         _listeningIndicator.SetActive(false);
-        Vector2 point = Random.insideUnitCircle.normalized * Random.Range(2f,6f);
+        Vector2 point = Random.insideUnitCircle.normalized * Random.Range(2f, 6f);
         Vector3 targetPoint = _mainCam.position + new Vector3(point.x, WorldBeyondManager.Instance.GetFloorHeight(), point.y);
         targetPoint.y = 0;
         _agent.SetDestination(targetPoint);
     }
 
     //NOTE: Called from CheckListenAvailable script which is attached on Run and Pet_End Animations
-    public void CheckListenAvailable() {
+    public void CheckListenAvailable()
+    {
         StartCoroutine(TryToReactivateWit());
     }
-    
-    IEnumerator TryToReactivateWit(float waitTime = 1) {
+
+    IEnumerator TryToReactivateWit(float waitTime = 1)
+    {
         yield return new WaitForSeconds(waitTime);
         if (CanListen() && WitConnector.Instance.currentFocus && ArrivedDestination())
         {
             bool reactivateWit = WitConnector.Instance.WitSwitcher(true);
         }
     }
-    
-    bool ArrivedDestination() {
+
+    bool ArrivedDestination()
+    {
         if (!_agent.pathPending)
         {
             if (_agent.remainingDistance <= _agent.stoppingDistance)
@@ -731,7 +737,7 @@ public class VirtualPet : MonoBehaviour
     #region VoiceCommand
     public void Listening(bool value)
     {
-        if(value) _animator.SetBool("ListenFail", false);
+        if (value) _animator.SetBool("ListenFail", false);
         _listeningIndicator.SetActive(value);
         // make sure to properly exit the animator state
         // for example when it's interrupted by shooting a ball

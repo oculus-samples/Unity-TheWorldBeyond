@@ -246,7 +246,7 @@ public class BallCollectable : MonoBehaviour
         Vector3 facingCam = (WorldBeyondManager.Instance._mainCamera.transform.position - worldPos).normalized;
         Vector3 fwd = -Vector3.up;
         Vector3.OrthoNormalize(ref facingCam, ref fwd);
-        transform.rotation = Quaternion.LookRotation(fwd,facingCam);
+        transform.rotation = Quaternion.LookRotation(fwd, facingCam);
         _rigidBody.isKinematic = true;
         _shellObject.enabled = true;
         SetState(BallStatus.Hidden);
@@ -338,7 +338,8 @@ public class BallCollectable : MonoBehaviour
 
         if (_ballState == BallStatus.Hidden || _ballState == BallStatus.Unavailable)
         {
-            if (MultiToy.Instance.IsFlashlightActive()){
+            if (MultiToy.Instance.IsFlashlightActive())
+            {
                 _sfxBallLoop.ResetVolume();
             }
             else
@@ -405,18 +406,18 @@ public class BallCollectable : MonoBehaviour
     {
         // spawn debris in a cone formation
         int debrisCount = Random.Range(4, 8);
-        for (int i=0;i<debrisCount;i++)
+        for (int i = 0; i < debrisCount; i++)
         {
             float angle = Mathf.Deg2Rad * Random.Range(35.0f, 55.0f);
             Vector3 localEjectDirection = new Vector3(Mathf.Cos(angle), 0, -Mathf.Sin(angle));
             localEjectDirection = Quaternion.Euler(0, 0, Random.Range(0.0f, 360.0f)) * localEjectDirection;
-            Vector3 localEjectPosition = new Vector3(Random.Range(-1.0f,1.0f), Random.Range(-1.0f, 1.0f), 0).normalized * 0.03f;
+            Vector3 localEjectPosition = new Vector3(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f), 0).normalized * 0.03f;
             localEjectPosition = impactSpace * localEjectPosition;
             GameObject debrisInstance = Instantiate(_debrisPrefab, position + localEjectPosition, Quaternion.identity);
             debrisInstance.transform.localScale = Random.Range(0.2f, 0.5f) * Vector3.one;
-            debrisInstance.GetComponent<Rigidbody>().AddForce(impactSpace * localEjectDirection * Random.Range(0.5f,1.5f), ForceMode.Impulse);
+            debrisInstance.GetComponent<Rigidbody>().AddForce(impactSpace * localEjectDirection * Random.Range(0.5f, 1.5f), ForceMode.Impulse);
             Vector3 randomTorque = new Vector3(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f));
-            debrisInstance.GetComponent<Rigidbody>().AddTorque(randomTorque * Random.Range(1.0f,2.0f), ForceMode.Impulse);
+            debrisInstance.GetComponent<Rigidbody>().AddTorque(randomTorque * Random.Range(1.0f, 2.0f), ForceMode.Impulse);
 
             // track the debris so we can delete some if too many spawn
             WorldBeyondManager.Instance.AddBallDebrisToWorld(debrisInstance);

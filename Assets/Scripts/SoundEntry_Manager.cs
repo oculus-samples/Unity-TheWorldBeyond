@@ -33,12 +33,12 @@ public class SoundEntry_Manager : MonoBehaviour
     static public List<SoundEntry> SoundEntryList = null;
 
     public static float AmbDuckVolume = -9f;
-    public static float AmbFilterCutoff = 1000f;  
-    
+    public static float AmbFilterCutoff = 1000f;
+
     private bool _isPlaying;
     private float _audioTimer;
 
-    private AudioListener _audioListener; 
+    private AudioListener _audioListener;
     private Vector3 _position = default(Vector3);
 
     public Vector3 position
@@ -53,7 +53,7 @@ public class SoundEntry_Manager : MonoBehaviour
             return _position;
         }
     }
-    
+
     private void Awake()
     {
         if (!Instance)
@@ -65,10 +65,10 @@ public class SoundEntry_Manager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        SoundEntryList = new List<SoundEntry>();        
+        SoundEntryList = new List<SoundEntry>();
         _audioListener = FindObjectOfType<AudioListener>();
     }
-    
+
     // Update is called once per frame
     public void DoLateUpdate()
     {
@@ -90,11 +90,11 @@ public class SoundEntry_Manager : MonoBehaviour
 
     private static Plane _plane;
     private static Ray _ray;
-    
+
     public void HandleObstructed()
     {
         if (SoundEntryList is null) return;
-        
+
         // Handle Ambient SFX Emitters and Walls
         foreach (var sfxSoundEntry in SoundEntryList)
         {
@@ -102,8 +102,8 @@ public class SoundEntry_Manager : MonoBehaviour
             if (!sfxSoundEntry.IsPlaying) continue;
             if (!sfxSoundEntry.UsesWallOcclusion) continue;
 
-            var heading = sfxSoundEntry.transform.position - _audioListener.transform.position;  
-            
+            var heading = sfxSoundEntry.transform.position - _audioListener.transform.position;
+
             var distance = heading.magnitude;
             var direction = heading / distance;
 
@@ -115,8 +115,8 @@ public class SoundEntry_Manager : MonoBehaviour
                 {
                     Debug.DrawRay(_ray.origin, _ray.direction * distance, Color.yellow);
                     sfxSoundEntry.SetOccluded(false);
-                } 
-                else 
+                }
+                else
                 {
                     Debug.DrawRay(_ray.origin, _ray.direction * distance, Color.red);
                     sfxSoundEntry.SetOccluded(true);
@@ -124,7 +124,7 @@ public class SoundEntry_Manager : MonoBehaviour
             }
         }
     }
-    
+
     public static void RegisterEntry(SoundEntry soundEntryIn)
     {
         if (soundEntryIn is null) return;
@@ -138,10 +138,10 @@ public class SoundEntry_Manager : MonoBehaviour
         if (soundEntryIn is null) return;
         if (SoundEntryList is null) return;
         if (!soundEntryIn.UsesWallOcclusion) return;
-        
+
         SoundEntryList.Remove(soundEntryIn);
     }
-        
+
     #endregion
 
 }

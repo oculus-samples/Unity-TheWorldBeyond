@@ -41,7 +41,7 @@ public class ListeningMaterialAnimation : MonoBehaviour
 
         Vector3 objFwd = transform.position - WorldBeyondManager.Instance._mainCamera.transform.position;
         objFwd.y = 0;
-        _intensity = Mathf.Clamp(Intensity * objFwd.magnitude,0.5f,3) ;
+        _intensity = Mathf.Clamp(Intensity * objFwd.magnitude, 0.5f, 3);
         rend.material.SetFloat("_Intensity", _intensity);
     }
 }

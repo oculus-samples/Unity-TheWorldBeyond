@@ -73,13 +73,13 @@ public class SpaceshipRingLights : MonoBehaviour
     public Renderer[] Lights;
     public Renderer[] Shafts;
 
-    [Range(0,1)] public float Brightness = 1f;
-    [Range(0,1)] public float MaxShaftBrightness = 0.2f;
+    [Range(0, 1)] public float Brightness = 1f;
+    [Range(0, 1)] public float MaxShaftBrightness = 0.2f;
     public Color[] Colors = new Color[] { Color.red };
 
     public float OnDamp = 0.5f;
     public float OffDamp = 0.1f;
-    [Range(0,1)] public float OnThreshold = 0.9f;
+    [Range(0, 1)] public float OnThreshold = 0.9f;
 
     public enum RingLightMode { Off, On, Blink, Spin, Random, Dormant }
 

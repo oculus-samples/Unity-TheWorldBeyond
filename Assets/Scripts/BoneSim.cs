@@ -62,7 +62,7 @@ public class BoneSimEditor : Editor
 public class BoneSim : MonoBehaviour
 {
     [System.Serializable]
-    public class Bone 
+    public class Bone
     {
         public Transform bone;
 
@@ -73,7 +73,7 @@ public class BoneSim : MonoBehaviour
         public Vector3 UpVec { get; set; }
         public Vector3 TargetPos { get; set; } // local to Space
         public Vector3 SimPos { get; set; } // local to Space
-        public Quaternion LocalRotationAxis { get; set; } 
+        public Quaternion LocalRotationAxis { get; set; }
         [HideInInspector] public Vector3 Force;
         [HideInInspector] public Vector3 Acc;
         [HideInInspector] public Vector3 Vel;
@@ -182,11 +182,11 @@ public class BoneSim : MonoBehaviour
             Chain[i].ForVec = Chain[i].child != null ?
                 Chain[i].bone.InverseTransformVector(Chain[i].child.position - Chain[i].bone.position).normalized :
                 Chain[i].bone.InverseTransformVector(Chain[i].bone.position - Chain[i].bone.parent.position).normalized;
-            
+
             Chain[i].UpVec = UpFromForward(Chain[i].ForVec);
             Chain[i].LocalRotationAxis = Quaternion.Inverse(Quaternion.LookRotation(Chain[i].ForVec, Chain[i].UpVec));
 
-            Chain[i].TargetPos = Chain[i].child != null ? 
+            Chain[i].TargetPos = Chain[i].child != null ?
                 Space.InverseTransformPoint(Chain[i].child.position) :
                 Space.InverseTransformPoint(Chain[i].bone.TransformPoint(Chain[i].ForVec));
 

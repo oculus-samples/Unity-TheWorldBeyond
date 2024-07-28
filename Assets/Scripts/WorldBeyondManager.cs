@@ -396,8 +396,8 @@ public class WorldBeyondManager : MonoBehaviour
         UpdateHandVisibility(rightHandHidden, _interactionLineRight, _rightHandGrabbedBallLastDistance, _gameController == OVRInput.Controller.RHand, grabbedBall);
 
         // Hidden hands have a position of 0, only update if the hand is visible.
-        if (!leftHandHidden) _leftHandGrabbedBallLastDistance = grabbedBall ? Vector3.Distance(_leftHandAnchor.position, grabbedBall.transform.position): Mathf.Infinity;
-        if (!rightHandHidden) _rightHandGrabbedBallLastDistance = grabbedBall ? Vector3.Distance(_rightHandAnchor.position, grabbedBall.transform.position): Mathf.Infinity;
+        if (!leftHandHidden) _leftHandGrabbedBallLastDistance = grabbedBall ? Vector3.Distance(_leftHandAnchor.position, grabbedBall.transform.position) : Mathf.Infinity;
+        if (!rightHandHidden) _rightHandGrabbedBallLastDistance = grabbedBall ? Vector3.Distance(_rightHandAnchor.position, grabbedBall.transform.position) : Mathf.Infinity;
 
         if (!_usingHands)
         {
@@ -620,7 +620,7 @@ public class WorldBeyondManager : MonoBehaviour
         {
             timer += Time.deltaTime;
 
-            float normTimer = Mathf.Clamp01(timer /lerpTime);
+            float normTimer = Mathf.Clamp01(timer / lerpTime);
 
             // fade black above everything
             float blackFade = Mathf.Clamp01(normTimer * 5) * Mathf.Clamp01((1 - normTimer) * 5);
@@ -860,7 +860,7 @@ public class WorldBeyondManager : MonoBehaviour
                     0.0f,
                     0.8f,
                     true,
-                    new Color(0,0.5f,1,0.5f),
+                    new Color(0, 0.5f, 1, 0.5f),
                     Color.black,
                     Color.white);
         _passthroughStylist.ShowStylizedPassthrough(weirdPassthrough, 0.2f);
@@ -1324,7 +1324,7 @@ public class WorldBeyondManager : MonoBehaviour
         Vector3 currentLook = (_titleScreen.transform.position - _mainCamera.transform.position).normalized;
         const float posLerp = 0.95f;
         Vector3 targetLook = firstFrame ? camFwd : Vector3.Slerp(camFwd, currentLook, posLerp);
-        Vector3 pitch = Vector3.Lerp(Vector3.down * 0.05f, Vector3.up * 0.05f,  Mathf.Clamp01(_titleFadeTimer/8.0f));
+        Vector3 pitch = Vector3.Lerp(Vector3.down * 0.05f, Vector3.up * 0.05f, Mathf.Clamp01(_titleFadeTimer / 8.0f));
         Quaternion targetRotation = Quaternion.LookRotation(-targetLook + pitch, Vector3.up);
 
         float dollyDirection = _currentChapter == GameChapter.Title ? -1.0f : 1.0f;

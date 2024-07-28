@@ -39,7 +39,7 @@ public class WorldBeyondEnvironment : MonoBehaviour
 
     GameObject[,] _worldObjects;
 
-    public AudioSource _outdoorAudio; 
+    public AudioSource _outdoorAudio;
 
     private void Awake()
     {
@@ -147,7 +147,8 @@ public class WorldBeyondEnvironment : MonoBehaviour
     {
         if (_outdoorAudio)
         {
-            _outdoorAudio.volume = volume;         }
+            _outdoorAudio.volume = volume;
+        }
     }
 
     /// <summary>

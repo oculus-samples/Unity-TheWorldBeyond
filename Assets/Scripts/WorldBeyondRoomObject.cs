@@ -73,7 +73,7 @@ public class WorldBeyondRoomObject : MonoBehaviour
             edge.UpdateParticleMaterial(_effectTimer, _impactPosition, _passthroughWallActive ? 1.0f : 0.0f);
         }
 
-        float smoothTimer = Mathf.Cos(Mathf.PI * _effectTimer/_effectTime) * 0.5f + 0.5f;
+        float smoothTimer = Mathf.Cos(Mathf.PI * _effectTimer / _effectTime) * 0.5f + 0.5f;
         foreach (GameObject obj in wallDebris)
         {
             obj.transform.localScale = Vector3.one * (_passthroughWallActive ? smoothTimer : (1.0f - smoothTimer));

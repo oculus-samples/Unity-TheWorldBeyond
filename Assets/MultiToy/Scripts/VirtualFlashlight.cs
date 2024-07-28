@@ -52,7 +52,7 @@ public class VirtualFlashlight : WorldBeyondToy
             {
                 newQuad = Instantiate(refQuad, _lightVolume.transform);
             }
-            float normPos = i / (float)(sliceCount-1);
+            float normPos = i / (float)(sliceCount - 1);
             float dist = Mathf.Pow(normPos, 1.5f);
             newQuad.transform.localPosition = Vector3.up * (basePos + dist) * 0.6f;
             newQuad.transform.localScale = Vector3.one * (baseScale + dist * 1.5f);
@@ -100,7 +100,7 @@ public class VirtualFlashlight : WorldBeyondToy
 
         for (int i = 0; i < _lightQuads.Count; i++)
         {
-            _lightQuads[i].material.SetFloat("_Intensity",strength);
+            _lightQuads[i].material.SetFloat("_Intensity", strength);
         }
     }
 

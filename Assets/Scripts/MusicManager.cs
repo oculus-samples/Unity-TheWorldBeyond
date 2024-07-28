@@ -33,7 +33,7 @@ public class MusicManager : MonoBehaviour
     public float TheGreatBeyondFadeInTimeSeconds = 1f;
     public float TheGreatBeyondDelayStopSeconds = 1f;
     public float TheGreatBeyondFadeOutTimeSeconds = 5f;
-    
+
     private AudioSource _errorSource;
     public AudioSource audioSourceStinger;
     public AudioSource theGreatBeyondLoopSource;
@@ -51,7 +51,7 @@ public class MusicManager : MonoBehaviour
         _errorSource = AudioManager.Instance.GlobalAudioSource;
         StartCoroutine(PlayErrorSound());
     }
-    
+
     private void Awake()
     {
         if (!Instance)
@@ -64,7 +64,7 @@ public class MusicManager : MonoBehaviour
             PlayError();
             audioSourceStinger = GetComponent<AudioSource>();
         }
-        
+
         if (theGreatBeyondLoopSource is null)
         {
             PlayError();
@@ -83,8 +83,8 @@ public class MusicManager : MonoBehaviour
             theGreatBeyondLoopSource.loop = true;
             StartCoroutine(StartMusicWithFade(theGreatBeyondLoopSource, TheGreatBeyondFadeInTimeSeconds, TheGreatBeyondDelayPlaySeconds));
             theGreatBeyondLoopSource.PlayDelayed(PortalOpen.length);
-        } 
-        else 
+        }
+        else
         {
             audioSourceStinger.Stop();
             audioSourceStinger.clip = clipToPlay;
@@ -94,11 +94,11 @@ public class MusicManager : MonoBehaviour
             audioSourceStinger.Play();
         }
     }
-    
+
     IEnumerator StartMusicWithFade(AudioSource musicAudioSource, float fadeSeconds = 0f, float delaySeconds = 0f)
     {
         yield return new WaitForSeconds(delaySeconds);
-    
+
         float startVolume = 0.2f;
 
         musicAudioSource.volume = 0;
@@ -113,7 +113,7 @@ public class MusicManager : MonoBehaviour
 
         musicAudioSource.volume = 1f;
     }
-    
+
 
     IEnumerator StopMusicWithFade(AudioSource musicAudioSource, float fadeSeconds = 0f, float delaySeconds = 0f)
     {

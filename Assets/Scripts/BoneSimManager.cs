@@ -42,7 +42,7 @@ public class BoneSimManager : MonoBehaviour
         }
     }
 
-    private void OnEnable ()
+    private void OnEnable()
     {
         for (int i = 0; i < BoneSims.Length; i++)
         {
@@ -65,7 +65,7 @@ public class BoneSimManager : MonoBehaviour
         }
     }
 
-    private void LateUpdate ()
+    private void LateUpdate()
     {
         for (int i = 0; i < BoneSims.Length; i++)
         {

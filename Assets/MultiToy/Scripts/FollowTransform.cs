@@ -49,7 +49,7 @@ public class FollowTransform : MonoBehaviour
     public float damping = 1f;
     public float gravity = 0.0001f;
 
-    float currentDelta = 0f; 
+    float currentDelta = 0f;
 
     // noise
     //public float sNoiseAmp = 0;
@@ -92,7 +92,7 @@ public class FollowTransform : MonoBehaviour
 
         // assign parent transform if not assigned
         if (!followTransform && theTransform.parent != null)
-        { 
+        {
             followTransform = theTransform.parent;
         }
 

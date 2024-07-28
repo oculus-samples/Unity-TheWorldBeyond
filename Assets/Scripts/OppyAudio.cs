@@ -26,10 +26,10 @@ using UnityEngine;
 
 public class OppyAudio : MonoBehaviour
 {
-    [NamedArray (new string[]
+    [NamedArray(new string[]
     {
-        "0 Footstep Run", 
-        "1 Footstep Walk", 
+        "0 Footstep Run",
+        "1 Footstep Walk",
         "2 Footstep Jump",
         "3 Stand EyeBlink",
         "4 Wave",

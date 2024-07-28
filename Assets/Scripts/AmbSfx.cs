@@ -23,7 +23,7 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class AmbSfx : MonoBehaviour
-{ 
+{
     #region PublicVariables
     [Header("Randomized Positioning")]
     public bool randomizePosition = true;
@@ -32,15 +32,15 @@ public class AmbSfx : MonoBehaviour
     [Header("Randomization Timing")]
     public float triggerTime = 8f;
     public float triggerTimeVariation = 4f;
-    
+
     [Header("Playback Behavior")]
     public bool layered = false;
     public List<SoundEntry> soundEntryList;
     public AudioSource audioSource = null;
     [HideInInspector] public Vector3 _positionToPlayAt;
-    
+
     [Header("Debug Info")]
-    public bool debugSpheresEnabled; 
+    public bool debugSpheresEnabled;
     public GameObject RandomizationSphere;
     #endregion
 
@@ -64,13 +64,13 @@ public class AmbSfx : MonoBehaviour
             return _position;
         }
     }
-    
+
     // Start is called before the first frame update
     void Start()
     {
-        _positionOriginal =  GetComponent<Transform>().position;
+        _positionOriginal = GetComponent<Transform>().position;
         UpdateDebugSphere();
-        print($"{name} - Original Position: {_positionOriginal}" );
+        print($"{name} - Original Position: {_positionOriginal}");
         Play();
     }
 
@@ -84,7 +84,7 @@ public class AmbSfx : MonoBehaviour
 
         return mod * value;
     }
-    private void GenerateNewRandomPosition ()
+    private void GenerateNewRandomPosition()
     {
         if (!randomizePosition)
         {
@@ -97,7 +97,7 @@ public class AmbSfx : MonoBehaviour
         _positionToPlayAt.x = new_x;
         _positionToPlayAt.y = new_y;
         _positionToPlayAt.z = new_z;
-        Debug.LogWarning($"[{name}] - Original Position: {_positionOriginal} <::::> Randomized position: {_positionToPlayAt}" );
+        Debug.LogWarning($"[{name}] - Original Position: {_positionOriginal} <::::> Randomized position: {_positionToPlayAt}");
     }
 
     public void Play()
@@ -113,12 +113,12 @@ public class AmbSfx : MonoBehaviour
         _isPlaying = false;
     }
 
-    
+
     private void RecalculateTriggerTime()
     {
         _waitTime = Random.Range(triggerTime - triggerTimeVariation, triggerTime + triggerTimeVariation);
     }
-    
+
     // Update is called once per frame
     void Update()
     {
@@ -133,7 +133,7 @@ public class AmbSfx : MonoBehaviour
         {
             GenerateNewRandomPosition();
 
-            // Debug Sphere 
+            // Debug Sphere
             UpdateDebugSphere();
             if (layered)
             {
@@ -141,7 +141,7 @@ public class AmbSfx : MonoBehaviour
                 for (i = 0; i < soundEntryList.Count; i++)
                 {
                     _currentSoundEntry = null;
-                        soundEntryList[i].Play(_positionToPlayAt);
+                    soundEntryList[i].Play(_positionToPlayAt);
                 }
             }
             else
@@ -195,7 +195,7 @@ public class AmbSfx : MonoBehaviour
         {
             return;
         }
-        
+
         if (!debugSpheresEnabled)
         {
             RandomizationSphere.SetActive(false);
@@ -203,9 +203,9 @@ public class AmbSfx : MonoBehaviour
         }
         RandomizationSphere.SetActive(true);
         var transformScale = RandomizationSphere.transform.lossyScale;
-        transformScale.x = positionRandomizationOffset.x*2;
-        transformScale.y = positionRandomizationOffset.y*2;
-        transformScale.z = positionRandomizationOffset.z*2;
+        transformScale.x = positionRandomizationOffset.x * 2;
+        transformScale.y = positionRandomizationOffset.y * 2;
+        transformScale.z = positionRandomizationOffset.z * 2;
         RandomizationSphere.transform.localScale = transformScale;
     }
 }

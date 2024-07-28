@@ -100,7 +100,7 @@ public class RoomFramer : WorldBeyondToy
             VirtualRoom.Instance.CloseWall(surfaceId, surfacePassthroughActive);
             AudioClip wallSound = surfacePassthroughActive ? MultiToy.Instance._wallToyWallClose : MultiToy.Instance._wallToyWallOpen;
             AudioManager.Instance.PlayAudio(wallSound, clickedWall.transform.position);
-            
+
             if (!surfacePassthroughActive)
             {
                 WorldBeyondManager.Instance.OpenedWall(surfaceId);
@@ -119,7 +119,7 @@ public class RoomFramer : WorldBeyondToy
     HoveredObject CheckForWall()
     {
         // highlight selected wall
-        HoveredObject hoveringWall  = HoveredObject.None;
+        HoveredObject hoveringWall = HoveredObject.None;
         Vector3 controllerPos = Vector3.zero;
         Quaternion controllerRot = Quaternion.identity;
         WorldBeyondManager.Instance.GetDominantHand(ref controllerPos, ref controllerRot);
@@ -154,7 +154,7 @@ public class RoomFramer : WorldBeyondToy
                     {
                         hoveringWall = HoveredObject.Floor;
                     }
-                    else 
+                    else
                     {
                         if (rbs.CanBeToggled())
                         {
@@ -240,8 +240,8 @@ public class RoomFramer : WorldBeyondToy
 
                 int maxParticleRate = 150;
                 var rate = effectPrt.emission;
-                float pingpong = Mathf.Abs(timer - 0.5f)*2;
-                rate.rateOverTime = maxParticleRate * (1-pingpong) * 100;
+                float pingpong = Mathf.Abs(timer - 0.5f) * 2;
+                rate.rateOverTime = maxParticleRate * (1 - pingpong) * 100;
             }
             yield return null;
         }

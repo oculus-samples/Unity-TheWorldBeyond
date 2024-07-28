@@ -28,10 +28,10 @@ public class AmbSfx_Manager : MonoBehaviour
 
     [NonSerialized]
     static public AmbSfx[] AmbSfxList = null;
-    
+
     private bool _isPlaying;
 
-    private AudioListener _audioListener; 
+    private AudioListener _audioListener;
     private Vector3 _position = default(Vector3);
 
     public Vector3 position
@@ -46,7 +46,7 @@ public class AmbSfx_Manager : MonoBehaviour
             return _position;
         }
     }
-    
+
     private void Awake()
     {
         if (!Instance)
@@ -68,7 +68,8 @@ public class AmbSfx_Manager : MonoBehaviour
         {
             for (var i = 0; i < AmbSfxList.Length; i++)
             {
-                if (isEnabled){
+                if (isEnabled)
+                {
                     AmbSfxList[i].Play();
                     _isPlaying = true;
                 }
@@ -80,7 +81,7 @@ public class AmbSfx_Manager : MonoBehaviour
             }
         }
     }
-    
+
     // Update is called once per frame
     public void DoLateUpdate()
     {
@@ -106,16 +107,16 @@ public class AmbSfx_Manager : MonoBehaviour
 
     private static Plane _plane;
     private static Ray _ray;
-    
+
     public void HandleObstructed()
     {
         // Handle Ambient SFX Emitters and Walls
         foreach (var ambAudioSource in AudioManager.AmbPool)
         {
             if (!ambAudioSource) continue;
-            
-            var heading = ambAudioSource.transform.position - _audioListener.transform.position;  
-            
+
+            var heading = ambAudioSource.transform.position - _audioListener.transform.position;
+
             var distance = heading.magnitude;
             var direction = heading / distance;
 
@@ -127,8 +128,8 @@ public class AmbSfx_Manager : MonoBehaviour
                 {
                     Debug.DrawRay(_ray.origin, _ray.direction * distance, Color.green);
                     ambAudioSource.mute = false;
-                } 
-                else 
+                }
+                else
                 {
                     Debug.DrawRay(_ray.origin, _ray.direction * distance, Color.red);
                     ambAudioSource.mute = true;

@@ -330,10 +330,10 @@ public class VirtualRoom : MonoBehaviour
         // while searching, also make sure they align with neighboring walls
         for (int i = 0; i < _roomboxWalls.Count; i++)
         {
-           for (int j = 0; j < _roomboxWalls[i].wallEdges.Count; j++)
+            for (int j = 0; j < _roomboxWalls[i].wallEdges.Count; j++)
             {
                 FindSiblingEdge(_roomboxWalls[i].wallEdges[j]);
-           }
+            }
         }
 
         AudioManager.SetRoomOpenness(GetRoomOpenAmount());
@@ -451,7 +451,8 @@ public class VirtualRoom : MonoBehaviour
     {
         List<Vector3> cornerPoints = new List<Vector3>();
 
-        if (null == _floorSceneAnchor || !OVRPlugin.GetSpaceBoundary2D(_floorSceneAnchor.Space, out Vector2[] boundary)){
+        if (null == _floorSceneAnchor || !OVRPlugin.GetSpaceBoundary2D(_floorSceneAnchor.Space, out Vector2[] boundary))
+        {
             // fall back to wall corner method
             List<WorldBeyondRoomObject> justWalls = new List<WorldBeyondRoomObject>();
             for (int i = 0; i < allFurniture.Length; i++)
@@ -472,7 +473,9 @@ public class VirtualRoom : MonoBehaviour
             {
                 WorldBeyondTutorial.Instance.DisplayMessage(WorldBeyondTutorial.TutorialMessage.ERROR_TOO_MANY_WALLS);
             }
-        } else {
+        }
+        else
+        {
             // Use the Scence API and floor scene anchor to get the cornor of the floor, and convert Vector2 to Vector3
             cornerPoints = boundary.ToList()
                 .ConvertAll<Vector3>(corner => new Vector3(-corner.x, corner.y, 0.0f));
@@ -578,7 +581,8 @@ public class VirtualRoom : MonoBehaviour
     /// </summary>
     void CreatePolygonMesh(List<WorldBeyondRoomObject> roomSurfaces, WorldBeyondRoomObject srObject, bool flipNormal)
     {
-        try {
+        try
+        {
             // to avoid precision issues resulting in tiny cracks along the floor/ceiling edges, we want to extend out the polygon by a small amount
             for (int i = 0; i < _cornerPoints.Count; i++)
             {
@@ -668,7 +672,7 @@ public class VirtualRoom : MonoBehaviour
             float extent = (j % 2 == 0) ? scl.y * 0.5f : scl.x * 0.5f;
             frame.transform.position = wallObject.transform.position + frame.transform.up * extent;
             float width = (j % 2 == 1) ? scl.y : scl.x;
-            frame.transform.localScale = new Vector3(1, 1.0f/scl.y, 1.0f/scl.z);
+            frame.transform.localScale = new Vector3(1, 1.0f / scl.y, 1.0f / scl.z);
 
             WallEdge thisWallEdge = frame.GetComponent<WallEdge>();
             thisWallEdge._parentSurface = wallObject;
@@ -901,7 +905,7 @@ public class VirtualRoom : MonoBehaviour
         float totalAmount = _roomboxWalls[_roomboxWalls.Count - 1]._passthroughWallActive ? 0.0f : 0.5f;
 
         int wallsOpen = 0;
-        for (int i = 0; i < _roomboxWalls.Count-2; i++) // ignore last two walls (floor and ceiling)
+        for (int i = 0; i < _roomboxWalls.Count - 2; i++) // ignore last two walls (floor and ceiling)
         {
             if (!_roomboxWalls[i]._passthroughWallActive)
             {
@@ -1021,12 +1025,12 @@ public class VirtualRoom : MonoBehaviour
             if (cameraPos.z <= zMax &&
                 cameraPos.z >= zMin)
             {
-                if ( cameraPos.x <= xMin)
+                if (cameraPos.x <= xMin)
                 {
                     // it's completely to the left of this line segment's bounds, so must intersect
                     lineCrosses++;
                 }
-                else if(cameraPos.x < xMax)
+                else if (cameraPos.x < xMax)
                 {
                     // it's within the bounds, so further calculation is needed
                     Vector3 lineVec = (highestPoint - lowestPoint).normalized;

@@ -36,7 +36,7 @@ public class AudioManager : MonoBehaviour
 
     [NonSerialized] private static SoundEntry_Manager _soundEntryManager;
     [NonSerialized] private static AmbSfx_Manager _ambSfxManager;
-    
+
     // Static Audio Sources
     private static AudioSource[] _audioSourcesPool;  // audioSources or 'emitter' pool
     private static readonly AudioSource AudioSourceGlobal = new AudioSource();
@@ -44,10 +44,10 @@ public class AudioManager : MonoBehaviour
     private static readonly AudioSource AudioSourceGlobalAmb = new AudioSource();
     public static AudioSource[] AmbPool => _audioSourcesPoolAmb;
     public AudioSource GlobalAudioSource => AudioSourceGlobal;
-    
+
     [NonSerialized] public AudioSource CurrentAudioSource;
     [NonSerialized] public SoundEntry CurrentSound;
-    
+
     [Header("Snapshot Transitions")]
     private static int _currentPoolIndex = 0;  // Index of the currently playing AudioSource from the pool
     public AudioMixer _audioMixer;
@@ -62,14 +62,14 @@ public class AudioManager : MonoBehaviour
     public AudioMixerSnapshot[] MixSnapshot_TheGreatBeyond;
     public int TransitionTimeToTheGreatBeyond_AfterPowerup = 1;
     public AudioMixerSnapshot[] MixSnapshot_TheGreatBeyond_AfterPowerup;
-    private static float[] _weights = new float[1]{1f};
+    private static float[] _weights = new float[1] { 1f };
     public int TransitionTimeToEnding = 1;
     public AudioMixerSnapshot[] MixSnapshot_Ending;
     public int TransitionTimeToReset = 1;
     public AudioMixerSnapshot[] MixSnapshot_Reset;
 
     [Header("Virtual Room Openness")]
-    public float openessFilterRange = 22050-375f;
+    public float openessFilterRange = 22050 - 375f;
     public float openessVolRange = 9f;
     public float openessReverbRange = 1500f;
 
@@ -78,41 +78,41 @@ public class AudioManager : MonoBehaviour
 
     public static void SetSnapshot_Title()
     {
-         Instance._audioMixer.TransitionToSnapshots(Instance.MixSnapshot_Title,_weights, Instance.TransitionTimeToTitle);
-         Instance._audioMixer.SetFloat("OccAmbVol", 0f);
+        Instance._audioMixer.TransitionToSnapshots(Instance.MixSnapshot_Title, _weights, Instance.TransitionTimeToTitle);
+        Instance._audioMixer.SetFloat("OccAmbVol", 0f);
     }
 
     public static void SetSnapshot_Introduction()
     {
         Instance._audioMixer.SetFloat("OccAmbVol", 0f);
-        Instance._audioMixer.TransitionToSnapshots(Instance.MixSnapshot_Introduction,_weights, Instance.TransitionTimeToIntro);
+        Instance._audioMixer.TransitionToSnapshots(Instance.MixSnapshot_Introduction, _weights, Instance.TransitionTimeToIntro);
     }
 
     public static void SetSnapshot_TheGreatBeyond()
     {
-        Instance._audioMixer.TransitionToSnapshots(Instance.MixSnapshot_TheGreatBeyond,_weights, Instance.TransitionTimeToGreatBeyond);
+        Instance._audioMixer.TransitionToSnapshots(Instance.MixSnapshot_TheGreatBeyond, _weights, Instance.TransitionTimeToGreatBeyond);
     }
 
     public static void SetSnapshot_Ending()
     {
-        Instance._audioMixer.TransitionToSnapshots(Instance.MixSnapshot_Ending,_weights, Instance.TransitionTimeToEnding);
+        Instance._audioMixer.TransitionToSnapshots(Instance.MixSnapshot_Ending, _weights, Instance.TransitionTimeToEnding);
     }
 
     public static void SetSnapshot_Reset()
     {
         Instance._audioMixer.SetFloat("OccAmbVol", 0f);
-        Instance._audioMixer.TransitionToSnapshots(Instance.MixSnapshot_Reset,_weights, Instance.TransitionTimeToReset);
+        Instance._audioMixer.TransitionToSnapshots(Instance.MixSnapshot_Reset, _weights, Instance.TransitionTimeToReset);
     }
     public static void SetSnapshot_OppyExploresReality()
     {
         Instance._audioMixer.SetFloat("OccAmbVol", 0f);
-        Instance._audioMixer.TransitionToSnapshots(Instance.OppyExploresReality,_weights, Instance.TransitionTimeToOppyExploresReality);
+        Instance._audioMixer.TransitionToSnapshots(Instance.OppyExploresReality, _weights, Instance.TransitionTimeToOppyExploresReality);
     }
 
     public static void SetSnapshot_TheGreatBeyond_AfterPowerup()
     {
         Instance._audioMixer.SetFloat("OccAmbVol", 0f);
-        Instance._audioMixer.TransitionToSnapshots(Instance.MixSnapshot_TheGreatBeyond_AfterPowerup,_weights, Instance.TransitionTimeToTheGreatBeyond_AfterPowerup);
+        Instance._audioMixer.TransitionToSnapshots(Instance.MixSnapshot_TheGreatBeyond_AfterPowerup, _weights, Instance.TransitionTimeToTheGreatBeyond_AfterPowerup);
     }
 
     private void Start()
@@ -129,7 +129,7 @@ public class AudioManager : MonoBehaviour
             _audioSourcesPool[i] = CreateNewAudioSource();
             _audioSourcesPool[i].spatialize = true;
             _audioSourcesPool[i].outputAudioMixerGroup = _defaultOutputMixerGroup;
-            
+
             _audioSourcesPoolAmb[i] = CreateNewAudioSource();
             if (!AudioSourceGlobalAmb)
             {
@@ -145,14 +145,14 @@ public class AudioManager : MonoBehaviour
 
         }
     }
-    
+
     // Old
     public void PlayAudio(
-        AudioClip clipToPlay, 
-        Vector3 position = default(Vector3), 
-        Transform transformToFollow = null, 
+        AudioClip clipToPlay,
+        Vector3 position = default(Vector3),
+        Transform transformToFollow = null,
         float pitch = 1.0f,
-        float volume = 1.0f,        
+        float volume = 1.0f,
         float delayInMs = 0.0f,
         AudioMixerGroup useMixerGroup = null,
         bool useAmbiancePool = false,
@@ -171,7 +171,7 @@ public class AudioManager : MonoBehaviour
         {
 
             if (!audioSourcePoolChoice[i])
-            { 
+            {
                 // if for some reason it's null, that's because it was attached to an object that was destroyed
                 audioSourcePoolChoice[i] = CreateNewAudioSource();
                 audioSourcePoolChoice[i].spatialize = true;
@@ -236,7 +236,7 @@ public class AudioManager : MonoBehaviour
             Debug.LogAssertion($"AudioManager::PlayRnd -{soundEntryIn.displayName} No Audio Source Provided using Global Source : {debugMsg}");
             Instance.CurrentAudioSource = AudioSourceGlobal;
         }
-        
+
         // Set Looping
         Instance.CurrentAudioSource.loop = soundEntryIn.IsLooping;
 
@@ -253,7 +253,7 @@ public class AudioManager : MonoBehaviour
         {
             var currentClip = soundEntryIn.GetCurrentClip();
             int whileCount = 0;
-            
+
             while (clip != currentClip && (whileCount < 5))
             {
                 clip = soundEntryIn.AudioClips[Random.Range(0, soundEntryIn.AudioClips.Count)];
@@ -261,23 +261,23 @@ public class AudioManager : MonoBehaviour
             }
         }
         soundEntryIn.SetCurrentClip(clip);
-        
+
         if (soundEntryIn.IsLooping)
         {
             if (soundEntryIn.DelayMs > 0f)
                 Instance.CurrentAudioSource.PlayDelayed(soundEntryIn.DelayMs);
             else
-                Instance.CurrentAudioSource.Play((ulong) soundEntryIn.DelayMs);
+                Instance.CurrentAudioSource.Play((ulong)soundEntryIn.DelayMs);
         }
         else
         {
             // When using a given position - utilize a pooled emitter.
             if (position != default(Vector3))
             {
-                Instance.PlayAudio(clip, position, transformToFollow, 
+                Instance.PlayAudio(clip, position, transformToFollow,
                     pitch: soundEntryIn.Pitch,
                     volume: soundEntryIn.Volume, delayInMs: soundEntryIn.DelayMs,
-                    useMixerGroup: soundEntryIn.OneShotFireForgetMixerGroupChoice, 
+                    useMixerGroup: soundEntryIn.OneShotFireForgetMixerGroupChoice,
                     useAmbiancePool: soundEntryIn.UseAmbiancePool,
                     minDistanceIn: soundEntryIn.AudioSourceComponent.minDistance,
                     maxDistanceIn: soundEntryIn.AudioSourceComponent.maxDistance);
@@ -293,22 +293,22 @@ public class AudioManager : MonoBehaviour
 
         soundEntryIn.AudioSourceComponent = Instance.CurrentAudioSource;
     }
-    
+
     public static void Play(
         AudioClip audioClipIn,
-        AudioSource audioSourceIn = null, 
+        AudioSource audioSourceIn = null,
         bool looped = false,
         float delayInMs = 0.0f,
-        float basePitchValue = 1.0f, 
-        float pitchRndRange = 0.0f, 
-        float baseVolValue = 1.0f, 
+        float basePitchValue = 1.0f,
+        float pitchRndRange = 0.0f,
+        float baseVolValue = 1.0f,
         float volRndRange = 0.0f,
         string debugMsg = "",
-        Vector3 position = default(Vector3), 
+        Vector3 position = default(Vector3),
         Transform transformToFollow = null)
     {
         if (audioSourceIn is null)
-        {            
+        {
             Debug.LogAssertion($"AudioManager::PlayRnd - No Audio Source Provided using Global Source : {debugMsg}");
             audioSourceIn = AudioSourceGlobal;
         }
@@ -320,13 +320,13 @@ public class AudioManager : MonoBehaviour
         }
 
         Instance.CurrentAudioSource = audioSourceIn;
-        
+
         // Set Looping
         audioSourceIn.loop = looped;
 
         //Choose a random pitch to play back our clip at between our high and low pitch ranges.
         audioSourceIn.pitch = RandomizeWithBase(basePitchValue, pitchRndRange);
-        
+
         //Choose a random volume to play back our clip at between our high and low volume ranges.
         audioSourceIn.volume = RandomizeWithBase(baseVolValue, volRndRange);
 
@@ -337,7 +337,7 @@ public class AudioManager : MonoBehaviour
             if (delayInMs > 0f)
                 audioSourceIn.PlayDelayed(delayInMs);
             else
-                audioSourceIn.Play((ulong) delayInMs);
+                audioSourceIn.Play((ulong)delayInMs);
         }
         else
         {
@@ -375,8 +375,8 @@ public class AudioManager : MonoBehaviour
     {
         return Random.Range(baseValue - varianceValue, baseValue + varianceValue);
     }
-    
-    void Awake ()
+
+    void Awake()
     {
         //Check if there is already an instance of SoundManager
         if (Instance == null)
@@ -392,13 +392,13 @@ public class AudioManager : MonoBehaviour
         }
 
         //Set SoundManager to DontDestroyOnLoad so that it won't be destroyed when reloading our scene.
-        DontDestroyOnLoad (gameObject);
+        DontDestroyOnLoad(gameObject);
     }
-    
+
     IEnumerator PlayFadeIn(AudioSource fadeAudioSource, float fadeSeconds = 0f, float delaySeconds = 0f, float fadeVolIn = 1f)
     {
         yield return new WaitForSeconds(delaySeconds);
-    
+
         float startVolume = 0.2f;
 
         fadeAudioSource.volume = 0;
@@ -440,14 +440,14 @@ public class AudioManager : MonoBehaviour
         fadeAudioSource.Stop();
         fadeAudioSource.volume = startVolume;
     }
-    
+
     public static void SetRoomOpenness(float openness)
     {
         Openness = openness;
-        var filter_amt = (22050f-Instance.openessFilterRange) + (Openness * Instance.openessFilterRange);
+        var filter_amt = (22050f - Instance.openessFilterRange) + (Openness * Instance.openessFilterRange);
         var vol_amt = -Instance.openessVolRange + (AudioManager.Openness * Instance.openessVolRange);
         var reverb_amt = (-Instance.openessReverbRange + (Openness * Instance.openessReverbRange));
-        
+
         Instance._audioMixer.SetFloat("AmbianceOpenness", reverb_amt);
         Instance._audioMixer.SetFloat("OccAmbVol", vol_amt);
         Instance._audioMixer.SetFloat("OccAmbCutoff", filter_amt);
@@ -455,14 +455,14 @@ public class AudioManager : MonoBehaviour
 
     void LateUpdate()
     {
-        // Check every 10 frames 
+        // Check every 10 frames
         _audioTimer += Time.deltaTime;
         if (_audioTimer <= 0.25f)
         {
             return;
         };
         _audioTimer = 0f;
-        
+
         Openness = VirtualRoom.Instance.GetRoomOpenAmount();
         _soundEntryManager.DoLateUpdate();
         _ambSfxManager.DoLateUpdate();

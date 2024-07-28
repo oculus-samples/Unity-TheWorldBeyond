@@ -81,12 +81,12 @@ public class SpaceshipTrigger : MonoBehaviour
     {
         sfxIdle.Play();
     }
-    
+
     public void StopIdleSound()
     {
         sfxIdle.Stop();
     }
-    
+
     public void FindLightObjects()
     {
         CheckForLight(this.transform);

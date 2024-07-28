@@ -90,7 +90,7 @@ public class WitConnector : MonoBehaviour
         }
     }
 
-#region GazeFocus
+    #region GazeFocus
     bool HasFocus()
     {
         float oppyFov = 20;
@@ -118,15 +118,17 @@ public class WitConnector : MonoBehaviour
         return currentFocus;
     }
 
-    void FocusHandler(bool isFocus) {
+    void FocusHandler(bool isFocus)
+    {
         WitSwitcher(isFocus && pet.CanListen());
     }
-#endregion GazeFocus
+    #endregion GazeFocus
 
-#region Wit
+    #region Wit
     public bool WitSwitcher(bool isOn)
     {
-        if (isOn) {
+        if (isOn)
+        {
             _voiceExperience.Activate();
             return true;
         }
@@ -139,7 +141,8 @@ public class WitConnector : MonoBehaviour
         return false;
     }
 
-    void StartListening() {
+    void StartListening()
+    {
         listeningTranscription = true;
         pet.Listening(true);
         pet.DisplayThought();
@@ -157,14 +160,16 @@ public class WitConnector : MonoBehaviour
         Debug.LogWarning("Voice Error : " + message);
         ListenFailHandler();
     }
-    void StoppedListeningDueToTimeout() {
+    void StoppedListeningDueToTimeout()
+    {
         Debug.LogWarning("Voice Debug : StoppedListeningDueToTimeout");
     }
     void StoppedListeningDueToInactivity()
     {
         Debug.LogWarning("Voice Debug : StoppedListeningDueToInactivity");
     }
-    void StoppedListeningDueToDeactivation() {
+    void StoppedListeningDueToDeactivation()
+    {
         Debug.LogWarning("Voice Debug : StoppedListeningDueToDeactivation");
     }
 
@@ -185,14 +190,17 @@ public class WitConnector : MonoBehaviour
             }
         }
     }
-#endregion Wit
-    void ListenFailHandler() {
+    #endregion Wit
+    void ListenFailHandler()
+    {
         pet.ListenFail();
     }
 
-    void LiveTranscriptionHandler(string content) {
+    void LiveTranscriptionHandler(string content)
+    {
 
-        if (listeningTranscription) {
+        if (listeningTranscription)
+        {
             pet.DisplayThought(content);
         }
 

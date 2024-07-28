@@ -329,7 +329,7 @@ public class SceneMesher : MonoBehaviour
                             offset = up.normalized * _borderSize + right.normalized * _borderSize;
                             break;
                     }
-                    MeshVertices[vertCounter] = MeshVertices[vertCounter-4] + offset;
+                    MeshVertices[vertCounter] = MeshVertices[vertCounter - 4] + offset;
                     MeshUVs[vertCounter] = new Vector2(0, 0);
                     MeshColors[vertCounter] = Color.white;
                     MeshNormals[vertCounter] = cube.forward;
@@ -446,7 +446,8 @@ public class SceneMesher : MonoBehaviour
     /// </summary>
     void CreateBorderedPolygon(ref int[] indexArray, ref int indexCounter, int baseCount, int pointsInLoop, List<Vector3> loopPoints = null, bool flipNormal = false, List<Vector3> insetPoints = null)
     {
-        try {
+        try
+        {
             //int baseCount = baseIndex * 8; // 8 because each wall always has 8 vertices
             for (int j = 0; j < pointsInLoop; j++)
             {
