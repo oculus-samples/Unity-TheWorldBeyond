@@ -1,22 +1,4 @@
-/*
- * Copyright (c) Meta Platforms, Inc. and affiliates.
- * All rights reserved.
- *
- * Licensed under the Oculus SDK License Agreement (the "License");
- * you may not use the Oculus SDK except in compliance with the License,
- * which is provided at the time of installation or download, or which
- * otherwise accompanies this software in either electronic or hard copy form.
- *
- * You may obtain a copy of the License at
- *
- * https://developer.oculus.com/licenses/oculussdk/
- *
- * Unless required by applicable law or agreed to in writing, the Oculus SDK
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright (c) Meta Platforms, Inc. and affiliates.
 
 Shader "TheWorldBeyond/BallShader" {
 	Properties
@@ -35,7 +17,7 @@ Shader "TheWorldBeyond/BallShader" {
 	}
 
 	ENDCG
-	
+
 	SubShader
 	{
 		Tags { "RenderType"="Opaque" }
@@ -51,13 +33,13 @@ Shader "TheWorldBeyond/BallShader" {
 		ZWrite On
 		ZTest LEqual
 		Offset 0 , 0
-		
+
 		Pass
 		{
 			Tags { "LightMode"="ForwardBase" }
 			CGPROGRAM
 
-			
+
 
 			#ifndef UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX
 			//only defining to not throw compilation error over Unity 5.5
@@ -76,7 +58,7 @@ Shader "TheWorldBeyond/BallShader" {
 				half3 normal : NORMAL;
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
-			
+
 			struct v2f
 			{
 				float4 vertex : SV_POSITION;
@@ -86,7 +68,7 @@ Shader "TheWorldBeyond/BallShader" {
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
-			 
+
 			uniform half _wobbleScale;
 			uniform half4 _CoreColor;
 			uniform half4 _RimColor;
@@ -114,10 +96,10 @@ Shader "TheWorldBeyond/BallShader" {
 				v.vertex.xyz += vertexValue;
 				o.vertex = UnityObjectToClipPos(v.vertex);
 				o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
-				
+
 				return o;
 			}
-			
+
 			fixed4 frag (v2f i ) : SV_Target
 			{
 				UNITY_SETUP_INSTANCE_ID(i);

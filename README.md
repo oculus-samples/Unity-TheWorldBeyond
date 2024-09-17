@@ -3,6 +3,9 @@
 # The World Beyond
 In this sample project, you'll learn how to take advantage of our Presence Platform features. This source code will compile into the same experience you play when downloading it from App Lab [here.](https://www.oculus.com/experiences/quest/4873390506111025)
 
+# Licenses
+The majority of TheWorldBeyond is licensed under [MIT LICENSE](./LICENSE), however files from [Text Mesh Pro](http://www.unity3d.com/legal/licenses/Unity_Companion_License) are licensed under their respective licensing terms.
+
 ## Requirements
 * Unity 2020.3.18f1
 * Mac or Windows
@@ -121,6 +124,3 @@ To demo some Voice SDK basics, this sample transcribes the user's speech to text
 * Unity Canvas using hands or controllers, powered by the [Interaction SDK](https://developer.oculus.com/documentation/unity/unity-isdk-interaction-sdk-overview/)
 * *SampleNotif* prefab, for displaying information and requesting user action
 * Sample code for checking and requesting microphone permissions in [`SampleVoice.CheckPermissionsAndContinue()`](https://github.com/oculus-samples/Unity-TheWorldBeyond/blob/main/Assets/Scripts/SampleVoice.cs#L87)
-
-# Licenses
-The [Meta License](./LICENSE) applies to the SDK and supporting material. The [MIT License](./Assets/Scripts/LICENSE) applies to only certain, clearly marked documents. If an individual file does not indicate which license it is subject to, then the Meta License applies.

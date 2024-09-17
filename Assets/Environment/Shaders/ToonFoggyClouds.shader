@@ -1,22 +1,4 @@
-/*
- * Copyright (c) Meta Platforms, Inc. and affiliates.
- * All rights reserved.
- *
- * Licensed under the Oculus SDK License Agreement (the "License");
- * you may not use the Oculus SDK except in compliance with the License,
- * which is provided at the time of installation or download, or which
- * otherwise accompanies this software in either electronic or hard copy form.
- *
- * You may obtain a copy of the License at
- *
- * https://developer.oculus.com/licenses/oculussdk/
- *
- * Unless required by applicable law or agreed to in writing, the Oculus SDK
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright (c) Meta Platforms, Inc. and affiliates.
 
 Shader "TheWorldBeyond/ToonFoggyClouds"
 {
@@ -138,7 +120,7 @@ Shader "TheWorldBeyond/ToonFoggyClouds"
 				{
 					UNITY_SETUP_INSTANCE_ID(i);
 					UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(i);
-					
+
 					//main texture
 					half2 uv_MainTex = i.mainTexCoords.xy * _MainTex_ST.xy + _MainTex_ST.zw;
 					half4 mainTexture = tex2D(_MainTex, uv_MainTex);
@@ -167,7 +149,7 @@ Shader "TheWorldBeyond/ToonFoggyClouds"
 					//saturating with distance
 					half satDistance = saturate( (_SaturationDistance * 11) - (FoggingRange * 10) );
 					half3 blackAndWhiteToColor = lerp(foggedColor, desaturatedColor, satDistance);
-					
+
 					half4 finalColor = half4(blackAndWhiteToColor.rgb, 1.0);
 					return  finalColor;
 				}
