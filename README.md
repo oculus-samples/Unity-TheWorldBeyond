@@ -1,7 +1,7 @@
 ![TheWorldBeyond Banner](./Media/CoverMiniLandscape.png "TheWorldBeyond")
 
 # The World Beyond
-In this sample project, you'll learn how to take advantage of our Presence Platform features. This source code will compile into the same experience you play when downloading it from App Lab [here.](https://www.oculus.com/experiences/quest/4873390506111025)
+In this sample project, you'll learn how to take advantage of our Presence Platform features. This source code will compile into the same experience you play when downloading it from App Lab [here.](https://www.meta.com/experiences/the-world-beyond/4873390506111025/)
 
 # Licenses
 The majority of TheWorldBeyond is licensed under [MIT LICENSE](./LICENSE), however files from [Text Mesh Pro](http://www.unity3d.com/legal/licenses/Unity_Companion_License) are licensed under their respective licensing terms.
