@@ -7,11 +7,11 @@ In this sample project, you'll learn how to take advantage of our Presence Platf
 The majority of TheWorldBeyond is licensed under [MIT LICENSE](./LICENSE), however files from [Text Mesh Pro](http://www.unity3d.com/legal/licenses/Unity_Companion_License) are licensed under their respective licensing terms.
 
 ## Requirements
-* Unity 2020.3.18f1
+* Unity 2020.3.18f1 or higher
 * Mac or Windows
 
 ## Getting Started
-* *PCs:* You can run the Unity Editor using Oculus Link if you are on a PC. Keep in mind that the Passthrough image only appears in the headset. For Scene API, room data must exist before connecting device; disconnect Oculus Link, run Room Setup on your Quest, then reconnect Oculus Link.
+* *PCs:* You can run the Unity Editor using [Link](https://developers.meta.com/horizon/documentation/unity/unity-link) if you are on a PC. Keep in mind that the Passthrough image only appears in the headset. For Scene API, room data must exist before connecting the device; disconnect Link, run Room Setup on your Quest, then reconnect Link.
 * *Macs:* If you are on a Mac, you must build an apk and deploy it to your device.
 
 # Health & Safety Guidelines
