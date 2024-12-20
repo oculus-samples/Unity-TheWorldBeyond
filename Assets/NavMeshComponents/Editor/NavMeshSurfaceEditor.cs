@@ -1,66 +1,56 @@
 #define NAVMESHCOMPONENTS_SHOW_NAVMESHDATA_REF
 
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using UnityEditor.Experimental.SceneManagement;
 using UnityEditor.IMGUI.Controls;
-using UnityEditor.SceneManagement;
 using UnityEditorInternal;
-using UnityEngine.AI;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace UnityEditor.AI
 {
     [CanEditMultipleObjects]
     [CustomEditor(typeof(NavMeshSurface))]
-    class NavMeshSurfaceEditor : Editor
+    internal class NavMeshSurfaceEditor : Editor
     {
-        SerializedProperty m_AgentTypeID;
-        SerializedProperty m_BuildHeightMesh;
-        SerializedProperty m_Center;
-        SerializedProperty m_CollectObjects;
-        SerializedProperty m_DefaultArea;
-        SerializedProperty m_LayerMask;
-        SerializedProperty m_OverrideTileSize;
-        SerializedProperty m_OverrideVoxelSize;
-        SerializedProperty m_Size;
-        SerializedProperty m_TileSize;
-        SerializedProperty m_UseGeometry;
-        SerializedProperty m_VoxelSize;
+        private SerializedProperty m_AgentTypeID;
+        private SerializedProperty m_BuildHeightMesh;
+        private SerializedProperty m_Center;
+        private SerializedProperty m_CollectObjects;
+        private SerializedProperty m_DefaultArea;
+        private SerializedProperty m_LayerMask;
+        private SerializedProperty m_OverrideTileSize;
+        private SerializedProperty m_OverrideVoxelSize;
+        private SerializedProperty m_Size;
+        private SerializedProperty m_TileSize;
+        private SerializedProperty m_UseGeometry;
+        private SerializedProperty m_VoxelSize;
 
 #if NAVMESHCOMPONENTS_SHOW_NAVMESHDATA_REF
-        SerializedProperty m_NavMeshData;
+        private SerializedProperty m_NavMeshData;
 #endif
-        class Styles
+        private class Styles
         {
-            public readonly GUIContent m_LayerMask = new GUIContent("Include Layers");
+            public readonly GUIContent m_LayerMask = new("Include Layers");
 
-            public readonly GUIContent m_ShowInputGeom = new GUIContent("Show Input Geom");
-            public readonly GUIContent m_ShowVoxels = new GUIContent("Show Voxels");
-            public readonly GUIContent m_ShowRegions = new GUIContent("Show Regions");
-            public readonly GUIContent m_ShowRawContours = new GUIContent("Show Raw Contours");
-            public readonly GUIContent m_ShowContours = new GUIContent("Show Contours");
-            public readonly GUIContent m_ShowPolyMesh = new GUIContent("Show Poly Mesh");
-            public readonly GUIContent m_ShowPolyMeshDetail = new GUIContent("Show Poly Mesh Detail");
+            public readonly GUIContent m_ShowInputGeom = new("Show Input Geom");
+            public readonly GUIContent m_ShowVoxels = new("Show Voxels");
+            public readonly GUIContent m_ShowRegions = new("Show Regions");
+            public readonly GUIContent m_ShowRawContours = new("Show Raw Contours");
+            public readonly GUIContent m_ShowContours = new("Show Contours");
+            public readonly GUIContent m_ShowPolyMesh = new("Show Poly Mesh");
+            public readonly GUIContent m_ShowPolyMeshDetail = new("Show Poly Mesh Detail");
         }
 
-        static Styles s_Styles;
+        private static Styles s_Styles;
+        private static bool s_ShowDebugOptions;
+        private static Color s_HandleColor = new Color(127f, 214f, 244f, 100f) / 255;
+        private static Color s_HandleColorSelected = new Color(127f, 214f, 244f, 210f) / 255;
+        private static Color s_HandleColorDisabled = new Color(127f * 0.75f, 214f * 0.75f, 244f * 0.75f, 100f) / 255;
+        private BoxBoundsHandle m_BoundsHandle = new();
 
-        static bool s_ShowDebugOptions;
+        private bool editingCollider => EditMode.editMode == EditMode.SceneViewEditMode.Collider && EditMode.IsOwner(this);
 
-        static Color s_HandleColor = new Color(127f, 214f, 244f, 100f) / 255;
-        static Color s_HandleColorSelected = new Color(127f, 214f, 244f, 210f) / 255;
-        static Color s_HandleColorDisabled = new Color(127f * 0.75f, 214f * 0.75f, 244f * 0.75f, 100f) / 255;
-
-        BoxBoundsHandle m_BoundsHandle = new BoxBoundsHandle();
-
-        bool editingCollider
-        {
-            get { return EditMode.editMode == EditMode.SceneViewEditMode.Collider && EditMode.IsOwner(this); }
-        }
-
-        void OnEnable()
+        private void OnEnable()
         {
             m_AgentTypeID = serializedObject.FindProperty("m_AgentTypeID");
             m_BuildHeightMesh = serializedObject.FindProperty("m_BuildHeightMesh");
@@ -81,12 +71,12 @@ namespace UnityEditor.AI
             NavMeshVisualizationSettings.showNavigation++;
         }
 
-        void OnDisable()
+        private void OnDisable()
         {
             NavMeshVisualizationSettings.showNavigation--;
         }
 
-        Bounds GetBounds()
+        private Bounds GetBounds()
         {
             var navSurface = (NavMeshSurface)target;
             return new Bounds(navSurface.transform.position, navSurface.size);
@@ -94,8 +84,7 @@ namespace UnityEditor.AI
 
         public override void OnInspectorGUI()
         {
-            if (s_Styles == null)
-                s_Styles = new Styles();
+            s_Styles ??= new Styles();
 
             serializedObject.Update();
 
@@ -105,7 +94,7 @@ namespace UnityEditor.AI
             {
                 // Draw image
                 const float diagramHeight = 80.0f;
-                Rect agentDiagramRect = EditorGUILayout.GetControlRect(false, diagramHeight);
+                var agentDiagramRect = EditorGUILayout.GetControlRect(false, diagramHeight);
                 NavMeshEditorHelpers.DrawAgentDiagram(agentDiagramRect, bs.agentRadius, bs.agentHeight, bs.agentClimb, bs.agentSlope);
             }
             NavMeshComponentsGUIUtility.AgentTypePopup("Agent Type", m_AgentTypeID);
@@ -155,7 +144,7 @@ namespace UnityEditor.AI
                     {
                         if (!m_AgentTypeID.hasMultipleDifferentValues)
                         {
-                            float voxelsPerRadius = m_VoxelSize.floatValue > 0.0f ? (bs.agentRadius / m_VoxelSize.floatValue) : 0.0f;
+                            var voxelsPerRadius = m_VoxelSize.floatValue > 0.0f ? (bs.agentRadius / m_VoxelSize.floatValue) : 0.0f;
                             EditorGUILayout.LabelField(" ", voxelsPerRadius.ToString("0.00") + " voxels per agent radius", EditorStyles.miniLabel);
                         }
                         if (m_OverrideVoxelSize.boolValue)
@@ -175,7 +164,7 @@ namespace UnityEditor.AI
 
                     if (!m_TileSize.hasMultipleDifferentValues && !m_VoxelSize.hasMultipleDifferentValues)
                     {
-                        float tileWorldSize = m_TileSize.intValue * m_VoxelSize.floatValue;
+                        var tileWorldSize = m_TileSize.intValue * m_VoxelSize.floatValue;
                         EditorGUILayout.LabelField(" ", tileWorldSize.ToString("0.00") + " world units", EditorStyles.miniLabel);
                     }
 
@@ -270,7 +259,7 @@ namespace UnityEditor.AI
 
             // Show progress for the selected targets
             var bakeOperations = NavMeshAssetManager.instance.GetBakeOperations();
-            for (int i = bakeOperations.Count - 1; i >= 0; --i)
+            for (var i = bakeOperations.Count - 1; i >= 0; --i)
             {
                 if (!targets.Contains(bakeOperations[i].surface))
                     continue;
@@ -304,13 +293,13 @@ namespace UnityEditor.AI
         }
 
         [DrawGizmo(GizmoType.Selected | GizmoType.Active | GizmoType.Pickable)]
-        static void RenderBoxGizmoSelected(NavMeshSurface navSurface, GizmoType gizmoType)
+        private static void RenderBoxGizmoSelected(NavMeshSurface navSurface, GizmoType gizmoType)
         {
             RenderBoxGizmo(navSurface, gizmoType, true);
         }
 
         [DrawGizmo(GizmoType.NotInSelectionHierarchy | GizmoType.Pickable)]
-        static void RenderBoxGizmoNotSelected(NavMeshSurface navSurface, GizmoType gizmoType)
+        private static void RenderBoxGizmoNotSelected(NavMeshSurface navSurface, GizmoType gizmoType)
         {
             if (NavMeshVisualizationSettings.showNavigation > 0)
                 RenderBoxGizmo(navSurface, gizmoType, false);
@@ -318,7 +307,7 @@ namespace UnityEditor.AI
                 Gizmos.DrawIcon(navSurface.transform.position, "NavMeshSurface Icon", true);
         }
 
-        static void RenderBoxGizmo(NavMeshSurface navSurface, GizmoType gizmoType, bool selected)
+        private static void RenderBoxGizmo(NavMeshSurface navSurface, GizmoType gizmoType, bool selected)
         {
             var color = selected ? s_HandleColorSelected : s_HandleColor;
             if (!navSurface.enabled)
@@ -359,7 +348,7 @@ namespace UnityEditor.AI
             Gizmos.DrawIcon(navSurface.transform.position, "NavMeshSurface Icon", true);
         }
 
-        void OnSceneGUI()
+        private void OnSceneGUI()
         {
             if (!editingCollider)
                 return;
@@ -377,8 +366,8 @@ namespace UnityEditor.AI
                 if (EditorGUI.EndChangeCheck())
                 {
                     Undo.RecordObject(navSurface, "Modified NavMesh Surface");
-                    Vector3 center = m_BoundsHandle.center;
-                    Vector3 size = m_BoundsHandle.size;
+                    var center = m_BoundsHandle.center;
+                    var size = m_BoundsHandle.size;
                     navSurface.center = center;
                     navSurface.size = size;
                     EditorUtility.SetDirty(target);
@@ -391,7 +380,7 @@ namespace UnityEditor.AI
         {
             var parent = menuCommand.context as GameObject;
             var go = NavMeshComponentsGUIUtility.CreateAndSelectGameObject("NavMesh Surface", parent);
-            go.AddComponent<NavMeshSurface>();
+            _ = go.AddComponent<NavMeshSurface>();
             var view = SceneView.lastActiveSceneView;
             if (view != null)
                 view.MoveToView(go.transform);

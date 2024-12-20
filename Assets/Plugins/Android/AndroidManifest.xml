@@ -9,6 +9,7 @@
       </intent-filter>
     </activity>
     <meta-data android:name="unityplayer.SkipPermissionsDialog" android:value="false" />
+    <meta-data android:name="com.samsung.android.vr.application.mode" android:value="vr_only" />
     <meta-data android:name="com.oculus.handtracking.frequency" android:value="MAX" />
 	<meta-data android:name="com.oculus.vr.focusaware" android:value="true" />
     <meta-data android:name="com.oculus.handtracking.version" android:value="V2.0" />

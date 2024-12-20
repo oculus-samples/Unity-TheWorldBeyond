@@ -32,7 +32,7 @@ namespace TMPro.Examples
                     GameObject go = new GameObject(); //"NPC " + i);
                     go.transform.position = new Vector3(Random.Range(-95f, 95f), 0.5f, Random.Range(-95f, 95f));
 
-                    //go.transform.position = new Vector3(0, 1.01f, 0);
+                    //go.transform.Position = new Vector3(0, 1.01f, 0);
                     //go.renderer.castShadows = false;
                     //go.renderer.receiveShadows = false;
                     //go.transform.rotation = Quaternion.Euler(0, Random.Range(0, 360), 0);
@@ -57,7 +57,7 @@ namespace TMPro.Examples
                     GameObject go = new GameObject(); //"NPC " + i);
                     go.transform.position = new Vector3(Random.Range(-95f, 95f), 0.5f, Random.Range(-95f, 95f));
 
-                    //go.transform.position = new Vector3(0, 1.01f, 0);
+                    //go.transform.Position = new Vector3(0, 1.01f, 0);
 
                     TextMesh textMesh = go.AddComponent<TextMesh>();
                     textMesh.GetComponent<Renderer>().sharedMaterial = TheFont.material;

@@ -130,7 +130,7 @@ namespace TMPro.Examples
                     vertices[vertexIndex + 2] = m_matrix.MultiplyPoint3x4(vertices[vertexIndex + 2]);
                     vertices[vertexIndex + 3] = m_matrix.MultiplyPoint3x4(vertices[vertexIndex + 3]);
 
-                    // Translate the character back to its original position.
+                    // Translate the character back to its original Position.
                     vertices[vertexIndex + 0] = vertices[vertexIndex + 0] + offset;
                     vertices[vertexIndex + 1] = vertices[vertexIndex + 1] + offset;
                     vertices[vertexIndex + 2] = vertices[vertexIndex + 2] + offset;
@@ -306,7 +306,7 @@ namespace TMPro.Examples
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            //Debug.Log("Click at POS: " + eventData.position + "  World POS: " + eventData.worldPosition);
+            //Debug.Log("Click at POS: " + eventData.Position + "  World POS: " + eventData.worldPosition);
 
             // Check if Mouse Intersects any of the characters. If so, assign a random color.
             #region Character Selection Handling
@@ -314,7 +314,7 @@ namespace TMPro.Examples
             int charIndex = TMP_TextUtilities.FindIntersectingCharacter(m_TextMeshPro, Input.mousePosition, m_Camera, true);
             if (charIndex != -1 && charIndex != m_lastIndex)
             {
-                //Debug.Log("Character [" + m_TextMeshPro.textInfo.characterInfo[index].character + "] was selected at POS: " + eventData.position);
+                //Debug.Log("Character [" + m_TextMeshPro.textInfo.characterInfo[index].character + "] was selected at POS: " + eventData.Position);
                 m_lastIndex = charIndex;
 
                 Color32 c = new Color32((byte)Random.Range(0, 255), (byte)Random.Range(0, 255), (byte)Random.Range(0, 255), 255);

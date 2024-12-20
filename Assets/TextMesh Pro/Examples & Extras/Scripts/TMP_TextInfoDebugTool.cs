@@ -114,7 +114,7 @@ namespace TMPro.Examples
 
                 float dottedLineSize = 6;
 
-                // Get Bottom Left and Top Right position of the current character
+                // Get Bottom Left and Top Right Position of the current character
                 Vector3 bottomLeft = m_Transform.TransformPoint(characterInfo.bottomLeft);
                 Vector3 topLeft = m_Transform.TransformPoint(new Vector3(characterInfo.topLeft.x, characterInfo.topLeft.y, 0));
                 Vector3 topRight = m_Transform.TransformPoint(characterInfo.topRight);
@@ -549,7 +549,7 @@ namespace TMPro.Examples
         {
             Bounds meshBounds = m_TextComponent.bounds;
 
-            // Get Bottom Left and Top Right position of each word
+            // Get Bottom Left and Top Right Position of each word
             Vector3 bottomLeft = m_TextComponent.transform.position + meshBounds.min;
             Vector3 topRight = m_TextComponent.transform.position + meshBounds.max;
 

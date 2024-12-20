@@ -25,12 +25,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7142519790336517324}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8495462757992086747
 MonoBehaviour:
@@ -44,8 +45,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15874651d56e60d45af7acbc4fdc7fa3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _voiceExperience: {fileID: 4854409633039583315}
-  pet: {fileID: 0}
+  m_voiceExperience: {fileID: 4854409633039583315}
+  m_pet: {fileID: 0}
   FocusChangeEvt:
     m_PersistentCalls:
       m_Calls: []
@@ -61,56 +62,85 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28779cfed47441a42a6cd4fb49c8dc89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShouldWrap: 1
+  ShouldLog: 1
   events:
-    OnResponse:
+    _onRequestOptionSetup:
       m_PersistentCalls:
         m_Calls: []
-    OnError:
+    _onRequestInitialized:
       m_PersistentCalls:
         m_Calls: []
-    OnAborted:
+    _onRequestCreated:
       m_PersistentCalls:
         m_Calls: []
-    OnRequestCompleted:
+    _onSend:
       m_PersistentCalls:
         m_Calls: []
-    OnMicLevelChanged:
+    _onMinimumWakeThresholdHit:
       m_PersistentCalls:
         m_Calls: []
-    OnRequestCreated:
+    _onMicDataSent:
       m_PersistentCalls:
         m_Calls: []
-    OnStartListening:
+    _onStoppedListeningDueToDeactivation:
       m_PersistentCalls:
         m_Calls: []
-    OnStoppedListening:
+    _onStoppedListeningDueToInactivity:
       m_PersistentCalls:
         m_Calls: []
-    OnStoppedListeningDueToInactivity:
+    _onStoppedListeningDueToTimeout:
       m_PersistentCalls:
         m_Calls: []
-    OnStoppedListeningDueToTimeout:
+    _onAborting:
       m_PersistentCalls:
         m_Calls: []
-    OnStoppedListeningDueToDeactivation:
+    _onAborted:
       m_PersistentCalls:
         m_Calls: []
-    OnMicDataSent:
+    _onCanceled:
       m_PersistentCalls:
         m_Calls: []
-    OnMinimumWakeThresholdHit:
+    _onRawResponse:
       m_PersistentCalls:
         m_Calls: []
-    OnPartialTranscription:
+    _onPartialResponse:
       m_PersistentCalls:
         m_Calls: []
-    OnFullTranscription:
+    _onResponse:
       m_PersistentCalls:
         m_Calls: []
-    OnByteDataReady:
+    _onError:
       m_PersistentCalls:
         m_Calls: []
-    OnByteDataSent:
+    _onRequestCompleted:
+      m_PersistentCalls:
+        m_Calls: []
+    _onComplete:
+      m_PersistentCalls:
+        m_Calls: []
+    _onStartListening:
+      m_PersistentCalls:
+        m_Calls: []
+    _onStoppedListening:
+      m_PersistentCalls:
+        m_Calls: []
+    _onMicLevelChanged:
+      m_PersistentCalls:
+        m_Calls: []
+    _onPartialTranscription:
+      m_PersistentCalls:
+        m_Calls: []
+    _onFullTranscription:
+      m_PersistentCalls:
+        m_Calls: []
+    _onByteDataReady:
+      m_PersistentCalls:
+        m_Calls: []
+    _onByteDataSent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onValidatePartialResponse:
       m_PersistentCalls:
         m_Calls: []
   witRuntimeConfiguration:
@@ -122,6 +152,11 @@ MonoBehaviour:
     soundWakeThreshold: 0.0005
     sampleLengthInMs: 10
     micBufferLengthInSeconds: 1
+    maxConcurrentRequests: 5
     sendAudioToWit: 1
     customTranscriptionProvider: {fileID: 0}
     alwaysRecord: 0
+    preferredActivationOffset: -0.5
+  usePlatformServices: 0
+  enableConsoleLogging: 0
+  sendTranscriptionEventsForMessages: 0

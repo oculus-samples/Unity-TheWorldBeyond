@@ -64,7 +64,7 @@ namespace TMPro.Examples
 
                     //if (lineHeight > orthoSize * 2 * 0.9f) return;
 
-                    go.transform.position = m_Transform.position + new Vector3(ratio * -orthoSize * 0.975f, orthoSize * 0.975f - lineHeight, 1);
+                    go.transform.Position = m_Transform.Position + new Vector3(ratio * -orthoSize * 0.975f, orthoSize * 0.975f - lineHeight, 1);
                                        
                     TextMesh textMesh = go.AddComponent<TextMesh>();
                     textMesh.font = Resources.Load("Fonts/ARIAL", typeof(Font)) as Font;

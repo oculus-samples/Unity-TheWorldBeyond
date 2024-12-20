@@ -1,0 +1,361 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2116162987735529812
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7382393975437416195}
+  - component: {fileID: 7828907718144581198}
+  m_Layer: 0
+  m_Name: Oppy_Sounds
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7382393975437416195
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2116162987735529812}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7828907718144581198
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2116162987735529812}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d1d30b41806244fca035fdae2896fb7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  makePersistent: 1
+  enableSpatializedAudio: 1
+  enableSpatializedFastOverride: 0
+  audioMixer: {fileID: 0}
+  defaultMixerGroup: {fileID: 0}
+  reservedMixerGroup: {fileID: 0}
+  voiceChatMixerGroup: {fileID: 0}
+  verboseLogging: 0
+  maxSoundEmitters: 32
+  volumeSoundFX: 1
+  soundFxFadeSecs: 1
+  audioMinFallOffDistance: 1
+  audioMaxFallOffDistance: 25
+  soundGroupings:
+  - name: Oz_Footsteps
+    soundList:
+    - name: Oz_Foot_Walk
+      playback: 0
+      volume: 0.7
+      pitchVariance: {x: 0.95, y: 1.1}
+      falloffDistance: {x: 1, y: 20}
+      falloffCurve: 1
+      volumeFalloffCurve:
+        serializedVersion: 2
+        m_Curve:
+        - serializedVersion: 3
+          time: 0
+          value: 1
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        - serializedVersion: 3
+          time: 1
+          value: 1
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+      reverbZoneMix:
+        serializedVersion: 2
+        m_Curve:
+        - serializedVersion: 3
+          time: 0
+          value: 1
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        - serializedVersion: 3
+          time: 1
+          value: 1
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+      spread: 0
+      pctChanceToPlay: 1
+      priority: 0
+      delay: {x: 0, y: 0}
+      looping: 0
+      ospProps:
+        enableSpatialization: 1
+        useFastOverride: 0
+        gain: 0
+        enableInvSquare: 0
+        volumetric: 0
+        invSquareFalloff: {x: 1, y: 25}
+      soundClips:
+      - {fileID: 8300000, guid: e226581478e50864e90c8509fea0d99f, type: 3}
+      - {fileID: 8300000, guid: 182a2cbe589a27244bf68b5a0da55548, type: 3}
+      - {fileID: 8300000, guid: 632b599343cd34b4ba564248e3799ad7, type: 3}
+      - {fileID: 8300000, guid: 0e78ee3e67229524f8e9199b4433cb7d, type: 3}
+      - {fileID: 8300000, guid: aace6ef05f46c634b9dfbf53f419fb69, type: 3}
+      - {fileID: 8300000, guid: 0cc1ab3996bd1d244be08e089afbe9d2, type: 3}
+      visibilityToggle: 1
+    - name: Oz_Foot_Run
+      playback: 0
+      volume: 1
+      pitchVariance: {x: 0.95, y: 1.1}
+      falloffDistance: {x: 2, y: 25}
+      falloffCurve: 1
+      volumeFalloffCurve:
+        serializedVersion: 2
+        m_Curve:
+        - serializedVersion: 3
+          time: 0
+          value: 1
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        - serializedVersion: 3
+          time: 1
+          value: 1
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+      reverbZoneMix:
+        serializedVersion: 2
+        m_Curve:
+        - serializedVersion: 3
+          time: 0
+          value: 1
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        - serializedVersion: 3
+          time: 1
+          value: 1
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+      spread: 0
+      pctChanceToPlay: 1
+      priority: 0
+      delay: {x: 0, y: 0}
+      looping: 0
+      ospProps:
+        enableSpatialization: 1
+        useFastOverride: 0
+        gain: 0
+        enableInvSquare: 0
+        volumetric: 0
+        invSquareFalloff: {x: 1, y: 25}
+      soundClips:
+      - {fileID: 8300000, guid: d09bf402735fb9445ac75adab79c9544, type: 3}
+      - {fileID: 8300000, guid: 10c07bc214fcfae4b9b8eb592c046f68, type: 3}
+      - {fileID: 8300000, guid: e319f46b2ddb9924fa5f537ccb2c670f, type: 3}
+      - {fileID: 8300000, guid: 4fd15a5b2caae7e4f85878505ced8056, type: 3}
+      - {fileID: 8300000, guid: 2e07463725ac05d4ebb21b015332f5e5, type: 3}
+      - {fileID: 8300000, guid: bc21c8b219198a946b4b2ce865e3cfe9, type: 3}
+      visibilityToggle: 0
+    - name: Oz_Foot_Jump
+      playback: 0
+      volume: 1
+      pitchVariance: {x: 0.95, y: 1.1}
+      falloffDistance: {x: 2, y: 25}
+      falloffCurve: 1
+      volumeFalloffCurve:
+        serializedVersion: 2
+        m_Curve:
+        - serializedVersion: 3
+          time: 0
+          value: 1
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        - serializedVersion: 3
+          time: 1
+          value: 1
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+      reverbZoneMix:
+        serializedVersion: 2
+        m_Curve:
+        - serializedVersion: 3
+          time: 0
+          value: 1
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        - serializedVersion: 3
+          time: 1
+          value: 1
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+      spread: 0
+      pctChanceToPlay: 1
+      priority: 0
+      delay: {x: 0, y: 0}
+      looping: 0
+      ospProps:
+        enableSpatialization: 1
+        useFastOverride: 0
+        gain: 0
+        enableInvSquare: 0
+        volumetric: 0
+        invSquareFalloff: {x: 1, y: 25}
+      soundClips:
+      - {fileID: 8300000, guid: ecd10880c92df1849a2781ceb91f7fbe, type: 3}
+      - {fileID: 8300000, guid: ecd10880c92df1849a2781ceb91f7fbe, type: 3}
+      - {fileID: 8300000, guid: ecd10880c92df1849a2781ceb91f7fbe, type: 3}
+      visibilityToggle: 0
+    mixerGroup: {fileID: -8900434418520127893, guid: 7389918f17108844bbf62c06ef6bcb8c, type: 2}
+    maxPlayingSounds: 0
+    preloadAudio: 0
+    volumeOverride: 1
+    playingSoundCount: 0
+  - name: Oz_Sparkle
+    soundList:
+    - name: Oz_Sparkle
+      playback: 0
+      volume: 0.3
+      pitchVariance: {x: 1, y: 1}
+      falloffDistance: {x: 1, y: 20}
+      falloffCurve: 1
+      volumeFalloffCurve:
+        serializedVersion: 2
+        m_Curve:
+        - serializedVersion: 3
+          time: 0
+          value: 1
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        - serializedVersion: 3
+          time: 1
+          value: 1
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+      reverbZoneMix:
+        serializedVersion: 2
+        m_Curve:
+        - serializedVersion: 3
+          time: 0
+          value: 1
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        - serializedVersion: 3
+          time: 1
+          value: 1
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+      spread: 0
+      pctChanceToPlay: 1
+      priority: 0
+      delay: {x: 0, y: 0}
+      looping: 1
+      ospProps:
+        enableSpatialization: 1
+        useFastOverride: 0
+        gain: 0
+        enableInvSquare: 0
+        volumetric: 0
+        invSquareFalloff: {x: 1, y: 25}
+      soundClips:
+      - {fileID: 8300000, guid: 5f12d81bc5481624b843745aaad93cdb, type: 3}
+      visibilityToggle: 0
+    mixerGroup: {fileID: -8900434418520127893, guid: 7389918f17108844bbf62c06ef6bcb8c, type: 2}
+    maxPlayingSounds: 0
+    preloadAudio: 0
+    volumeOverride: 1
+    playingSoundCount: 0
