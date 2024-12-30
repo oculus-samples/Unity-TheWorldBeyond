@@ -103,7 +103,7 @@ namespace TMPro.Examples
 
         void Set_FrameCounter_Position(FpsCounterAnchorPositions anchor_position)
         {
-            //Debug.Log("Changing frame counter anchor position.");
+            //Debug.Log("Changing frame counter anchor Position.");
             m_TextMeshPro.margin = new Vector4(1f, 1f, 1f, 1f);
 
             switch (anchor_position)

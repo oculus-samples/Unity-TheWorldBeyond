@@ -1,167 +1,172 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
 using System.Collections;
+using TheWorldBeyond.Environment.RoomEnvironment;
+using TheWorldBeyond.GameManagement;
 using UnityEngine;
 
-public class WorldBeyondEnvironment : MonoBehaviour
+namespace TheWorldBeyond.Environment
 {
-    static public WorldBeyondEnvironment Instance = null;
-    public GameObject _grassPrefab;
-
-    public Light _sun;
-    public GameObject _envRoot;
-    public GameObject[] _envObjects;
-
-    // chance of a cell being occupied with an object, 0-1
-    public Texture2D _grassDensityMap;
-    // how wide the whole grid is, in meters
-    public float _mapCoverage = 20.0f;
-    // the grid is divided into cells
-    int _cells = 20;
-
-    GameObject[,] _worldObjects;
-
-    public AudioSource _outdoorAudio;
-
-    private void Awake()
+    public class WorldBeyondEnvironment : MonoBehaviour
     {
-        if (!Instance)
-        {
-            Instance = this;
-        }
-    }
+        public static WorldBeyondEnvironment Instance = null;
+        public GameObject GrassPrefab;
 
-    public void Initialize()
-    {
-        CullForegroundObjects();
-        SpawnObjectsWithMap();
-    }
+        public Light Sun;
+        public GameObject EnvRoot;
+        public GameObject[] EnvObjects;
 
-    /// <summary>
-    /// Using a density map, spawn grass shrubs in the world, except in the room defined by Scene.
-    /// </summary>
-    void SpawnObjectsWithMap()
-    {
-        if (!_grassDensityMap)
-        {
-            return;
-        }
+        // chance of a cell being occupied with an object, 0-1
+        public Texture2D GrassDensityMap;
+        // how wide the whole grid is, in meters
+        public float MapCoverage = 20.0f;
 
-        _worldObjects = new GameObject[_grassDensityMap.width, _grassDensityMap.height];
-        _cells = _grassDensityMap.width;
-        float cellSize = _mapCoverage / _cells;
-        float cHalf = cellSize * 0.5f;
-        Vector3 centerOffset = new Vector3(-_mapCoverage * 0.5f, 0, -_mapCoverage * 0.5f) + new Vector3(cellSize * 0.5f, 0, cellSize * 0.5f);
-        for (int x = 0; x < _cells; x++)
+        // the grid is divided into cells
+        private int m_cells = 20;
+        private GameObject[,] m_worldObjects;
+
+        public AudioSource OutdoorAudio;
+
+        private void Awake()
         {
-            for (int y = 0; y < _cells; y++)
+            if (!Instance)
             {
-                Color pixelColor = _grassDensityMap.GetPixel(x, y);
-                bool spawnDebris = Random.Range(0.0f, 1.0f) <= pixelColor.r;
-                Vector3 cellCenter = centerOffset + new Vector3(x * cellSize, 0, y * cellSize);
-                Vector3 randomOffset = new Vector3(UnityEngine.Random.Range(-cHalf, cHalf), 0, UnityEngine.Random.Range(-cHalf, cHalf));
-                Vector3 desiredPosition = cellCenter + randomOffset + WorldBeyondManager.Instance.GetFloorHeight() * Vector3.up;
-                if (!VirtualRoom.Instance.IsPositionInRoom(desiredPosition, 0.5f) && spawnDebris)
+                Instance = this;
+            }
+        }
+
+        public void Initialize()
+        {
+            CullForegroundObjects();
+            SpawnObjectsWithMap();
+        }
+
+        /// <summary>
+        /// Using a density map, spawn grass shrubs in the world, except in the room defined by Scene.
+        /// </summary>
+        private void SpawnObjectsWithMap()
+        {
+            if (!GrassDensityMap)
+            {
+                return;
+            }
+
+            m_worldObjects = new GameObject[GrassDensityMap.width, GrassDensityMap.height];
+            m_cells = GrassDensityMap.width;
+            var cellSize = MapCoverage / m_cells;
+            var cHalf = cellSize * 0.5f;
+            var centerOffset = new Vector3(-MapCoverage * 0.5f, 0, -MapCoverage * 0.5f) + new Vector3(cellSize * 0.5f, 0, cellSize * 0.5f);
+            for (var x = 0; x < m_cells; x++)
+            {
+                for (var y = 0; y < m_cells; y++)
                 {
-                    GameObject newObj = Instantiate(_grassPrefab, _envRoot.transform);
-                    newObj.transform.position = desiredPosition;
-                    newObj.transform.rotation = Quaternion.Euler(0, UnityEngine.Random.Range(0, 360.0f), 0);
-                    newObj.transform.localScale = new Vector3(Random.Range(0.7f, 1.3f), Random.Range(0.5f, 1.5f), Random.Range(0.7f, 1.3f));
-                    _worldObjects[x, y] = newObj;
-                }
-                else
-                {
-                    _worldObjects[x, y] = null;
+                    var pixelColor = GrassDensityMap.GetPixel(x, y);
+                    var spawnDebris = Random.Range(0.0f, 1.0f) <= pixelColor.r;
+                    var cellCenter = centerOffset + new Vector3(x * cellSize, 0, y * cellSize);
+                    var randomOffset = new Vector3(Random.Range(-cHalf, cHalf), 0, Random.Range(-cHalf, cHalf));
+                    var desiredPosition = cellCenter + randomOffset + WorldBeyondManager.Instance.GetFloorHeight() * Vector3.up;
+                    if (!VirtualRoom.Instance.IsPositionInRoom(desiredPosition, 0.5f) && spawnDebris)
+                    {
+                        var newObj = Instantiate(GrassPrefab, EnvRoot.transform);
+                        newObj.transform.position = desiredPosition;
+                        newObj.transform.rotation = Quaternion.Euler(0, Random.Range(0, 360.0f), 0);
+                        newObj.transform.localScale = new Vector3(Random.Range(0.7f, 1.3f), Random.Range(0.5f, 1.5f), Random.Range(0.7f, 1.3f));
+                        m_worldObjects[x, y] = newObj;
+                    }
+                    else
+                    {
+                        m_worldObjects[x, y] = null;
+                    }
                 }
             }
         }
-    }
 
-    /// <summary>
-    /// If an object contains the ForegroundObject component and is inside the room, destroy it.
-    /// </summary>
-    void CullForegroundObjects()
-    {
-        ForegroundObject[] foregroundObjects = GetComponentsInChildren<ForegroundObject>();
-        foreach (ForegroundObject obj in foregroundObjects)
+        /// <summary>
+        /// If an object contains the ForegroundObject component and is inside the room, destroy it.
+        /// </summary>
+        private void CullForegroundObjects()
         {
-            if (VirtualRoom.Instance.IsPositionInRoom(obj.transform.position, 2.0f))
+            var foregroundObjects = GetComponentsInChildren<ForegroundObject>();
+            foreach (var obj in foregroundObjects)
             {
-                Destroy(obj.gameObject);
+                if (VirtualRoom.Instance.IsPositionInRoom(obj.transform.position, 2.0f))
+                {
+                    Destroy(obj.gameObject);
+                }
             }
         }
-    }
 
-    /// <summary>
-    /// Toggle the virtual world's objects.
-    /// </summary>
-    public void ShowEnvironment(bool doShow)
-    {
-        foreach (GameObject obj in _envObjects)
+        /// <summary>
+        /// Toggle the virtual world's objects.
+        /// </summary>
+        public void ShowEnvironment(bool doShow)
         {
-            obj.SetActive(doShow);
-        }
-    }
-
-    /// <summary>
-    /// Turn on/off outdoor audio if all passthrough walls are closed.
-    /// </summary>
-    public void SetOutdoorAudioParams(Vector3 position, bool wallOpen)
-    {
-        if (!_outdoorAudio)
-        {
-            return;
+            foreach (var obj in EnvObjects)
+            {
+                obj.SetActive(doShow);
+            }
         }
 
-        _outdoorAudio.transform.position = position;
-        if (wallOpen)
+        /// <summary>
+        /// Turn on/off outdoor audio if all passthrough walls are closed.
+        /// </summary>
+        public void SetOutdoorAudioParams(Vector3 position, bool wallOpen)
         {
-            _outdoorAudio.volume = 1.0f;
-            _outdoorAudio.Play();
-        }
-        else
-        {
-            _outdoorAudio.Stop();
-        }
-    }
+            if (!OutdoorAudio)
+            {
+                return;
+            }
 
-    public void FadeOutdoorAudio(float volume)
-    {
-        if (_outdoorAudio)
-        {
-            _outdoorAudio.volume = volume;
+            OutdoorAudio.transform.position = position;
+            if (wallOpen)
+            {
+                OutdoorAudio.volume = 1.0f;
+                OutdoorAudio.Play();
+            }
+            else
+            {
+                OutdoorAudio.Stop();
+            }
         }
-    }
 
-    /// <summary>
-    /// When the player first grabs the flashlight, turn on the main sun.
-    /// </summary>
-    public void FlickerSun()
-    {
-        StartCoroutine(FlickerSunCoroutine());
-    }
-
-    IEnumerator FlickerSunCoroutine()
-    {
-        float timer = 0.0f;
-        float flickerTimer = 0.5f;
-        while (timer <= flickerTimer)
+        public void FadeOutdoorAudio(float volume)
         {
-            timer += Time.deltaTime;
-            float normTimer = Mathf.Clamp01(timer / flickerTimer);
-            _sun.intensity = Mathf.Abs(normTimer - 0.5f) + 0.5f;
-            yield return null;
+            if (OutdoorAudio)
+            {
+                OutdoorAudio.volume = volume;
+            }
         }
-    }
 
-    /// <summary>
-    /// Adjust the entire world to the ground height of the floor anchor.
-    /// </summary>
-    public void MoveGroundFloor(float height)
-    {
-        foreach (GameObject obj in _envObjects)
+        /// <summary>
+        /// When the player first grabs the flashlight, turn on the main sun.
+        /// </summary>
+        public void FlickerSun()
         {
-            obj.transform.position = new Vector3(obj.transform.position.x, height, obj.transform.position.z);
+            _ = StartCoroutine(FlickerSunCoroutine());
+        }
+
+        private IEnumerator FlickerSunCoroutine()
+        {
+            var timer = 0.0f;
+            var flickerTimer = 0.5f;
+            while (timer <= flickerTimer)
+            {
+                timer += Time.deltaTime;
+                var normTimer = Mathf.Clamp01(timer / flickerTimer);
+                Sun.intensity = Mathf.Abs(normTimer - 0.5f) + 0.5f;
+                yield return null;
+            }
+        }
+
+        /// <summary>
+        /// Adjust the entire world to the ground height of the floor anchor.
+        /// </summary>
+        public void MoveGroundFloor(float height)
+        {
+            foreach (var obj in EnvObjects)
+            {
+                obj.transform.position = new Vector3(obj.transform.position.x, height, obj.transform.position.z);
+            }
         }
     }
 }

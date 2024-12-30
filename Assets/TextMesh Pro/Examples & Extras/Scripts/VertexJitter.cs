@@ -61,7 +61,7 @@ namespace TMPro.Examples
         IEnumerator AnimateVertexColors()
         {
 
-            // We force an update of the text object since it would only be updated at the end of the frame. Ie. before this code is executed on the first frame.
+            // We m_force an update of the text object since it would only be updated at the end of the frame. Ie. before this code is executed on the first frame.
             // Alternatively, we could yield and wait until the end of the frame when the text object will be generated.
             m_TextComponent.ForceMeshUpdate();
 
@@ -80,7 +80,7 @@ namespace TMPro.Examples
                 vertexAnim[i].speed = Random.Range(1f, 3f);
             }
 
-            // Cache the vertex data of the text object as the Jitter FX is applied to the original position of the characters.
+            // Cache the vertex data of the text object as the Jitter FX is applied to the original Position of the characters.
             TMP_MeshInfo[] cachedMeshInfo = textInfo.CopyMeshInfoVertexData();
 
             while (true)

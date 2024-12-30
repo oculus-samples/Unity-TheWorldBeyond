@@ -1,39 +1,44 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using TheWorldBeyond.GameManagement;
+using TheWorldBeyond.VFX;
 using UnityEngine;
 
-[System.Serializable]
-public class BallShooter : WorldBeyondToy
+namespace TheWorldBeyond.Toy
 {
-    public override void ActionDown()
+    [System.Serializable]
+    public class BallShooter : WorldBeyondToy
     {
-        if (WorldBeyondManager.Instance._ballCount > 0)
+        public override void ActionDown()
         {
-            ShootBall(transform.forward);
-            WorldBeyondManager.Instance._ballCount--;
-        }
-        else
-        {
-            // play "no balls" sound
-            if (WorldBeyondManager.Instance._currentChapter == WorldBeyondManager.GameChapter.TheGreatBeyond)
+            if (WorldBeyondManager.Instance.BallCount > 0)
             {
-                WorldBeyondTutorial.Instance.DisplayMessage(WorldBeyondTutorial.TutorialMessage.NoBalls);
+                ShootBall(transform.forward);
+                WorldBeyondManager.Instance.BallCount--;
+            }
+            else
+            {
+                // play "no balls" sound
+                if (WorldBeyondManager.Instance.CurrentChapter == WorldBeyondManager.GameChapter.TheGreatBeyond)
+                {
+                    WorldBeyondTutorial.Instance.DisplayMessage(WorldBeyondTutorial.TutorialMessage.NoBalls);
+                }
             }
         }
-    }
 
-    public void ShootBall(Vector3 ballDirection)
-    {
-        if (WorldBeyondManager.Instance && WorldBeyondManager.Instance._ballPrefab == null)
+        public void ShootBall(Vector3 ballDirection)
         {
-            Debug.Log("TheWorldBeyond: no ball prefab found");
-            return;
-        }
+            if (WorldBeyondManager.Instance && WorldBeyondManager.Instance.BallPrefab == null)
+            {
+                Debug.Log("TheWorldBeyond: no ball prefab found");
+                return;
+            }
 
-        Vector3 ballPos = transform.position + transform.forward * 0.1f;
-        GameObject newBall = Instantiate(WorldBeyondManager.Instance._ballPrefab, ballPos, Quaternion.identity);
-        BallCollectable nbc = newBall.GetComponent<BallCollectable>();
-        WorldBeyondManager.Instance.AddBallToWorld(nbc);
-        nbc.Shoot(ballPos, ballDirection);
+            var ballPos = transform.position + transform.forward * 0.1f;
+            var newBall = Instantiate(WorldBeyondManager.Instance.BallPrefab, ballPos, Quaternion.identity);
+            var nbc = newBall.GetComponent<BallCollectable>();
+            WorldBeyondManager.Instance.AddBallToWorld(nbc);
+            nbc.Shoot(ballPos, ballDirection);
+        }
     }
 }

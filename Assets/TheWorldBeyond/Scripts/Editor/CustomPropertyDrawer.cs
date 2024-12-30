@@ -1,9 +1,10 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using TheWorldBeyond.Utils;
 using UnityEditor;
 using UnityEngine;
 
-namespace Audio.Scripts
+namespace TheWorldBeyond.Editor
 {
     [CustomPropertyDrawer(typeof(NamedArrayAttribute))]
     public class NamedArrayDrawer : PropertyDrawer
@@ -12,7 +13,7 @@ namespace Audio.Scripts
         {
             try
             {
-                int pos = int.Parse(property.propertyPath.Split('[', ']')[1]);
+                var pos = int.Parse(property.propertyPath.Split('[', ']')[1]);
                 EditorGUI.ObjectField(rect, property, new GUIContent(((NamedArrayAttribute)attribute).Names[pos]));
             }
             catch

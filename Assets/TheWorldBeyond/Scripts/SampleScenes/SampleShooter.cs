@@ -2,56 +2,58 @@
 
 using UnityEngine;
 
-public class SampleShooter : MonoBehaviour
+namespace TheWorldBeyond.SampleScenes
 {
-    public GameObject _gunPrefab;
-    public GameObject _bulletPrefab;
-    public Transform _leftHandAnchor;
-    public Transform _rightHandAnchor;
-
-    GameObject _leftGun;
-    GameObject _rightGun;
-
-    void Start()
+    public class SampleShooter : MonoBehaviour
     {
-        _leftGun = Instantiate(_gunPrefab);
-        _leftGun.transform.SetParent(_leftHandAnchor, false);
-        _rightGun = Instantiate(_gunPrefab);
-        _rightGun.transform.SetParent(_rightHandAnchor, false);
-    }
+        public GameObject GunPrefab;
+        public GameObject BulletPrefab;
+        public Transform LeftHandAnchor;
+        public Transform RightHandAnchor;
+        private GameObject m_leftGun;
+        private GameObject m_rightGun;
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (OVRInput.GetDown(OVRInput.RawButton.LIndexTrigger))
+        private void Start()
         {
-            ShootBall(_leftGun.transform.position, _leftGun.transform.forward);
-            PlayShootSound(_leftGun);
+            m_leftGun = Instantiate(GunPrefab);
+            m_leftGun.transform.SetParent(LeftHandAnchor, false);
+            m_rightGun = Instantiate(GunPrefab);
+            m_rightGun.transform.SetParent(RightHandAnchor, false);
         }
-        if (OVRInput.GetDown(OVRInput.RawButton.RIndexTrigger))
-        {
-            ShootBall(_rightGun.transform.position, _rightGun.transform.forward);
-            PlayShootSound(_rightGun);
-        }
-    }
 
-    public void ShootBall(Vector3 ballPosition, Vector3 ballDirection)
-    {
-        Vector3 ballPos = ballPosition + ballDirection * 0.1f;
-        GameObject newBall = Instantiate(_bulletPrefab, ballPos, Quaternion.identity);
-        Rigidbody _rigidBody = newBall.GetComponent<Rigidbody>();
-        if (_rigidBody)
+        // Update is called once per frame
+        private void Update()
         {
-            _rigidBody.AddForce(ballDirection * 3.0f);
+            if (OVRInput.GetDown(OVRInput.RawButton.LIndexTrigger))
+            {
+                ShootBall(m_leftGun.transform.position, m_leftGun.transform.forward);
+                PlayShootSound(m_leftGun);
+            }
+            if (OVRInput.GetDown(OVRInput.RawButton.RIndexTrigger))
+            {
+                ShootBall(m_rightGun.transform.position, m_rightGun.transform.forward);
+                PlayShootSound(m_rightGun);
+            }
         }
-    }
 
-    void PlayShootSound(GameObject gun)
-    {
-        if (gun.GetComponent<AudioSource>())
+        public void ShootBall(Vector3 ballPosition, Vector3 ballDirection)
         {
-            gun.GetComponent<AudioSource>().time = 0.0f;
-            gun.GetComponent<AudioSource>().Play();
+            var ballPos = ballPosition + ballDirection * 0.1f;
+            var newBall = Instantiate(BulletPrefab, ballPos, Quaternion.identity);
+            var rigidBody = newBall.GetComponent<Rigidbody>();
+            if (rigidBody)
+            {
+                rigidBody.AddForce(ballDirection * 3.0f);
+            }
+        }
+
+        private void PlayShootSound(GameObject gun)
+        {
+            if (gun.GetComponent<AudioSource>())
+            {
+                gun.GetComponent<AudioSource>().time = 0.0f;
+                gun.GetComponent<AudioSource>().Play();
+            }
         }
     }
 }

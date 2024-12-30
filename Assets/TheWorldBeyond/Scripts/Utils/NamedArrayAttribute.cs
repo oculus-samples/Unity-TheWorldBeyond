@@ -3,11 +3,11 @@
 using UnityEngine;
 //https://forum.unity.com/threads/how-to-change-the-name-of-list-elements-in-the-inspector.448910/
 
-namespace Audio.Scripts
+namespace TheWorldBeyond.Utils
 {
     public class NamedArrayAttribute : PropertyAttribute
     {
         public readonly string[] Names;
-        public NamedArrayAttribute(string[] names) { this.Names = names; }
+        public NamedArrayAttribute(string[] names) => Names = names;
     }
 }

@@ -2,7 +2,10 @@
 
 using UnityEngine;
 
-public class ResizablePadding : MonoBehaviour
+namespace TheWorldBeyond.SampleAssets
 {
-    public Vector3 dimensionPadding = Vector3.zero;
+    public class ResizablePadding : MonoBehaviour
+    {
+        public Vector3 DimensionPadding = Vector3.zero;
+    }
 }

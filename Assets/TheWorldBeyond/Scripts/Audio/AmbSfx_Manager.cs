@@ -1,125 +1,130 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
 using System;
+using TheWorldBeyond.Environment.RoomEnvironment;
+using TheWorldBeyond.GameManagement;
 using UnityEngine;
 using Color = UnityEngine.Color;
 
-public class AmbSfx_Manager : MonoBehaviour
+namespace TheWorldBeyond.Audio
 {
-    static public AmbSfx_Manager Instance = null;
-
-    [NonSerialized]
-    static public AmbSfx[] AmbSfxList = null;
-
-    private bool _isPlaying;
-
-    private AudioListener _audioListener;
-    private Vector3 _position = default(Vector3);
-
-    public Vector3 position
+    public class AmbSfx_Manager : MonoBehaviour
     {
-        get
+        public static AmbSfx_Manager Instance = null;
+
+        [NonSerialized]
+        public static AmbSfx[] AmbSfxList = null;
+
+        private bool m_isPlaying;
+
+        private AudioListener m_audioListener;
+        private Vector3 m_position = default;
+
+        public Vector3 Position
         {
-            if (_position == default(Vector3))
+            get
             {
-                _position = GetComponent<Transform>().position;
-            }
-
-            return _position;
-        }
-    }
-
-    private void Awake()
-    {
-        if (!Instance)
-        {
-            Instance = this;
-        }
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        AmbSfxList = FindObjectsOfType<AmbSfx>();
-        _audioListener = FindObjectOfType<AudioListener>();
-    }
-
-    public void SetEnabled(bool isEnabled = true)
-    {
-        if (AmbSfxList.Length > 0)
-        {
-            for (var i = 0; i < AmbSfxList.Length; i++)
-            {
-                if (isEnabled)
+                if (m_position == default)
                 {
-                    AmbSfxList[i].Play();
-                    _isPlaying = true;
+                    m_position = GetComponent<Transform>().position;
                 }
-                else
-                {
-                    AmbSfxList[i].Stop();
-                    _isPlaying = false;
-                }
+
+                return m_position;
             }
         }
-    }
 
-    // Update is called once per frame
-    public void DoLateUpdate()
-    {
-        if (!_isPlaying)
+        private void Awake()
         {
-            if (WorldBeyondManager.Instance._currentChapter == WorldBeyondManager.GameChapter.TheGreatBeyond)
+            if (!Instance)
             {
-                SetEnabled(true);
+                Instance = this;
             }
         }
-        else
+
+        // Start is called before the first frame update
+        private void Start()
         {
-            if (WorldBeyondManager.Instance._currentChapter == WorldBeyondManager.GameChapter.Title)
-            {
-                SetEnabled(false);
-            }
+            AmbSfxList = FindObjectsOfType<AmbSfx>();
+            m_audioListener = FindObjectOfType<AudioListener>();
         }
-        // If the lister is blocked by a wall stop the emitter.
-        HandleObstructed();
-    }
 
-    #region OBSTRUCTION_MANAGER
-
-    private static Plane _plane;
-    private static Ray _ray;
-
-    public void HandleObstructed()
-    {
-        // Handle Ambient SFX Emitters and Walls
-        foreach (var ambAudioSource in AudioManager.AmbPool)
+        public void SetEnabled(bool isEnabled = true)
         {
-            if (!ambAudioSource) continue;
-
-            var heading = ambAudioSource.transform.position - _audioListener.transform.position;
-
-            var distance = heading.magnitude;
-            var direction = heading / distance;
-
-            if (!(_audioListener is null))
+            if (AmbSfxList.Length > 0)
             {
-                _ray.origin = _audioListener.transform.position;
-                _ray.direction = direction;
-                if (!VirtualRoom.Instance.IsBlockedByWall(_ray, distance))
+                for (var i = 0; i < AmbSfxList.Length; i++)
                 {
-                    Debug.DrawRay(_ray.origin, _ray.direction * distance, Color.green);
-                    ambAudioSource.mute = false;
-                }
-                else
-                {
-                    Debug.DrawRay(_ray.origin, _ray.direction * distance, Color.red);
-                    ambAudioSource.mute = true;
+                    if (isEnabled)
+                    {
+                        AmbSfxList[i].Play();
+                        m_isPlaying = true;
+                    }
+                    else
+                    {
+                        AmbSfxList[i].Stop();
+                        m_isPlaying = false;
+                    }
                 }
             }
         }
+
+        // Update is called once per frame
+        public void DoLateUpdate()
+        {
+            if (!m_isPlaying)
+            {
+                if (WorldBeyondManager.Instance.CurrentChapter == WorldBeyondManager.GameChapter.TheGreatBeyond)
+                {
+                    SetEnabled(true);
+                }
+            }
+            else
+            {
+                if (WorldBeyondManager.Instance.CurrentChapter == WorldBeyondManager.GameChapter.Title)
+                {
+                    SetEnabled(false);
+                }
+            }
+            // If the lister is blocked by a wall stop the emitter.
+            HandleObstructed();
+        }
+
+        #region OBSTRUCTION_MANAGER
+
+        private static Plane s_plane;
+        private static Ray s_ray;
+
+        public void HandleObstructed()
+        {
+            // Handle Ambient SFX Emitters and Walls
+            foreach (var ambAudioSource in AudioManager.AmbPool)
+            {
+                if (!ambAudioSource) continue;
+
+                var heading = ambAudioSource.transform.position - m_audioListener.transform.position;
+
+                var distance = heading.magnitude;
+                var direction = heading / distance;
+
+                if (m_audioListener is not null)
+                {
+                    s_ray.origin = m_audioListener.transform.position;
+                    s_ray.direction = direction;
+                    if (!VirtualRoom.Instance.IsBlockedByWall(s_ray, distance))
+                    {
+                        Debug.DrawRay(s_ray.origin, s_ray.direction * distance, Color.green);
+                        ambAudioSource.mute = false;
+                    }
+                    else
+                    {
+                        Debug.DrawRay(s_ray.origin, s_ray.direction * distance, Color.red);
+                        ambAudioSource.mute = true;
+                    }
+                }
+            }
+        }
+
+        #endregion
+
     }
-
-    #endregion
-
 }

@@ -3,110 +3,113 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WorldBeyondRoomObject : MonoBehaviour
+namespace TheWorldBeyond.Environment.RoomEnvironment
 {
-    public MeshRenderer _passthroughMesh;
-    Material _defaultMaterial;
-    public Material _darkRoomMaterial;
-    public int _surfaceID = 0;
-    public Vector3 _dimensions = Vector3.one;
-
-    [HideInInspector]
-    public bool _isWall = false;
-    [HideInInspector]
-    public bool _isFurniture = false;
-
-    [Header("Wall Fading")]
-    bool _animating = false;
-    [HideInInspector]
-    public float _effectTimer = 0.0f;
-    const float _effectTime = 1.0f;
-    public bool _passthroughWallActive = true;
-    public Vector3 _impactPosition = new Vector3(0, 1000, 0);
-    public List<WallEdge> wallEdges = new List<WallEdge>();
-    public List<GameObject> wallDebris = new List<GameObject>();
-
-    private void Start()
+    public class WorldBeyondRoomObject : MonoBehaviour
     {
-        _defaultMaterial = _passthroughMesh.material;
-    }
+        public MeshRenderer PassthroughMesh;
+        private Material m_defaultMaterial;
+        public Material DarkRoomMaterial;
+        public int SurfaceID = 0;
+        public Vector3 Dimensions = Vector3.one;
 
-    private void Update()
-    {
-        if (!_animating)
+        [HideInInspector]
+        public bool IsWall = false;
+        [HideInInspector]
+        public bool IsFurniture = false;
+
+        [Header("Wall Fading")]
+        private bool m_animating = false;
+        [HideInInspector]
+        public float EffectTimer = 0.0f;
+        private const float EFFECT_TIME = 1.0f;
+        public bool PassthroughWallActive = true;
+        public Vector3 ImpactPosition = new(0, 1000, 0);
+        public List<WallEdge> WallEdges = new();
+        public List<GameObject> WallDebris = new();
+
+        private void Start()
         {
-            return;
+            m_defaultMaterial = PassthroughMesh.material;
         }
 
-        _effectTimer += Time.deltaTime;
-        if (_effectTimer >= _effectTime)
+        private void Update()
         {
-            _animating = false;
-        }
-        _effectTimer = Mathf.Clamp01(_effectTimer);
-        if (_passthroughMesh)
-        {
-            _passthroughMesh.material.SetFloat("_EffectTimer", _effectTimer);
-            _passthroughMesh.material.SetVector("_EffectPosition", _impactPosition);
-            _passthroughMesh.material.SetFloat("_InvertedMask", _passthroughWallActive ? 1.0f : 0.0f);
-        }
-        foreach (WallEdge edge in wallEdges)
-        {
-            edge.UpdateParticleMaterial(_effectTimer, _impactPosition, _passthroughWallActive ? 1.0f : 0.0f);
-        }
+            if (!m_animating)
+            {
+                return;
+            }
 
-        float smoothTimer = Mathf.Cos(Mathf.PI * _effectTimer / _effectTime) * 0.5f + 0.5f;
-        foreach (GameObject obj in wallDebris)
-        {
-            obj.transform.localScale = Vector3.one * (_passthroughWallActive ? smoothTimer : (1.0f - smoothTimer));
-        }
-    }
+            EffectTimer += Time.deltaTime;
+            if (EffectTimer >= EFFECT_TIME)
+            {
+                m_animating = false;
+            }
+            EffectTimer = Mathf.Clamp01(EffectTimer);
+            if (PassthroughMesh)
+            {
+                PassthroughMesh.material.SetFloat("_EffectTimer", EffectTimer);
+                PassthroughMesh.material.SetVector("_EffectPosition", ImpactPosition);
+                PassthroughMesh.material.SetFloat("_InvertedMask", PassthroughWallActive ? 1.0f : 0.0f);
+            }
+            foreach (var edge in WallEdges)
+            {
+                edge.UpdateParticleMaterial(EffectTimer, ImpactPosition, PassthroughWallActive ? 1.0f : 0.0f);
+            }
 
-    /// <summary>
-    /// The toggle rate of the animation effect needs to be limited for it to work properly.
-    /// </summary>
-    public bool CanBeToggled()
-    {
-        return !_animating;
-    }
-
-    /// <summary>
-    /// Trigger the particles and shader effect on the wall material, as well as the start position for it.
-    /// </summary>
-    public bool ToggleWall(Vector3 hitPoint)
-    {
-        _impactPosition = hitPoint;
-        _passthroughWallActive = !_passthroughWallActive;
-        _effectTimer = 0.0f;
-        _animating = true;
-        return _passthroughWallActive;
-    }
-
-    /// <summary>
-    /// "Reset" the wall to full Passthrough.
-    /// </summary>
-    public void ForcePassthroughMaterial()
-    {
-        _passthroughWallActive = true;
-
-        if (_passthroughMesh)
-        {
-            _passthroughMesh.material.SetFloat("_EffectTimer", 0.0f);
-            _passthroughMesh.material.SetVector("_EffectPosition", Vector3.up * 1000);
-            _passthroughMesh.material.SetFloat("_InvertedMask", 0.0f);
+            var smoothTimer = Mathf.Cos(Mathf.PI * EffectTimer / EFFECT_TIME) * 0.5f + 0.5f;
+            foreach (var obj in WallDebris)
+            {
+                obj.transform.localScale = Vector3.one * (PassthroughWallActive ? smoothTimer : (1.0f - smoothTimer));
+            }
         }
 
-        foreach (WallEdge edge in wallEdges)
+        /// <summary>
+        /// The toggle rate of the animation effect needs to be limited for it to work properly.
+        /// </summary>
+        public bool CanBeToggled()
         {
-            edge.UpdateParticleMaterial(0.0f, Vector3.up * 1000, 0.0f);
+            return !m_animating;
         }
-    }
 
-    /// <summary>
-    /// During the intro sequence when the MultiToy appears, the room is a different material
-    /// </summary>
-    public void ShowDarkRoomMaterial(bool showDarkRoom)
-    {
-        _passthroughMesh.material = showDarkRoom ? _darkRoomMaterial : _defaultMaterial;
+        /// <summary>
+        /// Trigger the particles and shader effect on the wall material, as well as the start Position for it.
+        /// </summary>
+        public bool ToggleWall(Vector3 hitPoint)
+        {
+            ImpactPosition = hitPoint;
+            PassthroughWallActive = !PassthroughWallActive;
+            EffectTimer = 0.0f;
+            m_animating = true;
+            return PassthroughWallActive;
+        }
+
+        /// <summary>
+        /// "Reset" the wall to full Passthrough.
+        /// </summary>
+        public void ForcePassthroughMaterial()
+        {
+            PassthroughWallActive = true;
+
+            if (PassthroughMesh)
+            {
+                PassthroughMesh.material.SetFloat("_EffectTimer", 0.0f);
+                PassthroughMesh.material.SetVector("_EffectPosition", Vector3.up * 1000);
+                PassthroughMesh.material.SetFloat("_InvertedMask", 0.0f);
+            }
+
+            foreach (var edge in WallEdges)
+            {
+                edge.UpdateParticleMaterial(0.0f, Vector3.up * 1000, 0.0f);
+            }
+        }
+
+        /// <summary>
+        /// During the intro sequence when the MultiToy appears, the room is a different material
+        /// </summary>
+        public void ShowDarkRoomMaterial(bool showDarkRoom)
+        {
+            PassthroughMesh.material = showDarkRoom ? DarkRoomMaterial : m_defaultMaterial;
+        }
     }
 }

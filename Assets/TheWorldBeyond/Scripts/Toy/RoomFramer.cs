@@ -1,231 +1,232 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
 using System.Collections;
+using TheWorldBeyond.Audio;
+using TheWorldBeyond.Environment;
+using TheWorldBeyond.Environment.RoomEnvironment;
+using TheWorldBeyond.GameManagement;
 using UnityEngine;
 
-public class RoomFramer : WorldBeyondToy
+namespace TheWorldBeyond.Toy
 {
-    static public RoomFramer Instance = null;
-
-    WorldBeyondRoomObject _hoveredSurface = null;
-    Vector3 _hoveredPoint = Vector3.zero;
-    Vector3 _hoveredNormal = Vector3.up;
-    public GameObject _sparkPrefab;
-    public GameObject _hoverBorderPrefab;
-    public GameObject _wallOpenEffect;
-    public GameObject _wallCloseEffect;
-    LineRenderer _pointerLine;
-    [HideInInspector]
-    public ParticleSystem pointerSparks;
-    ParticleSystemRenderer _sparksRenderer = null;
-
-    public Color _wallHitColor;
-    public Color _furnishingHitColor;
-
-    enum HoveredObject
+    public class RoomFramer : WorldBeyondToy
     {
-        None,
-        Wall,
-        Floor,
-        Furnishing
-    };
+        public static RoomFramer Instance = null;
+        private WorldBeyondRoomObject m_hoveredSurface = null;
+        private Vector3 m_hoveredPoint = Vector3.zero;
+        private Vector3 m_hoveredNormal = Vector3.up;
+        public GameObject SparkPrefab;
+        public GameObject HoverBorderPrefab;
+        public GameObject WallOpenEffect;
+        public GameObject WallCloseEffect;
+        private LineRenderer m_pointerLine;
+        [HideInInspector]
+        public ParticleSystem PointerSparks;
+        private ParticleSystemRenderer m_sparksRenderer = null;
 
-    public override void Initialize()
-    {
-        if (!Instance)
+        public Color WallHitColor;
+        public Color FurnishingHitColor;
+
+        private enum HoveredObject
         {
-            Instance = this;
-        }
+            None,
+            Wall,
+            Floor,
+            Furnishing
+        };
 
-        GameObject pointerObj = Instantiate(_hoverBorderPrefab);
-        _pointerLine = pointerObj.GetComponent<LineRenderer>();
-        _pointerLine.gameObject.SetActive(false);
-
-        GameObject sparkObj = Instantiate(_sparkPrefab);
-        pointerSparks = sparkObj.GetComponent<ParticleSystem>();
-        _sparksRenderer = sparkObj.GetComponent<ParticleSystemRenderer>();
-        MultiToy.Instance.wallToyTarget = sparkObj.transform;
-    }
-
-    private void Update()
-    {
-        if (!_isActivated)
+        public override void Initialize()
         {
-            return;
-        }
-
-        // highlight selected wall
-        WorldBeyondRoomObject lastSurface = _hoveredSurface;
-        HoveredObject hoveringWall = CheckForWall();
-        SetBeamColor(hoveringWall);
-
-        // handle any UI
-        MultiToy.Instance.PointingAtWall();
-
-        _pointerLine.positionCount = 2;
-        _pointerLine.SetPosition(0, MultiToy.Instance.GetMuzzlePosition());
-        _pointerLine.SetPosition(1, _hoveredPoint);
-
-        pointerSparks.transform.position = _hoveredPoint;
-        pointerSparks.transform.rotation = Quaternion.Lerp(pointerSparks.transform.rotation, Quaternion.LookRotation(-_hoveredNormal), 0.3f);
-
-        WorldBeyondManager.Instance.AffectDebris(_hoveredPoint, true);
-    }
-
-    public override void ActionUp()
-    {
-        if (_hoveredSurface != null)
-        {
-            WorldBeyondRoomObject clickedWall = _hoveredSurface.GetComponent<WorldBeyondRoomObject>();
-            bool surfacePassthroughActive = clickedWall.ToggleWall(_hoveredPoint);
-            int surfaceId = _hoveredSurface._surfaceID;
-            VirtualRoom.Instance.CloseWall(surfaceId, surfacePassthroughActive);
-            AudioClip wallSound = surfacePassthroughActive ? MultiToy.Instance._wallToyWallClose : MultiToy.Instance._wallToyWallOpen;
-            AudioManager.Instance.PlayAudio(wallSound, clickedWall.transform.position);
-
-            if (!surfacePassthroughActive)
+            if (!Instance)
             {
-                WorldBeyondManager.Instance.OpenedWall(surfaceId);
-                WorldBeyondTutorial.Instance.HideMessage(WorldBeyondTutorial.TutorialMessage.ShootWall);
+                Instance = this;
             }
 
-            // recalculate the outdoor audio position
-            Vector3 audioPos = Vector3.up;
-            bool audioOn = VirtualRoom.Instance.GetOutdoorAudioPosition(ref audioPos);
-            WorldBeyondEnvironment.Instance.SetOutdoorAudioParams(audioPos, audioOn);
+            var pointerObj = Instantiate(HoverBorderPrefab);
+            m_pointerLine = pointerObj.GetComponent<LineRenderer>();
+            m_pointerLine.gameObject.SetActive(false);
 
-            StartCoroutine(ExpandWallRing(surfacePassthroughActive));
-        }
-    }
-
-    HoveredObject CheckForWall()
-    {
-        // highlight selected wall
-        HoveredObject hoveringWall = HoveredObject.None;
-        Vector3 controllerPos = Vector3.zero;
-        Quaternion controllerRot = Quaternion.identity;
-        WorldBeyondManager.Instance.GetDominantHand(ref controllerPos, ref controllerRot);
-
-        // modify the beam direction, for hands
-        if (WorldBeyondManager.Instance._usingHands)
-        {
-            controllerRot *= Quaternion.Euler(-60, 0, 0);
+            var sparkObj = Instantiate(SparkPrefab);
+            PointerSparks = sparkObj.GetComponent<ParticleSystem>();
+            m_sparksRenderer = sparkObj.GetComponent<ParticleSystemRenderer>();
+            MultiToy.Instance.WallToyTarget = sparkObj.transform;
         }
 
-        LayerMask acceptableLayers = LayerMask.GetMask("RoomBox", "Furniture");
-        RaycastHit[] roomboxHit = Physics.RaycastAll(controllerPos, controllerRot * Vector3.forward, 1000.0f, acceptableLayers);
-        float closestHit = 100.0f;
-        Vector3 targetPoint = _hoveredPoint;
-        foreach (RaycastHit hit in roomboxHit)
+        private void Update()
         {
-            GameObject hitObj = hit.collider.gameObject;
-            float thisHit = Vector3.Distance(hit.point, controllerPos);
-            if (thisHit < closestHit)
+            if (!IsActivated)
             {
-                closestHit = thisHit;
-                targetPoint = hit.point + hit.normal * 0.02f;
-                _hoveredNormal = hit.normal;
-                WorldBeyondRoomObject rbs = hitObj.GetComponent<WorldBeyondRoomObject>();
-                if (rbs)
+                return;
+            }
+
+            // highlight selected wall
+            var hoveringWall = CheckForWall();
+            SetBeamColor(hoveringWall);
+
+            // handle any UI
+            MultiToy.Instance.PointingAtWall();
+
+            m_pointerLine.positionCount = 2;
+            m_pointerLine.SetPosition(0, MultiToy.Instance.GetMuzzlePosition());
+            m_pointerLine.SetPosition(1, m_hoveredPoint);
+
+            PointerSparks.transform.position = m_hoveredPoint;
+            PointerSparks.transform.rotation = Quaternion.Lerp(PointerSparks.transform.rotation, Quaternion.LookRotation(-m_hoveredNormal), 0.3f);
+
+            WorldBeyondManager.Instance.AffectDebris(m_hoveredPoint, true);
+        }
+
+        public override void ActionUp()
+        {
+            if (m_hoveredSurface != null)
+            {
+                var clickedWall = m_hoveredSurface.GetComponent<WorldBeyondRoomObject>();
+                var surfacePassthroughActive = clickedWall.ToggleWall(m_hoveredPoint);
+                var surfaceId = m_hoveredSurface.SurfaceID;
+                VirtualRoom.Instance.CloseWall(surfaceId, surfacePassthroughActive);
+                var wallSound = surfacePassthroughActive ? MultiToy.Instance.WallToyWallClose : MultiToy.Instance.WallToyWallOpen;
+                AudioManager.Instance.PlayAudio(wallSound, clickedWall.transform.position);
+
+                if (!surfacePassthroughActive)
                 {
-                    if (rbs._isFurniture)
+                    WorldBeyondManager.Instance.OpenedWall(surfaceId);
+                    WorldBeyondTutorial.Instance.HideMessage(WorldBeyondTutorial.TutorialMessage.ShootWall);
+                }
+
+                // recalculate the outdoor audio Position
+                var audioPos = Vector3.up;
+                var audioOn = VirtualRoom.Instance.GetOutdoorAudioPosition(ref audioPos);
+                WorldBeyondEnvironment.Instance.SetOutdoorAudioParams(audioPos, audioOn);
+
+                _ = StartCoroutine(ExpandWallRing(surfacePassthroughActive));
+            }
+        }
+
+        private HoveredObject CheckForWall()
+        {
+            // highlight selected wall
+            var hoveringWall = HoveredObject.None;
+            var controllerPos = Vector3.zero;
+            var controllerRot = Quaternion.identity;
+            WorldBeyondManager.Instance.GetDominantHand(ref controllerPos, ref controllerRot);
+
+            // modify the beam direction, for hands
+            if (WorldBeyondManager.Instance.UsingHands)
+            {
+                controllerRot *= Quaternion.Euler(-60, 0, 0);
+            }
+
+            LayerMask acceptableLayers = LayerMask.GetMask("RoomBox", "Furniture");
+            var roomboxHit = Physics.RaycastAll(controllerPos, controllerRot * Vector3.forward, 1000.0f, acceptableLayers);
+            var closestHit = 100.0f;
+            var targetPoint = m_hoveredPoint;
+            foreach (var hit in roomboxHit)
+            {
+                var hitObj = hit.collider.gameObject;
+                var thisHit = Vector3.Distance(hit.point, controllerPos);
+                if (thisHit < closestHit)
+                {
+                    closestHit = thisHit;
+                    targetPoint = hit.point + hit.normal * 0.02f;
+                    m_hoveredNormal = hit.normal;
+                    var rbs = hitObj.GetComponent<WorldBeyondRoomObject>();
+                    if (rbs)
                     {
-                        hoveringWall = HoveredObject.Furnishing;
-                    }
-                    else if (VirtualRoom.Instance.IsFloor(rbs._surfaceID))
-                    {
-                        hoveringWall = HoveredObject.Floor;
-                    }
-                    else
-                    {
-                        if (rbs.CanBeToggled())
+                        if (rbs.IsFurniture)
                         {
-                            _hoveredSurface = rbs;
-                            hoveringWall = HoveredObject.Wall;
+                            hoveringWall = HoveredObject.Furnishing;
+                        }
+                        else if (VirtualRoom.Instance.IsFloor(rbs.SurfaceID))
+                        {
+                            hoveringWall = HoveredObject.Floor;
                         }
                         else
                         {
-                            hoveringWall = HoveredObject.None;
+                            if (rbs.CanBeToggled())
+                            {
+                                m_hoveredSurface = rbs;
+                                hoveringWall = HoveredObject.Wall;
+                            }
+                            else
+                            {
+                                hoveringWall = HoveredObject.None;
+                            }
                         }
                     }
                 }
             }
-        }
 
-        _hoveredPoint = Vector3.Lerp(_hoveredPoint, targetPoint, 0.1f);
-        if (hoveringWall != HoveredObject.Wall)
-        {
-            _hoveredSurface = null;
-        }
-
-        return hoveringWall;
-    }
-
-    public override void Activate()
-    {
-        base.Activate();
-        _hoveredSurface = null;
-        _hoveredPoint = transform.position;
-        HoveredObject surf = CheckForWall();
-        if (surf != HoveredObject.None)
-        {
-            _pointerLine.gameObject.SetActive(true);
-            pointerSparks.transform.position = _hoveredPoint;
-            pointerSparks.transform.rotation = Quaternion.LookRotation(-_hoveredNormal);
-            MultiToy.Instance._wallToyLoop_1.Play();
-            SetBeamColor(surf);
-        }
-        pointerSparks.Play();
-    }
-
-    void SetBeamColor(HoveredObject surf)
-    {
-        Color beamColor = surf == HoveredObject.Wall ? _wallHitColor : _furnishingHitColor;
-        _pointerLine.sharedMaterial.SetColor("_Color", beamColor);
-        _sparksRenderer.sharedMaterial.SetColor("_Color", beamColor);
-    }
-
-    public override void Deactivate()
-    {
-        base.Deactivate();
-        _pointerLine.gameObject.SetActive(false);
-        pointerSparks.Stop();
-        pointerSparks.Clear();
-        MultiToy.Instance._wallToyLoop_1.Stop();
-    }
-
-    public bool IsHighlightingWall()
-    {
-        if (_pointerLine)
-        {
-            return (_pointerLine.gameObject.activeSelf && _hoveredSurface != null);
-        }
-        return false;
-    }
-
-    IEnumerator ExpandWallRing(bool ptActive)
-    {
-        // caution: the timing and numbers here should match the material effect in PassthroughWall.shader
-        Quaternion ringRot = Quaternion.LookRotation(_hoveredNormal);
-        GameObject effectObj = ptActive ? Instantiate(_wallCloseEffect, _hoveredPoint, ringRot) : Instantiate(_wallOpenEffect, _hoveredPoint, ringRot);
-        ParticleSystem effectPrt = effectObj?.GetComponent<ParticleSystem>();
-        float timer = 0.0f;
-        float effectTime = 1.0f;
-        while (timer <= effectTime)
-        {
-            timer += Time.deltaTime;
-            if (effectPrt)
+            m_hoveredPoint = Vector3.Lerp(m_hoveredPoint, targetPoint, 0.1f);
+            if (hoveringWall != HoveredObject.Wall)
             {
-                var shape = effectPrt.shape;
-                // it takes 1 second to reach 10m radius
-                shape.radius = timer * 5;
-
-                int maxParticleRate = 150;
-                var rate = effectPrt.emission;
-                float pingpong = Mathf.Abs(timer - 0.5f) * 2;
-                rate.rateOverTime = maxParticleRate * (1 - pingpong) * 100;
+                m_hoveredSurface = null;
             }
-            yield return null;
+
+            return hoveringWall;
+        }
+
+        public override void Activate()
+        {
+            base.Activate();
+            m_hoveredSurface = null;
+            m_hoveredPoint = transform.position;
+            var surf = CheckForWall();
+            if (surf != HoveredObject.None)
+            {
+                m_pointerLine.gameObject.SetActive(true);
+                PointerSparks.transform.position = m_hoveredPoint;
+                PointerSparks.transform.rotation = Quaternion.LookRotation(-m_hoveredNormal);
+                MultiToy.Instance.WallToyLoop_1.Play();
+                SetBeamColor(surf);
+            }
+            PointerSparks.Play();
+        }
+
+        private void SetBeamColor(HoveredObject surf)
+        {
+            var beamColor = surf == HoveredObject.Wall ? WallHitColor : FurnishingHitColor;
+            m_pointerLine.sharedMaterial.SetColor("_Color", beamColor);
+            m_sparksRenderer.sharedMaterial.SetColor("_Color", beamColor);
+        }
+
+        public override void Deactivate()
+        {
+            base.Deactivate();
+            m_pointerLine.gameObject.SetActive(false);
+            PointerSparks.Stop();
+            PointerSparks.Clear();
+            MultiToy.Instance.WallToyLoop_1.Stop();
+        }
+
+        public bool IsHighlightingWall()
+        {
+            return m_pointerLine ? m_pointerLine.gameObject.activeSelf && m_hoveredSurface != null : false;
+        }
+
+        private IEnumerator ExpandWallRing(bool ptActive)
+        {
+            // caution: the timing and numbers here should match the material effect in PassthroughWall.shader
+            var ringRot = Quaternion.LookRotation(m_hoveredNormal);
+            var effectObj = ptActive ? Instantiate(WallCloseEffect, m_hoveredPoint, ringRot) : Instantiate(WallOpenEffect, m_hoveredPoint, ringRot);
+            var effectPrt = effectObj?.GetComponent<ParticleSystem>();
+            var timer = 0.0f;
+            var effectTime = 1.0f;
+            while (timer <= effectTime)
+            {
+                timer += Time.deltaTime;
+                if (effectPrt)
+                {
+                    var shape = effectPrt.shape;
+                    // it takes 1 second to reach 10m radius
+                    shape.radius = timer * 5;
+
+                    var maxParticleRate = 150;
+                    var rate = effectPrt.emission;
+                    var pingpong = Mathf.Abs(timer - 0.5f) * 2;
+                    rate.rateOverTime = maxParticleRate * (1 - pingpong) * 100;
+                }
+                yield return null;
+            }
         }
     }
 }

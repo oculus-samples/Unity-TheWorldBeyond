@@ -1,15 +1,16 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
 using System.Collections.Generic;
-using Audio.Scripts;
+using TheWorldBeyond.Utils;
 using UnityEngine;
 
-[System.Serializable]
-
-public class OppyAudio : MonoBehaviour
+namespace TheWorldBeyond.Audio
 {
-    [NamedArray(new string[]
+    [System.Serializable]
+    public class OppyAudio : MonoBehaviour
     {
+        [NamedArray(new string[]
+        {
         "0 Footstep Run",
         "1 Footstep Walk",
         "2 Footstep Jump",
@@ -27,30 +28,31 @@ public class OppyAudio : MonoBehaviour
         "14 Listen Long",
         "15 Listen Fail",
         "16 Pet"
-    })]
-    public List<SoundEntry> SoundEntries = new List<SoundEntry>();
+        })]
+        public List<SoundEntry> SoundEntries = new();
 
-    public void PlaySound(int soundIndex)
-    {
-        if (soundIndex < SoundEntries.Count)
+        public void PlaySound(int soundIndex)
         {
-            SoundEntries[soundIndex].Play();
+            if (soundIndex < SoundEntries.Count)
+            {
+                SoundEntries[soundIndex].Play();
+            }
+            else
+            {
+                Debug.Log("Error: invalid sound index");
+            }
         }
-        else
-        {
-            Debug.Log("Error: invalid sound index");
-        }
-    }
 
-    public void StopSound(int soundIndex)
-    {
-        if (soundIndex < SoundEntries.Count)
+        public void StopSound(int soundIndex)
         {
-            SoundEntries[soundIndex].Stop();
-        }
-        else
-        {
-            Debug.Log("Error: invalid sound index");
+            if (soundIndex < SoundEntries.Count)
+            {
+                SoundEntries[soundIndex].Stop();
+            }
+            else
+            {
+                Debug.Log("Error: invalid sound index");
+            }
         }
     }
 }

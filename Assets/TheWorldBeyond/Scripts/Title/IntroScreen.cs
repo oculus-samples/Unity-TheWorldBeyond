@@ -1,24 +1,28 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
-using UnityEngine;
+using TheWorldBeyond.GameManagement;
 using TMPro;
+using UnityEngine;
 
-public class IntroScreen : MonoBehaviour
+namespace TheWorldBeyond.Title
 {
-    public TextMeshProUGUI debugText;
-
-    private void Start()
+    public class IntroScreen : MonoBehaviour
     {
-        string buildInfo = Application.version;
-        buildInfo += WorldBeyondManager.Instance.IsGreyPassthrough() ? " for Quest" : " in color";
-        debugText.text = buildInfo;
-        Debug.Log("TheWorldBeyond: running version " + Application.version + " on " + OVRPlugin.GetSystemHeadsetType());
-    }
+        public TextMeshProUGUI DebugText;
 
-    private void Update()
-    {
-        // only show the debug text if a thumbstick is pressed
-        bool thumbstickPressed = OVRInput.Get(OVRInput.RawButton.RThumbstick) || OVRInput.Get(OVRInput.RawButton.LThumbstick);
-        debugText.enabled = thumbstickPressed;
+        private void Start()
+        {
+            var buildInfo = Application.version;
+            buildInfo += WorldBeyondManager.Instance.IsGreyPassthrough() ? " for Quest" : " in color";
+            DebugText.text = buildInfo;
+            Debug.Log("TheWorldBeyond: running version " + Application.version + " on " + OVRPlugin.GetSystemHeadsetType());
+        }
+
+        private void Update()
+        {
+            // only show the debug text if a thumbstick is pressed
+            var thumbstickPressed = OVRInput.Get(OVRInput.RawButton.RThumbstick) || OVRInput.Get(OVRInput.RawButton.LThumbstick);
+            DebugText.enabled = thumbstickPressed;
+        }
     }
 }

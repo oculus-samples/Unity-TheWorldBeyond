@@ -1,99 +1,103 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
-using System.Collections;
 using System.Collections.Generic;
+using TheWorldBeyond.Audio;
 using UnityEngine;
-
 #if UNITY_EDITOR
 using UnityEditor;
-[CustomEditor(typeof(SpaceshipTrigger))]
-public class SpaceshipTriggerEditor : Editor
-{
-    public override void OnInspectorGUI()
-    {
-        DrawDefaultInspector();
-        GUILayout.Space(EditorGUIUtility.singleLineHeight);
-        if (GUILayout.Button("Trigger Animation"))
-        {
-            (target as SpaceshipTrigger).TriggerAnim();
-        }
-        if (GUILayout.Button("Reset Animation"))
-        {
-            (target as SpaceshipTrigger).ResetAnim();
-        }
-    }
-}
 #endif
-public class SpaceshipTrigger : MonoBehaviour
+namespace TheWorldBeyond.Character
 {
-    public Animator[] Animators;
-    public SoundEntry sfxIdle;
-    public SoundEntry sfxTakeOff;
-    public List<GameObject> lightObjects;
-
-    void Start()
+#if UNITY_EDITOR
+    [CustomEditor(typeof(SpaceshipTrigger))]
+    public class SpaceshipTriggerEditor : Editor
     {
-        FindLightObjects();
-        EnableCostlyEffects(false);
-    }
-
-    public void TriggerAnim()
-    {
-        EnableCostlyEffects(true);
-        foreach (Animator a in Animators)
+        public override void OnInspectorGUI()
         {
-            a.Play("FlyAway", 0);
-        }
-        sfxIdle.Stop();
-        sfxTakeOff.Play();
-    }
-
-    public void ResetAnim()
-    {
-        EnableCostlyEffects(false);
-        sfxIdle.Stop();
-        foreach (Animator a in Animators)
-        {
-            a.Play("Idle", 0);
-        }
-        sfxIdle.Play();
-    }
-
-    public void StartIdleSound()
-    {
-        sfxIdle.Play();
-    }
-
-    public void StopIdleSound()
-    {
-        sfxIdle.Stop();
-    }
-
-    public void FindLightObjects()
-    {
-        CheckForLight(this.transform);
-    }
-
-    public void CheckForLight(Transform xform)
-    {
-        if (xform.gameObject.name == "RimLightShaft" ||
-            xform.gameObject.name == "RoundLightShaft" ||
-            xform.gameObject.name == "QuadLightShaft")
-        {
-            lightObjects.Add(xform.gameObject);
-        }
-
-        foreach (Transform child in xform)
-        {
-            CheckForLight(child);
+            _ = DrawDefaultInspector();
+            GUILayout.Space(EditorGUIUtility.singleLineHeight);
+            if (GUILayout.Button("Trigger Animation"))
+            {
+                (target as SpaceshipTrigger).TriggerAnim();
+            }
+            if (GUILayout.Button("Reset Animation"))
+            {
+                (target as SpaceshipTrigger).ResetAnim();
+            }
         }
     }
-
-    public void EnableCostlyEffects(bool doEnable)
+#endif
+    public class SpaceshipTrigger : MonoBehaviour
     {
-        foreach (GameObject go in lightObjects)
+        public Animator[] Animators;
+        public SoundEntry SfxIdle;
+        public SoundEntry SfxTakeOff;
+        public List<GameObject> LightObjects;
+
+        private void Start()
         {
-            go.SetActive(doEnable);
+            FindLightObjects();
+            EnableCostlyEffects(false);
+        }
+
+        public void TriggerAnim()
+        {
+            EnableCostlyEffects(true);
+            foreach (var a in Animators)
+            {
+                a.Play("FlyAway", 0);
+            }
+            SfxIdle.Stop();
+            SfxTakeOff.Play();
+        }
+
+        public void ResetAnim()
+        {
+            EnableCostlyEffects(false);
+            SfxIdle.Stop();
+            foreach (var a in Animators)
+            {
+                a.Play("Idle", 0);
+            }
+            SfxIdle.Play();
+        }
+
+        public void StartIdleSound()
+        {
+            SfxIdle.Play();
+        }
+
+        public void StopIdleSound()
+        {
+            SfxIdle.Stop();
+        }
+
+        public void FindLightObjects()
+        {
+            CheckForLight(transform);
+        }
+
+        public void CheckForLight(Transform xform)
+        {
+            if (xform.gameObject.name is "RimLightShaft" or
+                "RoundLightShaft" or
+                "QuadLightShaft")
+            {
+                LightObjects.Add(xform.gameObject);
+            }
+
+            foreach (Transform child in xform)
+            {
+                CheckForLight(child);
+            }
+        }
+
+        public void EnableCostlyEffects(bool doEnable)
+        {
+            foreach (var go in LightObjects)
+            {
+                go.SetActive(doEnable);
+            }
         }
     }
 }

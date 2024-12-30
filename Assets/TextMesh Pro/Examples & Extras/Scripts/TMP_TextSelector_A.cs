@@ -22,7 +22,7 @@ namespace TMPro.Examples
             m_TextMeshPro = gameObject.GetComponent<TextMeshPro>();
             m_Camera = Camera.main;
 
-            // Force generation of the text object so we have valid data to work with. This is needed since LateUpdate() will be called before the text object has a chance to generated when entering play mode.
+            // Force generation of the text object so we have valid data to work with. This is needed since IsLateUpdate() will be called before the text object has a chance to generated when entering play mode.
             m_TextMeshPro.ForceMeshUpdate();
         }
 
@@ -92,12 +92,12 @@ namespace TMPro.Examples
                     switch (linkInfo.GetLinkID())
                     {
                         case "id_01": // 100041637: // id_01
-                                      //m_TextPopup_RectTransform.position = worldPointInRectangle;
+                                      //m_TextPopup_RectTransform.Position = worldPointInRectangle;
                                       //m_TextPopup_RectTransform.gameObject.SetActive(true);
                                       //m_TextPopup_TMPComponent.text = k_LinkText + " ID 01";
                             break;
                         case "id_02": // 100041638: // id_02
-                                      //m_TextPopup_RectTransform.position = worldPointInRectangle;
+                                      //m_TextPopup_RectTransform.Position = worldPointInRectangle;
                                       //m_TextPopup_RectTransform.gameObject.SetActive(true);
                                       //m_TextPopup_TMPComponent.text = k_LinkText + " ID 02";
                             break;

@@ -1,132 +1,136 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
 using System.Collections.Generic;
+using TheWorldBeyond.GameManagement;
 using UnityEngine;
 
-public class VirtualFlashlight : WorldBeyondToy
+namespace TheWorldBeyond.Toy
 {
-    public GameObject _flashlight;
-    public GameObject _lightVolume;
-    List<MeshRenderer> _lightQuads = new List<MeshRenderer>();
-    public AnimationCurve _flickerStrength;
-    public MeshRenderer _magicEffectCone;
-    public Light _spotlight;
-    float _spotlightBaseIntensity = 1.0f;
-    float _effectTimer = 0.0f;
-    float _effectAccel = 0.0f;
-
-    [HideInInspector]
-    public bool _absorbingBall = false;
-    public AudioSource ballAbsorbAudioSource;
-
-    public Transform _lightBone;
-
-    void Start()
+    public class VirtualFlashlight : WorldBeyondToy
     {
-        GameObject refQuad = _lightVolume.transform.GetChild(0).gameObject;
-        int sliceCount = 4;
-        float basePos = 0.3f;
-        float baseScale = 0.4f;
-        for (int i = 0; i < sliceCount; i++)
+        public GameObject Flashlight;
+        public GameObject LightVolume;
+        private List<MeshRenderer> m_lightQuads = new();
+        public AnimationCurve FlickerStrength;
+        public MeshRenderer MagicEffectCone;
+        public Light Spotlight;
+        private float m_spotlightBaseIntensity = 1.0f;
+        private float m_effectTimer = 0.0f;
+        private float m_effectAccel = 0.0f;
+
+        [HideInInspector]
+        public bool AbsorbingBall = false;
+        public AudioSource BallAbsorbAudioSource;
+
+        public Transform LightBone;
+
+        private void Start()
         {
-            GameObject newQuad = refQuad;
-            if (i > 0)
+            var refQuad = LightVolume.transform.GetChild(0).gameObject;
+            var sliceCount = 4;
+            var basePos = 0.3f;
+            var baseScale = 0.4f;
+            for (var i = 0; i < sliceCount; i++)
             {
-                newQuad = Instantiate(refQuad, _lightVolume.transform);
+                var newQuad = refQuad;
+                if (i > 0)
+                {
+                    newQuad = Instantiate(refQuad, LightVolume.transform);
+                }
+                var normPos = i / (float)(sliceCount - 1);
+                var dist = Mathf.Pow(normPos, 1.5f);
+                newQuad.transform.localPosition = Vector3.up * (basePos + dist) * 0.6f;
+                newQuad.transform.localScale = Vector3.one * (baseScale + dist * 1.5f);
+                var nqm = newQuad.GetComponent<MeshRenderer>();
+
+                m_lightQuads.Add(nqm);
             }
-            float normPos = i / (float)(sliceCount - 1);
-            float dist = Mathf.Pow(normPos, 1.5f);
-            newQuad.transform.localPosition = Vector3.up * (basePos + dist) * 0.6f;
-            newQuad.transform.localScale = Vector3.one * (baseScale + dist * 1.5f);
-            MeshRenderer nqm = newQuad.GetComponent<MeshRenderer>();
 
-            _lightQuads.Add(nqm);
+            Flashlight.SetActive(false);
+            if (Spotlight) m_spotlightBaseIntensity = Spotlight.intensity;
         }
 
-        _flashlight.SetActive(false);
-        if (_spotlight) _spotlightBaseIntensity = _spotlight.intensity;
-    }
-
-    void LateUpdate()
-    {
-        // ensure all the light volume quads are camera-facing
-        for (int i = 0; i < _lightQuads.Count; i++)
+        private void LateUpdate()
         {
-            Quaternion quadLook = Quaternion.LookRotation(_lightQuads[i].transform.position - WorldBeyondManager.Instance._mainCamera.transform.position);
-            _lightQuads[i].transform.rotation = quadLook;
+            // ensure all the light volume quads are camera-facing
+            for (var i = 0; i < m_lightQuads.Count; i++)
+            {
+                var quadLook = Quaternion.LookRotation(m_lightQuads[i].transform.position - WorldBeyondManager.Instance.MainCamera.transform.position);
+                m_lightQuads[i].transform.rotation = quadLook;
+            }
+
+            m_effectAccel += AbsorbingBall ? -0.1f : 0.05f;
+            // when using the mesh, it's attached to the spinning piece, so adjust a bit
+            var rotationOffset = WorldBeyondManager.Instance.UsingHands ? 0.0f : -0.03f;
+            m_effectAccel = Mathf.Clamp(m_effectAccel, -0.2f, 0.05f) + rotationOffset;
+            m_effectTimer += Time.deltaTime * m_effectAccel;
+            MagicEffectCone.material.SetFloat("_ScrollAmount", m_effectTimer);
+
+            if (IsActivated && AbsorbingBall)
+            {
+                WorldBeyondManager.Instance.AffectDebris(transform.position, false);
+            }
         }
 
-        _effectAccel += _absorbingBall ? -0.1f : 0.05f;
-        // when using the mesh, it's attached to the spinning piece, so adjust a bit
-        float rotationOffset = WorldBeyondManager.Instance._usingHands ? 0.0f : -0.03f;
-        _effectAccel = Mathf.Clamp(_effectAccel, -0.2f, 0.05f) + rotationOffset;
-        _effectTimer += Time.deltaTime * _effectAccel;
-        _magicEffectCone.material.SetFloat("_ScrollAmount", _effectTimer);
-
-        if (_isActivated && _absorbingBall)
+        public void SetLightStrength(float strength)
         {
-            WorldBeyondManager.Instance.AffectDebris(transform.position, false);
-        }
-    }
+            MultiToy.Instance.FlashlightLoop_1.SetVolume(strength);
+            if (WorldBeyondManager.Instance.UsingHands)
+            {
+                MultiToy.Instance.FlashlightAbsorbLoop_1.SetVolume(0f);
+            }
 
-    public void SetLightStrength(float strength)
-    {
-        MultiToy.Instance._flashlightLoop_1.SetVolume(strength);
-        if (WorldBeyondManager.Instance._usingHands)
-        {
-            MultiToy.Instance._flashlightAbsorbLoop_1.SetVolume(0f);
+            Spotlight.intensity = m_spotlightBaseIntensity * strength;
+            MagicEffectCone.material.SetFloat("_Intensity", strength);
+
+            for (var i = 0; i < m_lightQuads.Count; i++)
+            {
+                m_lightQuads[i].material.SetFloat("_Intensity", strength);
+            }
         }
 
-        _spotlight.intensity = _spotlightBaseIntensity * strength;
-        _magicEffectCone.material.SetFloat("_Intensity", strength);
-
-        for (int i = 0; i < _lightQuads.Count; i++)
+        public override void Activate()
         {
-            _lightQuads[i].material.SetFloat("_Intensity", strength);
+            base.Activate();
+            Flashlight.SetActive(true);
+            MultiToy.Instance.FlashlightLoop_1.Play();
         }
-    }
 
-    public override void Activate()
-    {
-        base.Activate();
-        _flashlight.SetActive(true);
-        MultiToy.Instance._flashlightLoop_1.Play();
-    }
-
-    public override void Deactivate()
-    {
-        base.Deactivate();
-        _flashlight.SetActive(false);
-        MultiToy.Instance.StopLoopingSound();
-        _absorbingBall = false;
-        MultiToy.Instance._flashlightAbsorbLoop_1.Stop();
-        if (!WorldBeyondManager.Instance._usingHands)
+        public override void Deactivate()
         {
-            OVRInput.SetControllerVibration(1, 0, WorldBeyondManager.Instance._gameController);
+            base.Deactivate();
+            Flashlight.SetActive(false);
+            MultiToy.Instance.StopLoopingSound();
+            AbsorbingBall = false;
+            MultiToy.Instance.FlashlightAbsorbLoop_1.Stop();
+            if (!WorldBeyondManager.Instance.UsingHands)
+            {
+                OVRInput.SetControllerVibration(1, 0, WorldBeyondManager.Instance.GameController);
+            }
         }
-    }
 
-    public override void ActionDown()
-    {
-        _absorbingBall = true;
-        MultiToy.Instance._flashlightAbsorbLoop_1.Play();
-    }
-
-    public override void Action()
-    {
-        if (!WorldBeyondManager.Instance._usingHands)
+        public override void ActionDown()
         {
-            OVRInput.SetControllerVibration(1, 0.5f, WorldBeyondManager.Instance._gameController);
+            AbsorbingBall = true;
+            MultiToy.Instance.FlashlightAbsorbLoop_1.Play();
         }
-    }
 
-    public override void ActionUp()
-    {
-        _absorbingBall = false;
-        MultiToy.Instance._flashlightAbsorbLoop_1.Stop();
-        if (!WorldBeyondManager.Instance._usingHands)
+        public override void Action()
         {
-            OVRInput.SetControllerVibration(1, 0, WorldBeyondManager.Instance._gameController);
+            if (!WorldBeyondManager.Instance.UsingHands)
+            {
+                OVRInput.SetControllerVibration(1, 0.5f, WorldBeyondManager.Instance.GameController);
+            }
+        }
+
+        public override void ActionUp()
+        {
+            AbsorbingBall = false;
+            MultiToy.Instance.FlashlightAbsorbLoop_1.Stop();
+            if (!WorldBeyondManager.Instance.UsingHands)
+            {
+                OVRInput.SetControllerVibration(1, 0, WorldBeyondManager.Instance.GameController);
+            }
         }
     }
 }

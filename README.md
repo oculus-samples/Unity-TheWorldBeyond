@@ -20,8 +20,8 @@ While building mixed reality experiences, we highly recommend evaluating your co
 # Scene Structure & Prefabs
 The main scene in The World Beyond is "TheWorldBeyond.unity," which contains the core experience. This scene should be the only one in the Build settings. Most of the content in this scene is pre-existing, meaning the system does not spawn it at runtime. Some exceptions are the virtual room (visible through flashlight), Passthrough walls, and any ground grass in your room.  Some other notes about the scene you should be aware of include:
 * *NavMesh:*  This is what Oppy walks on, and it lives under the Environment/EnvRoot object. *NavMesh* is part of the Unity Editor. The scene adds obstacles dynamically (e.g., your room walls, furniture, and trees/rocks in the foreground).
-* [*WorldBeyondManager:*](Assets/Scripts/WorldBeyondManager.cs) Holds the *WorldBeyondManager* component, which manages the whole demo. Consider *WorldBeyondManager* as the `main()` function.
-* [*MultiToy:*](Assets/MultiToy/Scripts/MultiToy.cs)  You can attach *MultiToy* to your hand/controller. Only one MultiToy will ever exist, and you can attach it to either hand.
+* [*WorldBeyondManager:*](Assets/TheWorldBeyond/Scripts/GameManagement/WorldBeyondManager.cs) Holds the *WorldBeyondManager* component, which manages the whole demo. Consider *WorldBeyondManager* as the `main()` function.
+* [*MultiToy:*](Assets/TheWorldBeyond/Scripts/Toy/MultiToy.cs)  You can attach *MultiToy* to your hand/controller. Only one MultiToy will ever exist, and you can attach it to either hand.
 * *Oppy:* Everything related to Oppy is in *Oppy*.
 * *Environment:* Everything in the virtual world, except for the UFO, is included in *Environment*.
 
@@ -76,13 +76,11 @@ In The World Beyond, the system unlocks Voice control after opening a wall to th
 # Interaction
 You can easily include hands-support using our Interaction components with little understanding of how the code works. You can learn more about the [*Interaction SDK*](https://developer.oculus.com/documentation/unity/unity-isdk-interaction-sdk-overview/) from our documentation. In The World Beyond, we use the *Interaction SDK* to let users grab and release the energy orbs.
 * The *OVRInteraction* object exists under the *OVRCameraRig* prefab. There are important fields on the *WorldBeyondManager* game object that point to children of this interaction rig, so be careful when replacing it.
-* The ball prefab, which is the only element in The World Beyond designed for usage with *ISDK*, is located in `Assets/VFX/EnergyBall/EnergyBallPrefab.prefab`. Please note that the *Interaction SDK* manages many of the components on the object.
-
+* The ball prefab, which is the only element in The World Beyond designed for usage with *ISDK*, is located in [Assets/TheWorldBeyond/VFX/EnergyBall/EnergyBallPrefab.prefab](Assets/TheWorldBeyond/VFX/EnergyBall/EnergyBallPrefab.prefab). Please note that the *Interaction SDK* manages many of the components on the object.
 * Other hand behaviors, such as wall opening or toy switching, are custom and exist outside of *ISDK*. This functionality shows that you can mix and match how you want to implement hands in your project.
 
 # Audio Spatializer
-Audio in The World Beyond uses the *Oculus AudioManager* and *Oculus Spatializer*. Get a deep understanding of it from our documentation [here](https://developer.oculus.com/documentation/unity/audio-spatializer-features/). The mixer for the project exists at `Assets/Audio/WorldBeyondAudioMixer.mixer`.
-
+Audio in The World Beyond uses the *Oculus AudioManager* and *Oculus Spatializer*. Get a deep understanding of it from our documentation [here](https://developer.oculus.com/documentation/unity/audio-spatializer-features/). The mixer for the project exists at [Assets/TheWorldBeyond/Audio/WorldBeyondAudioMixer.mixer](Assets/TheWorldBeyond/Audio/WorldBeyondAudioMixer.mixer).
 * You can use simple raycasting for occlusion. For instance, if a sound is in the virtual world behind your Passthrough wall. You can see how we do this in [`SoundEntry_Manager.HandleObstructed()`](https://github.com/oculus-samples/Unity-TheWorldBeyond/blob/main/Assets/Scripts/SoundEntry_Manager.cs#L94).
 * The system mutes environment audio when all the Passthrough walls are closed. The audio increases as you open each wall. Anytime a wall status changes, the system adjusts the audio accordingly in [`AudioManager.SetRoomOpenness()`](https://github.com/oculus-samples/Unity-TheWorldBeyond/blob/main/Assets/Scripts/AudioManager.cs#L444).
 

@@ -1,102 +1,104 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
 using System.Collections;
-using UnityEngine;
-using UnityEngine.Android;
 using Oculus.Voice;
 using TMPro;
+using UnityEngine;
+using UnityEngine.Android;
 
-public class SampleVoice : MonoBehaviour
+namespace TheWorldBeyond.SampleScenes
 {
-    [SerializeField]
-    private AppVoiceExperience _voiceExperience;
-    public TextMeshProUGUI _thoughtText;
-
-    public GameObject[] _demoObjects;
-    public GameObject _notifScreen;
-
-    const string _defaultMessage = "(press to begin transcribing)";
-
-    private void OnEnable()
+    public class SampleVoice : MonoBehaviour
     {
-        _voiceExperience.VoiceEvents.OnStartListening.AddListener(StartListening);
-        _voiceExperience.VoiceEvents.OnStoppedListening.AddListener(StopListening);
-        _voiceExperience.VoiceEvents.OnPartialTranscription.AddListener(LiveTranscriptionHandler);
+        [SerializeField]
+        private AppVoiceExperience m_voiceExperience;
+        public TextMeshProUGUI ThoughtText;
 
-        _thoughtText.text = _defaultMessage;
+        public GameObject[] DemoObjects;
+        public GameObject NotifScreen;
+        private const string DEFAULT_MESSAGE = "(press to begin transcribing)";
 
-        // ensure the experience is hidden by default, until user has agreed to the notif
-        foreach (GameObject obj in _demoObjects)
+        private void OnEnable()
         {
-            obj.SetActive(false);
-        }
-    }
+            m_voiceExperience.VoiceEvents.OnStartListening.AddListener(StartListening);
+            m_voiceExperience.VoiceEvents.OnStoppedListening.AddListener(StopListening);
+            m_voiceExperience.VoiceEvents.OnPartialTranscription.AddListener(LiveTranscriptionHandler);
 
-    private void OnDisable()
-    {
-        _voiceExperience.VoiceEvents.OnStartListening.RemoveListener(StartListening);
-        _voiceExperience.VoiceEvents.OnStoppedListening.RemoveListener(StopListening);
-        _voiceExperience.VoiceEvents.OnPartialTranscription.RemoveListener(LiveTranscriptionHandler);
-    }
+            ThoughtText.text = DEFAULT_MESSAGE;
 
-    public void BeginTranscription()
-    {
-        _voiceExperience.Activate();
-    }
-
-    void StartListening()
-    {
-        _thoughtText.text = "(begin talking)";
-    }
-
-    void StopListening()
-    {
-        StartCoroutine(ClearText(3));
-    }
-
-    void LiveTranscriptionHandler(string content)
-    {
-        _thoughtText.text = content;
-    }
-
-    IEnumerator ClearText(float countdown)
-    {
-        yield return new WaitForSeconds(countdown);
-        _thoughtText.text = _defaultMessage;
-    }
-
-    // this is only called from the UI button
-    public void CheckPermissionsAndContinue(GameObject notifScreen)
-    {
-        // user should have already seen permission screen upon initial run
-        // pop it up again if permission's still not granted
-        if (Permission.HasUserAuthorizedPermission(Permission.Microphone))
-        {
-            StartExperience(Permission.Microphone);
-        }
-        else
-        {
-            // display the Android permission screen, with a callback
-            // if user denies permission, our notif screen is still visible
-            // if you want to provide more user feedback, add PermissionDenied callback here
-            var callbacks = new PermissionCallbacks();
-            callbacks.PermissionGranted += StartExperience;
-            Permission.RequestUserPermission(Permission.Microphone, callbacks);
-        }
-    }
-
-    void StartExperience(string permissionName)
-    {
-        if (permissionName == Permission.Microphone)
-        {
-            foreach (GameObject obj in _demoObjects)
+            // ensure the experience is hidden by default, until user has agreed to the notif
+            foreach (var obj in DemoObjects)
             {
-                obj.SetActive(true);
+                obj.SetActive(false);
             }
+        }
 
-            if (_notifScreen)
+        private void OnDisable()
+        {
+            m_voiceExperience.VoiceEvents.OnStartListening.RemoveListener(StartListening);
+            m_voiceExperience.VoiceEvents.OnStoppedListening.RemoveListener(StopListening);
+            m_voiceExperience.VoiceEvents.OnPartialTranscription.RemoveListener(LiveTranscriptionHandler);
+        }
+
+        public void BeginTranscription()
+        {
+            m_voiceExperience.Activate();
+        }
+
+        private void StartListening()
+        {
+            ThoughtText.text = "(begin talking)";
+        }
+
+        private void StopListening()
+        {
+            _ = StartCoroutine(ClearText(3));
+        }
+
+        private void LiveTranscriptionHandler(string content)
+        {
+            ThoughtText.text = content;
+        }
+
+        private IEnumerator ClearText(float countdown)
+        {
+            yield return new WaitForSeconds(countdown);
+            ThoughtText.text = DEFAULT_MESSAGE;
+        }
+
+        // this is only called from the UI button
+        public void CheckPermissionsAndContinue(GameObject notifScreen)
+        {
+            // user should have already seen permission screen upon initial run
+            // pop it up again if permission's still not granted
+            if (Permission.HasUserAuthorizedPermission(Permission.Microphone))
             {
-                _notifScreen.SetActive(false);
+                StartExperience(Permission.Microphone);
+            }
+            else
+            {
+                // display the Android permission screen, with a callback
+                // if user denies permission, our notif screen is still visible
+                // if you want to provide more user feedback, add PermissionDenied callback here
+                var callbacks = new PermissionCallbacks();
+                callbacks.PermissionGranted += StartExperience;
+                Permission.RequestUserPermission(Permission.Microphone, callbacks);
+            }
+        }
+
+        private void StartExperience(string permissionName)
+        {
+            if (permissionName == Permission.Microphone)
+            {
+                foreach (var obj in DemoObjects)
+                {
+                    obj.SetActive(true);
+                }
+
+                if (NotifScreen)
+                {
+                    NotifScreen.SetActive(false);
+                }
             }
         }
     }

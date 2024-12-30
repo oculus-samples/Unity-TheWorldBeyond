@@ -1,70 +1,75 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
-using UnityEngine;
+using TheWorldBeyond.GameManagement;
 using TMPro;
+using UnityEngine;
 
-public class ThoughtBubble : MonoBehaviour
+namespace TheWorldBeyond.VFX
 {
-    public TextMeshProUGUI _thoughtText;
-    public Transform _mainDisplay;
-    public Transform _bubble1;
-    public Transform _bubble2;
-    Vector3 b2Offset = Vector3.zero;
-    float countdownTimer = 0.0f;
-    public Transform _oppyHeadBone;
-    public float scaleMultipier = 0.7f;
-
-    private void Awake()
+    public class ThoughtBubble : MonoBehaviour
     {
-        _thoughtText.fontMaterial.renderQueue = 4501;
-        b2Offset = _bubble2.localPosition;
-    }
-    void Update()
-    {
-        ForceSizeUpdate();
+        public TextMeshProUGUI ThoughtText;
+        public Transform MainDisplay;
+        public Transform Bubble1;
+        public Transform Bubble2;
+        private Vector3 m_b2Offset = Vector3.zero;
+        private float m_countdownTimer = 0.0f;
+        public Transform OppyHeadBone;
+        public float ScaleMultipier = 0.7f;
 
-        // animate things in code
-        _bubble1.transform.localRotation = Quaternion.Euler(0, 0, Time.time * 10);
-        _bubble2.transform.localRotation = Quaternion.Euler(0, 0, -Time.time * 15);
-
-        _bubble1.transform.localPosition = Vector3.right * Mathf.Sin(Time.time * 1.6f) * 0.005f;
-        _bubble2.transform.localPosition = b2Offset + Vector3.right * Mathf.Cos(Time.time * 1.5f) * 0.01f;
-
-        _mainDisplay.transform.localRotation = Quaternion.Euler(0, 0, Mathf.Sin(Time.time) * 5);
-
-        countdownTimer -= Time.deltaTime;
-        if (countdownTimer <= 0.0f)
+        private void Awake()
         {
-            gameObject.SetActive(false);
-        }
-    }
-
-    public void ForceSizeUpdate()
-    {
-        if (_oppyHeadBone)
-        {
-            transform.position = _oppyHeadBone.position - _oppyHeadBone.right * 0.3f;
+            ThoughtText.fontMaterial.renderQueue = 4501;
+            m_b2Offset = Bubble2.localPosition;
         }
 
-        Vector3 objFwd = transform.position - WorldBeyondManager.Instance._mainCamera.transform.position;
+        private void Update()
+        {
+            ForceSizeUpdate();
 
-        // face camera
-        transform.rotation = Quaternion.LookRotation(objFwd, Vector3.up);
+            // animate things in code
+            Bubble1.transform.localRotation = Quaternion.Euler(0, 0, Time.time * 10);
+            Bubble2.transform.localRotation = Quaternion.Euler(0, 0, -Time.time * 15);
 
-        // keep uniform size on screen
-        objFwd.y = 0;
-        transform.localScale = Vector3.one * Mathf.Clamp(objFwd.magnitude * scaleMultipier, 0.8f, 4.0f);
-    }
+            Bubble1.transform.localPosition = Vector3.right * Mathf.Sin(Time.time * 1.6f) * 0.005f;
+            Bubble2.transform.localPosition = m_b2Offset + Vector3.right * Mathf.Cos(Time.time * 1.5f) * 0.01f;
 
-    public void UpdateText(string message, float thoughtDuration = 2)
-    {
-        countdownTimer = thoughtDuration;
-        _thoughtText.text = message;
-    }
+            MainDisplay.transform.localRotation = Quaternion.Euler(0, 0, Mathf.Sin(Time.time) * 5);
 
-    public void ShowHint(float hintDuration = 5)
-    {
-        countdownTimer = hintDuration;
-        _thoughtText.text = "<color=#000000>Ask me to <color=#FF0000>come<color=#000000>, <color=#FF0000>jump <color=#000000>or<br> say <color=#FF0000>hi<color=#000000> to me";
+            m_countdownTimer -= Time.deltaTime;
+            if (m_countdownTimer <= 0.0f)
+            {
+                gameObject.SetActive(false);
+            }
+        }
+
+        public void ForceSizeUpdate()
+        {
+            if (OppyHeadBone)
+            {
+                transform.position = OppyHeadBone.position - OppyHeadBone.right * 0.3f;
+            }
+
+            var objFwd = transform.position - WorldBeyondManager.Instance.MainCamera.transform.position;
+
+            // face camera
+            transform.rotation = Quaternion.LookRotation(objFwd, Vector3.up);
+
+            // keep uniform size on screen
+            objFwd.y = 0;
+            transform.localScale = Vector3.one * Mathf.Clamp(objFwd.magnitude * ScaleMultipier, 0.8f, 4.0f);
+        }
+
+        public void UpdateText(string message, float thoughtDuration = 2)
+        {
+            m_countdownTimer = thoughtDuration;
+            ThoughtText.text = message;
+        }
+
+        public void ShowHint(float hintDuration = 5)
+        {
+            m_countdownTimer = hintDuration;
+            ThoughtText.text = "<color=#000000>Ask me to <color=#FF0000>come<color=#000000>, <color=#FF0000>jump <color=#000000>or<br> say <color=#FF0000>hi<color=#000000> to me";
+        }
     }
 }

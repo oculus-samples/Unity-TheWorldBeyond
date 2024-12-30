@@ -4,190 +4,193 @@ using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class AmbSfx : MonoBehaviour
+namespace TheWorldBeyond.Audio
 {
-    #region PublicVariables
-    [Header("Randomized Positioning")]
-    public bool randomizePosition = true;
-    public Vector3 positionRandomizationOffset;
-
-    [Header("Randomization Timing")]
-    public float triggerTime = 8f;
-    public float triggerTimeVariation = 4f;
-
-    [Header("Playback Behavior")]
-    public bool layered = false;
-    public List<SoundEntry> soundEntryList;
-    public AudioSource audioSource = null;
-    [HideInInspector] public Vector3 _positionToPlayAt;
-
-    [Header("Debug Info")]
-    public bool debugSpheresEnabled;
-    public GameObject RandomizationSphere;
-    #endregion
-
-    #region  Private Variables
-    private SoundEntry _currentSoundEntry;
-    private bool _isPlaying;
-    private float _waitTime;
-    private Vector3 _positionOriginal;
-    private float _timer;
-    private Vector3 _position = default(Vector3);
-    #endregion
-    public Vector3 position
+    public class AmbSfx : MonoBehaviour
     {
-        get
+        #region PublicVariables
+        [Header("Randomized Positioning")]
+        public bool RandomizePosition = true;
+        public Vector3 PositionRandomizationOffset;
+
+        [Header("Randomization Timing")]
+        public float TriggerTime = 8f;
+        public float TriggerTimeVariation = 4f;
+
+        [Header("Playback Behavior")]
+        public bool Layered = false;
+        public List<SoundEntry> SoundEntryList;
+        public AudioSource AudioSource = null;
+        [HideInInspector] public Vector3 PositionToPlayAt;
+
+        [Header("Debug Info")]
+        public bool DebugSpheresEnabled;
+        public GameObject RandomizationSphere;
+        #endregion
+
+        #region  Private Variables
+        private SoundEntry m_currentSoundEntry;
+        private bool m_isPlaying;
+        private float m_waitTime;
+        private Vector3 m_positionOriginal;
+        private float m_timer;
+        private Vector3 m_position = default;
+        #endregion
+        public Vector3 Position
         {
-            if (_position != default(Vector3))
+            get
             {
-                _position = GetComponent<Transform>().position;
+                if (m_position != default)
+                {
+                    m_position = GetComponent<Transform>().position;
+                }
+
+                return m_position;
             }
-
-            return _position;
-        }
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        _positionOriginal = GetComponent<Transform>().position;
-        UpdateDebugSphere();
-        print($"{name} - Original Position: {_positionOriginal}");
-        Play();
-    }
-
-    private float RandomizeNegative(float value)
-    {
-        float mod = 1f;
-        if (Random.Range(-1f, 1f) < 0f)
-        {
-            mod = -1f;
         }
 
-        return mod * value;
-    }
-    private void GenerateNewRandomPosition()
-    {
-        if (!randomizePosition)
+        // Start is called before the first frame update
+        private void Start()
         {
-            return;
-        }
-        float new_x = _positionOriginal.x + RandomizeNegative(Random.Range(0f, positionRandomizationOffset.x));
-        float new_y = _positionOriginal.y + RandomizeNegative(Random.Range(0f, positionRandomizationOffset.y));
-        float new_z = _positionOriginal.z + RandomizeNegative(Random.Range(0f, positionRandomizationOffset.z));
-
-        _positionToPlayAt.x = new_x;
-        _positionToPlayAt.y = new_y;
-        _positionToPlayAt.z = new_z;
-        Debug.LogWarning($"[{name}] - Original Position: {_positionOriginal} <::::> Randomized position: {_positionToPlayAt}");
-    }
-
-    public void Play()
-    {
-        _timer = 0f;
-        RecalculateTriggerTime();
-        _isPlaying = true;
-    }
-
-    public void Stop()
-    {
-        _timer = 0f;
-        _isPlaying = false;
-    }
-
-
-    private void RecalculateTriggerTime()
-    {
-        _waitTime = Random.Range(triggerTime - triggerTimeVariation, triggerTime + triggerTimeVariation);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (!_isPlaying)
-        {
-            return;
-        }
-
-        int i;
-        _timer += Time.deltaTime;
-        if (_timer > _waitTime)
-        {
-            GenerateNewRandomPosition();
-
-            // Debug Sphere
+            m_positionOriginal = GetComponent<Transform>().position;
             UpdateDebugSphere();
-            if (layered)
+            print($"{name} - Original Position: {m_positionOriginal}");
+            Play();
+        }
+
+        private float RandomizeNegative(float value)
+        {
+            var mod = 1f;
+            if (Random.Range(-1f, 1f) < 0f)
             {
-                // Play all sounds from the sound entry list
-                for (i = 0; i < soundEntryList.Count; i++)
-                {
-                    _currentSoundEntry = null;
-                    soundEntryList[i].Play(_positionToPlayAt);
-                }
-            }
-            else
-            {
-                // Pick a random sound from the sound entry list
-                _currentSoundEntry = soundEntryList[Random.Range(0, soundEntryList.Count)];
-                _currentSoundEntry.Play(_positionToPlayAt);
+                mod = -1f;
             }
 
-            _timer = 0f;
-            RecalculateTriggerTime();
+            return mod * value;
         }
-    }
-
-    public void SetBlockedByWall(bool blocked)
-    {
-        if (layered)
+        private void GenerateNewRandomPosition()
         {
-            for (var i = 0; i < soundEntryList.Count; i++)
-            {
-                if (blocked)
-                {
-                    soundEntryList[i].SetVolume(0f);
-                }
-                else
-                {
-                    soundEntryList[i].ResetVolume();
-                }
-            }
-        }
-        else
-        {
-            if (!_currentSoundEntry)
+            if (!RandomizePosition)
             {
                 return;
             }
-            if (blocked)
+            var new_x = m_positionOriginal.x + RandomizeNegative(Random.Range(0f, PositionRandomizationOffset.x));
+            var new_y = m_positionOriginal.y + RandomizeNegative(Random.Range(0f, PositionRandomizationOffset.y));
+            var new_z = m_positionOriginal.z + RandomizeNegative(Random.Range(0f, PositionRandomizationOffset.z));
+
+            PositionToPlayAt.x = new_x;
+            PositionToPlayAt.y = new_y;
+            PositionToPlayAt.z = new_z;
+            Debug.LogWarning($"[{name}] - Original Position: {m_positionOriginal} <::::> Randomized Position: {PositionToPlayAt}");
+        }
+
+        public void Play()
+        {
+            m_timer = 0f;
+            RecalculateTriggerTime();
+            m_isPlaying = true;
+        }
+
+        public void Stop()
+        {
+            m_timer = 0f;
+            m_isPlaying = false;
+        }
+
+
+        private void RecalculateTriggerTime()
+        {
+            m_waitTime = Random.Range(TriggerTime - TriggerTimeVariation, TriggerTime + TriggerTimeVariation);
+        }
+
+        // Update is called once per frame
+        private void Update()
+        {
+            if (!m_isPlaying)
             {
-                _currentSoundEntry.SetVolume(0f);
+                return;
+            }
+
+            int i;
+            m_timer += Time.deltaTime;
+            if (m_timer > m_waitTime)
+            {
+                GenerateNewRandomPosition();
+
+                // Debug Sphere
+                UpdateDebugSphere();
+                if (Layered)
+                {
+                    // Play all sounds from the sound entry list
+                    for (i = 0; i < SoundEntryList.Count; i++)
+                    {
+                        m_currentSoundEntry = null;
+                        SoundEntryList[i].Play(PositionToPlayAt);
+                    }
+                }
+                else
+                {
+                    // Pick a random sound from the sound entry list
+                    m_currentSoundEntry = SoundEntryList[Random.Range(0, SoundEntryList.Count)];
+                    m_currentSoundEntry.Play(PositionToPlayAt);
+                }
+
+                m_timer = 0f;
+                RecalculateTriggerTime();
+            }
+        }
+
+        public void SetBlockedByWall(bool blocked)
+        {
+            if (Layered)
+            {
+                for (var i = 0; i < SoundEntryList.Count; i++)
+                {
+                    if (blocked)
+                    {
+                        SoundEntryList[i].SetVolume(0f);
+                    }
+                    else
+                    {
+                        SoundEntryList[i].ResetVolume();
+                    }
+                }
             }
             else
             {
-                _currentSoundEntry.ResetVolume();
+                if (!m_currentSoundEntry)
+                {
+                    return;
+                }
+                if (blocked)
+                {
+                    m_currentSoundEntry.SetVolume(0f);
+                }
+                else
+                {
+                    m_currentSoundEntry.ResetVolume();
+                }
             }
         }
-    }
 
-    private void UpdateDebugSphere()
-    {
-        if (!RandomizationSphere)
+        private void UpdateDebugSphere()
         {
-            return;
-        }
+            if (!RandomizationSphere)
+            {
+                return;
+            }
 
-        if (!debugSpheresEnabled)
-        {
-            RandomizationSphere.SetActive(false);
-            return;
+            if (!DebugSpheresEnabled)
+            {
+                RandomizationSphere.SetActive(false);
+                return;
+            }
+            RandomizationSphere.SetActive(true);
+            var transformScale = RandomizationSphere.transform.lossyScale;
+            transformScale.x = PositionRandomizationOffset.x * 2;
+            transformScale.y = PositionRandomizationOffset.y * 2;
+            transformScale.z = PositionRandomizationOffset.z * 2;
+            RandomizationSphere.transform.localScale = transformScale;
         }
-        RandomizationSphere.SetActive(true);
-        var transformScale = RandomizationSphere.transform.lossyScale;
-        transformScale.x = positionRandomizationOffset.x * 2;
-        transformScale.y = positionRandomizationOffset.y * 2;
-        transformScale.z = positionRandomizationOffset.z * 2;
-        RandomizationSphere.transform.localScale = transformScale;
     }
 }

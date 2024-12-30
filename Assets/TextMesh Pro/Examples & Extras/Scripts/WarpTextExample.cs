@@ -52,7 +52,7 @@ namespace TMPro.Examples
             Vector3[] vertices;
             Matrix4x4 matrix;
 
-            m_TextComponent.havePropertiesChanged = true; // Need to force the TextMeshPro Object to be updated.
+            m_TextComponent.havePropertiesChanged = true; // Need to m_force the TextMeshPro Object to be updated.
             CurveScale *= 10;
             float old_CurveScale = CurveScale;
             AnimationCurve old_curve = CopyAnimationCurve(VertexCurve);
@@ -107,7 +107,7 @@ namespace TMPro.Examples
                     vertices[vertexIndex + 3] += -offsetToMidBaseline;
 
                     // Compute the angle of rotation for each character based on the animation curve
-                    float x0 = (offsetToMidBaseline.x - boundsMinX) / (boundsMaxX - boundsMinX); // Character's position relative to the bounds of the mesh.
+                    float x0 = (offsetToMidBaseline.x - boundsMinX) / (boundsMaxX - boundsMinX); // Character's Position relative to the bounds of the mesh.
                     float x1 = x0 + 0.0001f;
                     float y0 = VertexCurve.Evaluate(x0) * CurveScale;
                     float y1 = VertexCurve.Evaluate(x1) * CurveScale;

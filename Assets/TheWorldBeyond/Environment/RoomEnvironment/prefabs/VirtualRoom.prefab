@@ -25,12 +25,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3490246368697302982}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7534386722001396886
 MonoBehaviour:
@@ -44,10 +45,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 767d9276fe17cb242be9d19856167730, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _anchorPrefab: {fileID: 4350422998566360405, guid: af5e4d497301619449e0573c9155a296, type: 3}
-  _edgePrefab: {fileID: 2926639975604320003, guid: 976511d7c653df3419c672342c6de9e3, type: 3}
-  _sceneMesher: {fileID: 7410720407653810764}
-  _edgeIntensity:
+  AnchorPrefab: {fileID: 4350422998566360405, guid: af5e4d497301619449e0573c9155a296, type: 3}
+  EdgePrefab: {fileID: 2926639975604320003, guid: 976511d7c653df3419c672342c6de9e3, type: 3}
+  SceneMesher: {fileID: 7410720407653810764}
+  EdgeIntensity:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
@@ -92,10 +93,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18890a827576a094e951a4b77f25de88, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _MeshMaterial: {fileID: 2100000, guid: 79615458149184b47a963a27b26fd6d9, type: 2}
-  _createDebugRoom: 0
-  _borderSize: 0.1
-  _mappingInWorldUnits: 0
-  _debugSplinePoints: []
-  _debugFurnishings: []
-  _debugQuads: []
+  MeshMaterial: {fileID: 2100000, guid: 79615458149184b47a963a27b26fd6d9, type: 2}
+  CreateDebugRoom: 0
+  BorderSize: 0.1
+  MappingInWorldUnits: 0
+  DebugSplinePoints: []
+  DebugFurnishings: []
+  DebugQuads: []

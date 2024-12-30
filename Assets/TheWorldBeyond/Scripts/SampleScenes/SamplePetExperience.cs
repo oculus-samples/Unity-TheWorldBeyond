@@ -3,56 +3,58 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-public class SamplePetExperience : MonoBehaviour
+namespace TheWorldBeyond.SampleScenes
 {
-    public OVRSceneManager _sceneManager;
-    bool _roomReady = false;
-
-    // build the nav mesh when Scene is detected
-    public NavMeshSurface _ground;
-    public NavMeshAgent _agent;
-
-    // the point on the ground where your controller points
-    public Transform _targetingIcon;
-    public LayerMask _sceneLayer;
-
-    void Awake()
+    public class SamplePetExperience : MonoBehaviour
     {
-        _agent.SetDestination(Vector3.zero);
-        _agent.updateRotation = false;
+        public OVRSceneManager SceneManager;
+        private bool m_roomReady = false;
 
-        _sceneManager.SceneModelLoadedSuccessfully += InitializeRoom;
-    }
+        // build the nav mesh when Scene is detected
+        public NavMeshSurface Ground;
+        public NavMeshAgent Agent;
 
-    void InitializeRoom()
-    {
-        _ground.BuildNavMesh();
-        _roomReady = true;
-    }
+        // the point on the ground where your controller points
+        public Transform TargetingIcon;
+        public LayerMask SceneLayer;
 
-    void Update()
-    {
-        if (!_roomReady)
+        private void Awake()
         {
-            return;
+            _ = Agent.SetDestination(Vector3.zero);
+            Agent.updateRotation = false;
+
+            SceneManager.SceneModelLoadedSuccessfully += InitializeRoom;
         }
 
-        RaycastHit hitInfo;
-        Vector3 rayPos = OVRInput.GetLocalControllerPosition(OVRInput.Controller.RTouch);
-        Vector3 rayFwd = OVRInput.GetLocalControllerRotation(OVRInput.Controller.RTouch) * Vector3.forward;
-        if (Physics.Raycast(rayPos, rayFwd, out hitInfo, 1000.0f, _sceneLayer))
+        private void InitializeRoom()
         {
-            // if hitting a vertical surface, drop quad to the floor
-            float iconHeight = Mathf.Abs(Vector3.Dot(Vector3.up, hitInfo.normal)) < 0.5f ? 0 : hitInfo.point.y;
-            // offset quad a bit so it doesn't z-flicker
-            _targetingIcon.position = new Vector3(hitInfo.point.x, iconHeight + 0.01f, hitInfo.point.z);
+            Ground.BuildNavMesh();
+            m_roomReady = true;
         }
 
-        bool pressingButton = OVRInput.Get(OVRInput.RawButton.RIndexTrigger) || OVRInput.Get(OVRInput.RawButton.A);
-        if (pressingButton)
+        private void Update()
         {
-            _agent.SetDestination(_targetingIcon.position);
+            if (!m_roomReady)
+            {
+                return;
+            }
+
+            var rayPos = OVRInput.GetLocalControllerPosition(OVRInput.Controller.RTouch);
+            var rayFwd = OVRInput.GetLocalControllerRotation(OVRInput.Controller.RTouch) * Vector3.forward;
+            if (Physics.Raycast(rayPos, rayFwd, out var hitInfo, 1000.0f, SceneLayer))
+            {
+                // if hitting a vertical surface, drop quad to the floor
+                var iconHeight = Mathf.Abs(Vector3.Dot(Vector3.up, hitInfo.normal)) < 0.5f ? 0 : hitInfo.point.y;
+                // offset quad a bit so it doesn't z-flicker
+                TargetingIcon.position = new Vector3(hitInfo.point.x, iconHeight + 0.01f, hitInfo.point.z);
+            }
+
+            var pressingButton = OVRInput.Get(OVRInput.RawButton.RIndexTrigger) || OVRInput.Get(OVRInput.RawButton.A);
+            if (pressingButton)
+            {
+                _ = Agent.SetDestination(TargetingIcon.position);
+            }
+            TargetingIcon.localScale = Vector3.one * (pressingButton ? 0.6f : 0.5f);
         }
-        _targetingIcon.localScale = Vector3.one * (pressingButton ? 0.6f : 0.5f);
     }
 }

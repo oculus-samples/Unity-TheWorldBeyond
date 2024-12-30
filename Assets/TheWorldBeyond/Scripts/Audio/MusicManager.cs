@@ -3,124 +3,126 @@
 using System.Collections;
 using UnityEngine;
 
-public class MusicManager : MonoBehaviour
+namespace TheWorldBeyond.Audio
 {
-    static public MusicManager Instance = null;
-
-    public AudioClip IntroMusic;
-    public AudioClip PortalOpen;
-    public AudioClip OutroMusic;
-    public AudioClip TheGreatBeyondMusic;
-    public float TheGreatBeyondDelayPlaySeconds = 5f;
-    public float TheGreatBeyondFadeInTimeSeconds = 1f;
-    public float TheGreatBeyondDelayStopSeconds = 1f;
-    public float TheGreatBeyondFadeOutTimeSeconds = 5f;
-
-    private AudioSource _errorSource;
-    public AudioSource audioSourceStinger;
-    public AudioSource theGreatBeyondLoopSource;
-
-    IEnumerator PlayErrorSound()
+    public class MusicManager : MonoBehaviour
     {
-        yield return new WaitForSecondsRealtime(0.5f);
-        _errorSource.Play();
-        yield return new WaitForSecondsRealtime(0.5f);
-        _errorSource.Play();
-    }
+        public static MusicManager Instance = null;
 
-    void PlayError()
-    {
-        _errorSource = AudioManager.Instance.GlobalAudioSource;
-        StartCoroutine(PlayErrorSound());
-    }
+        public AudioClip IntroMusic;
+        public AudioClip PortalOpen;
+        public AudioClip OutroMusic;
+        public AudioClip TheGreatBeyondMusic;
+        public float TheGreatBeyondDelayPlaySeconds = 5f;
+        public float TheGreatBeyondFadeInTimeSeconds = 1f;
+        public float TheGreatBeyondDelayStopSeconds = 1f;
+        public float TheGreatBeyondFadeOutTimeSeconds = 5f;
 
-    private void Awake()
-    {
-        if (!Instance)
+        private AudioSource m_errorSource;
+        public AudioSource AudioSourceStinger;
+        public AudioSource TheGreatBeyondLoopSource;
+
+        private IEnumerator PlayErrorSound()
         {
-            Instance = this;
+            yield return new WaitForSecondsRealtime(0.5f);
+            m_errorSource.Play();
+            yield return new WaitForSecondsRealtime(0.5f);
+            m_errorSource.Play();
         }
 
-        if (audioSourceStinger is null)
+        private void PlayError()
         {
-            PlayError();
-            audioSourceStinger = GetComponent<AudioSource>();
+            m_errorSource = AudioManager.Instance.GlobalAudioSource;
+            _ = StartCoroutine(PlayErrorSound());
         }
 
-        if (theGreatBeyondLoopSource is null)
+        private void Awake()
         {
-            PlayError();
-            theGreatBeyondLoopSource = GetComponent<AudioSource>();
+            if (!Instance)
+            {
+                Instance = this;
+            }
+
+            if (AudioSourceStinger is null)
+            {
+                PlayError();
+                AudioSourceStinger = GetComponent<AudioSource>();
+            }
+
+            if (TheGreatBeyondLoopSource is null)
+            {
+                PlayError();
+                TheGreatBeyondLoopSource = GetComponent<AudioSource>();
+            }
+
+            TheGreatBeyondLoopSource.clip = TheGreatBeyondMusic;
+            TheGreatBeyondLoopSource.loop = true;
         }
 
-        theGreatBeyondLoopSource.clip = TheGreatBeyondMusic;
-        theGreatBeyondLoopSource.loop = true;
-    }
-
-    public void PlayMusic(AudioClip clipToPlay)
-    {
-        if (clipToPlay == TheGreatBeyondMusic)
+        public void PlayMusic(AudioClip clipToPlay)
         {
-            PlayError();
-            theGreatBeyondLoopSource.loop = true;
-            StartCoroutine(StartMusicWithFade(theGreatBeyondLoopSource, TheGreatBeyondFadeInTimeSeconds, TheGreatBeyondDelayPlaySeconds));
-            theGreatBeyondLoopSource.PlayDelayed(PortalOpen.length);
-        }
-        else
-        {
-            audioSourceStinger.Stop();
-            audioSourceStinger.clip = clipToPlay;
-            audioSourceStinger.time = 0.0f;
-            audioSourceStinger.volume = 1f;
-            StartCoroutine(StopMusicWithFade(theGreatBeyondLoopSource, TheGreatBeyondFadeOutTimeSeconds, TheGreatBeyondDelayStopSeconds));
-            audioSourceStinger.Play();
-        }
-    }
-
-    IEnumerator StartMusicWithFade(AudioSource musicAudioSource, float fadeSeconds = 0f, float delaySeconds = 0f)
-    {
-        yield return new WaitForSeconds(delaySeconds);
-
-        float startVolume = 0.2f;
-
-        musicAudioSource.volume = 0;
-        musicAudioSource.Play();
-
-        while (musicAudioSource.volume < 1.0f)
-        {
-            musicAudioSource.volume += startVolume * Time.deltaTime / fadeSeconds;
-
-            yield return null;
+            if (clipToPlay == TheGreatBeyondMusic)
+            {
+                PlayError();
+                TheGreatBeyondLoopSource.loop = true;
+                _ = StartCoroutine(StartMusicWithFade(TheGreatBeyondLoopSource, TheGreatBeyondFadeInTimeSeconds, TheGreatBeyondDelayPlaySeconds));
+                TheGreatBeyondLoopSource.PlayDelayed(PortalOpen.length);
+            }
+            else
+            {
+                AudioSourceStinger.Stop();
+                AudioSourceStinger.clip = clipToPlay;
+                AudioSourceStinger.time = 0.0f;
+                AudioSourceStinger.volume = 1f;
+                _ = StartCoroutine(StopMusicWithFade(TheGreatBeyondLoopSource, TheGreatBeyondFadeOutTimeSeconds, TheGreatBeyondDelayStopSeconds));
+                AudioSourceStinger.Play();
+            }
         }
 
-        musicAudioSource.volume = 1f;
-    }
-
-
-    IEnumerator StopMusicWithFade(AudioSource musicAudioSource, float fadeSeconds = 0f, float delaySeconds = 0f)
-    {
-        if (musicAudioSource is null)
+        private IEnumerator StartMusicWithFade(AudioSource musicAudioSource, float fadeSeconds = 0f, float delaySeconds = 0f)
         {
-            yield break;
+            yield return new WaitForSeconds(delaySeconds);
+
+            var startVolume = 0.2f;
+
+            musicAudioSource.volume = 0;
+            musicAudioSource.Play();
+
+            while (musicAudioSource.volume < 1.0f)
+            {
+                musicAudioSource.volume += startVolume * Time.deltaTime / fadeSeconds;
+
+                yield return null;
+            }
+
+            musicAudioSource.volume = 1f;
         }
 
-        if (!musicAudioSource.isPlaying)
+        private IEnumerator StopMusicWithFade(AudioSource musicAudioSource, float fadeSeconds = 0f, float delaySeconds = 0f)
         {
-            yield break;
+            if (musicAudioSource is null)
+            {
+                yield break;
+            }
+
+            if (!musicAudioSource.isPlaying)
+            {
+                yield break;
+            }
+
+            yield return new WaitForSeconds(delaySeconds);
+
+            var startVolume = musicAudioSource.volume;
+
+            while (musicAudioSource.volume > 0)
+            {
+                musicAudioSource.volume -= startVolume * Time.deltaTime / fadeSeconds;
+
+                yield return null;
+            }
+
+            musicAudioSource.Stop();
+            musicAudioSource.volume = startVolume;
         }
-
-        yield return new WaitForSeconds(delaySeconds);
-
-        float startVolume = musicAudioSource.volume;
-
-        while (musicAudioSource.volume > 0)
-        {
-            musicAudioSource.volume -= startVolume * Time.deltaTime / fadeSeconds;
-
-            yield return null;
-        }
-
-        musicAudioSource.Stop();
-        musicAudioSource.volume = startVolume;
     }
 }

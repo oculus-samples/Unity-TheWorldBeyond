@@ -2,41 +2,44 @@
 
 using UnityEngine;
 
-public class BallDebris : MonoBehaviour
+namespace TheWorldBeyond.VFX
 {
-    bool _dead = false;
-    float _deathTimer = 0.5f;
-    float _maxAbsorbStrength = 7.0f;
-    public Rigidbody _rigidBody;
-
-    void Update()
+    public class BallDebris : MonoBehaviour
     {
-        if (_dead)
+        private bool m_dead = false;
+        private float m_deathTimer = 0.5f;
+        private float m_maxAbsorbStrength = 7.0f;
+        public Rigidbody RigidBody;
+
+        private void Update()
         {
-            // shrink into oblivion
-            _deathTimer -= Time.deltaTime * 0.5f;
-            if (_deathTimer <= 0.0f)
+            if (m_dead)
             {
-                Destroy(this.gameObject);
-            }
-            else
-            {
-                transform.localScale = _deathTimer * Vector3.one;
+                // shrink into oblivion
+                m_deathTimer -= Time.deltaTime * 0.5f;
+                if (m_deathTimer <= 0.0f)
+                {
+                    Destroy(gameObject);
+                }
+                else
+                {
+                    transform.localScale = m_deathTimer * Vector3.one;
+                }
             }
         }
-    }
 
-    public void Kill()
-    {
-        if (!_dead)
+        public void Kill()
         {
-            _deathTimer = transform.localScale.x;
-            _dead = true;
+            if (!m_dead)
+            {
+                m_deathTimer = transform.localScale.x;
+                m_dead = true;
+            }
         }
-    }
 
-    public void AddForce(Vector3 direction, float absorbScale)
-    {
-        _rigidBody.AddForce(direction * absorbScale * _maxAbsorbStrength, ForceMode.Force);
+        public void AddForce(Vector3 direction, float absorbScale)
+        {
+            RigidBody.AddForce(direction * absorbScale * m_maxAbsorbStrength, ForceMode.Force);
+        }
     }
 }

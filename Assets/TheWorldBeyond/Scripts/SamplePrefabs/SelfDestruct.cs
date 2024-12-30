@@ -2,16 +2,19 @@
 
 using UnityEngine;
 
-public class SelfDestruct : MonoBehaviour
+namespace TheWorldBeyond.SamplePrefabs
 {
-    public float _selfDestructionTimer = 5.0f;
-
-    void Update()
+    public class SelfDestruct : MonoBehaviour
     {
-        _selfDestructionTimer -= Time.deltaTime;
-        if (_selfDestructionTimer <= 0.0f)
+        public float SelfDestructionTimer = 5.0f;
+
+        private void Update()
         {
-            Destroy(this.gameObject);
+            SelfDestructionTimer -= Time.deltaTime;
+            if (SelfDestructionTimer <= 0.0f)
+            {
+                Destroy(gameObject);
+            }
         }
     }
 }

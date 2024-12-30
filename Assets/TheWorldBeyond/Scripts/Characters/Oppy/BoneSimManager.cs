@@ -2,58 +2,61 @@
 
 using UnityEngine;
 
-public class BoneSimManager : MonoBehaviour
+namespace TheWorldBeyond.Character.Oppy
 {
-    public int EditorFrameRate = 72;
-
-    public BoneSim[] BoneSims;
-
-    private void Awake()
+    public class BoneSimManager : MonoBehaviour
     {
-        for (int i = 0; i < BoneSims.Length; i++)
-        {
-            BoneSims[i].OrderedEvaluation = true;
-        }
-    }
+        public int EditorFrameRate = 72;
 
-    private void Start()
-    {
-        if (Application.isEditor)
-        {
-            Application.targetFrameRate = EditorFrameRate;
-        }
-    }
+        public BoneSim[] BoneSims;
 
-    private void OnEnable()
-    {
-        for (int i = 0; i < BoneSims.Length; i++)
+        private void Awake()
         {
-            if (BoneSims[i].isActiveAndEnabled)
+            for (var i = 0; i < BoneSims.Length; i++)
             {
                 BoneSims[i].OrderedEvaluation = true;
-                BoneSims[i].Init();
             }
         }
-    }
 
-    private void OnDisable()
-    {
-        for (int i = 0; i < BoneSims.Length; i++)
+        private void Start()
         {
-            if (BoneSims[i].isActiveAndEnabled)
+            if (Application.isEditor)
             {
-                BoneSims[i].OrderedEvaluation = false;
+                Application.targetFrameRate = EditorFrameRate;
             }
         }
-    }
 
-    private void LateUpdate()
-    {
-        for (int i = 0; i < BoneSims.Length; i++)
+        private void OnEnable()
         {
-            if (BoneSims[i].isActiveAndEnabled)
+            for (var i = 0; i < BoneSims.Length; i++)
             {
-                BoneSims[i].Tick();
+                if (BoneSims[i].isActiveAndEnabled)
+                {
+                    BoneSims[i].OrderedEvaluation = true;
+                    BoneSims[i].Init();
+                }
+            }
+        }
+
+        private void OnDisable()
+        {
+            for (var i = 0; i < BoneSims.Length; i++)
+            {
+                if (BoneSims[i].isActiveAndEnabled)
+                {
+                    BoneSims[i].OrderedEvaluation = false;
+                }
+            }
+        }
+
+        private void LateUpdate()
+        {
+            for (var i = 0; i < BoneSims.Length; i++)
+            {
+                if (BoneSims[i].isActiveAndEnabled)
+                {
+                    BoneSims[i].Tick();
+                }
             }
         }
     }
