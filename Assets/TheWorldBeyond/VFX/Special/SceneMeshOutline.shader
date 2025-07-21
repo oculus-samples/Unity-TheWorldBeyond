@@ -1,6 +1,7 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
-Shader "TheWorldBeyond/SceneMeshOutline" {
+Shader "TheWorldBeyond/SceneMeshOutline"
+{
     Properties
     {
         _EdgeColor("Edge Color", Color) = (1,1,1,1)
@@ -11,80 +12,85 @@ Shader "TheWorldBeyond/SceneMeshOutline" {
         _CeilingHeight("CeilingHeight", float) = 1
         [IntRange] _StencilRef("Stencil Reference Value", Range(0, 255)) = 0
     }
-        SubShader
+    SubShader
     {
-        Stencil{
-                Ref[_StencilRef]
-                Comp NotEqual
+        Stencil
+        {
+            Ref[_StencilRef]
+            Comp NotEqual
         }
-        Tags { "Queue" = "Transparent" }
+        Tags
+        {
+            "Queue" = "Transparent"
+        }
         LOD 100
         BlendOp Add, Max
         Blend One Zero, One One
 
         // First Pass: render outside shell of hand, as depth object
-        Pass {
-        ColorMask 0 Blend SrcAlpha OneMinusSrcAlpha CGPROGRAM
+        Pass
+        {
+            ColorMask 0 Blend SrcAlpha OneMinusSrcAlpha
+            CGPROGRAM
 #pragma vertex vert
 #pragma fragment frag
-        // make fog work
-        #pragma multi_compile_fog
+            // make fog work
+#pragma multi_compile_fog
 
-        #include "UnityCG.cginc"
+#include "UnityCG.cginc"
 
-           struct appdata {
+            struct appdata {
                 float4 vertex : POSITION;
                 float2 uv : TEXCOORD0;
                 UNITY_VERTEX_INPUT_INSTANCE_ID
-              };
+            };
 
-           struct v2f {
+            struct v2f {
                 float2 uv : TEXCOORD0;
                 UNITY_FOG_COORDS(1)
                 float4 vertex : SV_POSITION;
-				UNITY_VERTEX_INPUT_INSTANCE_ID
+                UNITY_VERTEX_INPUT_INSTANCE_ID
                 UNITY_VERTEX_OUTPUT_STEREO
-              };
+            };
 
-              v2f vert(appdata v) {
+            v2f vert(appdata v) {
                 v2f o;
                 UNITY_SETUP_INSTANCE_ID(v);
-				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
-				UNITY_TRANSFER_INSTANCE_ID(v, o);
-                o.vertex = UnityObjectToClipPos(v.vertex);
+                UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(
+                        o);
+                UNITY_TRANSFER_INSTANCE_ID(v, o);
+                o.vertex = UnityObjectToClipPos(
+                        v.vertex);
                 o.uv = v.uv;
                 UNITY_TRANSFER_FOG(o, o.vertex);
                 return o;
-              }
-
-              fixed4 frag(v2f i) : SV_Target {
-                float4 mask = float4(1,1,1,0);
-                return mask;
-              }
-              ENDCG
             }
 
+            fixed4 frag(v2f i) : SV_Target {
+                float4 mask = float4(1, 1, 1, 0);
+                return mask;
+            }
+            ENDCG
+        }
 
         Pass
         {
             CGPROGRAM
-            #pragma vertex vert
-            #pragma fragment frag
+#pragma vertex vert
+#pragma fragment frag
             // make fog work
-            #pragma multi_compile_fog
+#pragma multi_compile_fog
 
-            #include "UnityCG.cginc"
+#include "UnityCG.cginc"
 
-            struct appdata
-            {
+            struct appdata {
                 float4 vertex : POSITION;
                 float2 uv : TEXCOORD0;
                 float4 color : COLOR;
                 UNITY_VERTEX_INPUT_INSTANCE_ID
             };
 
-            struct v2f
-            {
+            struct v2f {
                 float2 uv : TEXCOORD0;
                 float4 color : TEXCOORD1;
                 float4 vertWorld : TEXCOORD2;
@@ -101,26 +107,25 @@ Shader "TheWorldBeyond/SceneMeshOutline" {
             float _EdgeTimeline;
             float _CeilingHeight;
 
-            v2f vert(appdata v)
-            {
+            v2f vert(appdata v) {
                 v2f o;
                 UNITY_SETUP_INSTANCE_ID(v);
-				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
-				UNITY_TRANSFER_INSTANCE_ID(v, o);
+                UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
+                UNITY_TRANSFER_INSTANCE_ID(v, o);
                 o.vertex = UnityObjectToClipPos(v.vertex);
                 o.vertex = UnityObjectToClipPos(v.vertex);
                 o.uv = v.uv;
                 o.color = v.color;
                 o.vertWorld = mul(unity_ObjectToWorld, v.vertex);
-                UNITY_TRANSFER_FOG(o,o.vertex);
+                UNITY_TRANSFER_FOG(o, o.vertex);
                 return o;
             }
 
-            fixed4 frag(v2f i) : SV_Target
-            {
+            fixed4 frag(v2f i) : SV_Target {
                 float glow = 1 - pow(i.color.r, 0.2);
                 float stroke = 1 - step(0.03, i.color.r);
-                float edgeReveal = (i.vertWorld.y*10) + (_EdgeTimeline * 11 *_CeilingHeight) - (_CeilingHeight*10);
+                float edgeReveal = (i.vertWorld.y * 10) + (_EdgeTimeline * 11 * _CeilingHeight) - (
+                    _CeilingHeight * 10);
 
                 float edgeEffect = saturate(glow * 0.5 + stroke);
                 float4 col = edgeEffect * _EffectIntensity * _EdgeColor * saturate(edgeReveal);

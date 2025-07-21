@@ -1,6 +1,7 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
-Shader "TheWorldBeyond/EdgePassthroughParticle" {
+Shader "TheWorldBeyond/EdgePassthroughParticle"
+{
     Properties
     {
         _MainTex("Texture", 2D) = "white" {}
@@ -18,7 +19,10 @@ Shader "TheWorldBeyond/EdgePassthroughParticle" {
 
     SubShader
     {
-        Tags { "RenderType" = "Transparent" }
+        Tags
+        {
+            "RenderType" = "Transparent"
+        }
         LOD 100
 
         Pass
@@ -29,21 +33,19 @@ Shader "TheWorldBeyond/EdgePassthroughParticle" {
             Blend OneMinusSrcAlpha One, One One
 
             CGPROGRAM
-            #pragma vertex vert
-            #pragma fragment frag
+#pragma vertex vert
+#pragma fragment frag
 
-            #include "UnityCG.cginc"
+#include "UnityCG.cginc"
 
-            struct appdata
-            {
+            struct appdata {
                 float4 vertex : POSITION;
                 float2 uv : TEXCOORD0;
                 float3 normal : NORMAL;
                 UNITY_VERTEX_INPUT_INSTANCE_ID
             };
 
-            struct v2f
-            {
+            struct v2f {
                 float2 uv : TEXCOORD0;
                 float4 vertex : SV_POSITION;
                 float3 worldPos : TEXCOORD1;
@@ -58,8 +60,7 @@ Shader "TheWorldBeyond/EdgePassthroughParticle" {
             uniform float _EffectTimer;
             uniform float _InvertedMask;
 
-            v2f vert(appdata v)
-            {
+            v2f vert(appdata v) {
                 v2f o;
                 UNITY_SETUP_INSTANCE_ID(v);
                 UNITY_INITIALIZE_OUTPUT(v2f, o);
@@ -71,8 +72,7 @@ Shader "TheWorldBeyond/EdgePassthroughParticle" {
                 return o;
             }
 
-            fixed4 frag(v2f i) : SV_Target
-            {
+            fixed4 frag(v2f i) : SV_Target {
                 fixed4 col = tex2D(_MainTex, i.uv);
 
                 float radialDist = distance(i.worldPos, _EffectPosition) * 10;
@@ -83,7 +83,7 @@ Shader "TheWorldBeyond/EdgePassthroughParticle" {
                 }
 
                 float alpha = lerp(dist, 1 - dist, _InvertedMask);
-                return float4(_Color.r, _Color.g, _Color.b, 1-(alpha * col.r));
+                return float4(_Color.r, _Color.g, _Color.b, 1 - (alpha * col.r));
             }
             ENDCG
         }

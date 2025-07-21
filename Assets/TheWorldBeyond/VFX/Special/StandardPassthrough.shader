@@ -1,6 +1,7 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
-Shader "TheWorldBeyond/StandardPassthrough" {
+Shader "TheWorldBeyond/StandardPassthrough"
+{
     Properties
     {
         _MainTex("Texture", 2D) = "white" {}
@@ -13,65 +14,65 @@ Shader "TheWorldBeyond/StandardPassthrough" {
         [Enum(UnityEngine.Rendering.BlendOp)] _BlendOpColor("Blend Color", Float) = 2 //"ReverseSubtract"
         [Enum(UnityEngine.Rendering.BlendOp)] _BlendOpAlpha("Blend Alpha", Float) = 3 //"Min"
     }
-        SubShader
+    SubShader
+    {
+        Tags
         {
-            Tags { "RenderType" = "Transparent" }
-            LOD 100
+            "RenderType" = "Transparent"
+        }
+        LOD 100
 
-            Pass
-            {
-                Cull[_Cull]
-                ZWrite[_ZWrite]
-                ZTest[_ZTest]
-                BlendOp[_BlendOpColor],[_BlendOpAlpha]
-                Blend Zero One, One One
+        Pass
+        {
+            Cull[_Cull]
+            ZWrite[_ZWrite]
+            ZTest[_ZTest]
+            BlendOp[_BlendOpColor],[_BlendOpAlpha]
+            Blend Zero One, One One
 
-                CGPROGRAM
+            CGPROGRAM
             // Upgrade NOTE: excluded shader from DX11; has structs without semantics (struct v2f members center)
             //#pragma exclude_renderers d3d11
-                        #pragma vertex vert
-                        #pragma fragment frag
+#pragma vertex vert
+#pragma fragment frag
 
-                        #include "UnityCG.cginc"
+#include "UnityCG.cginc"
 
-                        struct appdata
-                        {
-                            float4 vertex : POSITION;
-                            float2 uv : TEXCOORD0;
-                            float3 normal : NORMAL;
-                            UNITY_VERTEX_INPUT_INSTANCE_ID
-                        };
+            struct appdata {
+                float4 vertex : POSITION;
+                float2 uv : TEXCOORD0;
+                float3 normal : NORMAL;
+                UNITY_VERTEX_INPUT_INSTANCE_ID
+            };
 
-                        struct v2f
-                        {
-                            float2 uv : TEXCOORD0;
-                            float4 vertex : SV_POSITION;
-        					UNITY_VERTEX_INPUT_INSTANCE_ID
-                            UNITY_VERTEX_OUTPUT_STEREO
-                        };
+            struct v2f {
+                float2 uv : TEXCOORD0;
+                float4 vertex : SV_POSITION;
+                UNITY_VERTEX_INPUT_INSTANCE_ID
+                UNITY_VERTEX_OUTPUT_STEREO
+            };
 
-                        sampler2D _MainTex;
-                        float4 _MainTex_ST;
-                        float _InvertedAlpha;
+            sampler2D _MainTex;
+            float4 _MainTex_ST;
+            float _InvertedAlpha;
 
-                        v2f vert(appdata v)
-                        {
-                            v2f o;
-                            UNITY_SETUP_INSTANCE_ID(v);
-				            UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
-				            UNITY_TRANSFER_INSTANCE_ID(v, o);
-                            o.vertex = UnityObjectToClipPos(v.vertex);
-                            float4 origin = mul(unity_ObjectToWorld, float4(0.0, 0.0, 0.0, 1.0));
-                            o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-                            return o;
-                        }
+            v2f vert(appdata v) {
+                v2f o;
+                UNITY_SETUP_INSTANCE_ID(v);
+                UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
+                UNITY_TRANSFER_INSTANCE_ID(v, o);
+                o.vertex = UnityObjectToClipPos(v.vertex);
+                float4 origin = mul(unity_ObjectToWorld, float4(0.0, 0.0, 0.0, 1.0));
+                o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+                return o;
+            }
 
-                        fixed4 frag(v2f i) : SV_Target {
-                            fixed4 col = tex2D(_MainTex, i.uv);
-                            float alpha = lerp(col.r, 1 - col.r, _InvertedAlpha);
-                            return float4(0, 0, 0, alpha);
-                        }
-                        ENDCG
-                    }
+            fixed4 frag(v2f i) : SV_Target {
+                fixed4 col = tex2D(_MainTex, i.uv);
+                float alpha = lerp(col.r, 1 - col.r, _InvertedAlpha);
+                return float4(0, 0, 0, alpha);
+            }
+            ENDCG
         }
+    }
 }

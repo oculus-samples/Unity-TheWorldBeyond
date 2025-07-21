@@ -2,44 +2,50 @@
 
 Shader "TheWorldBeyond/ToonFoggy"
 {
-		Properties
-		{
-			_SaturationDistance("Saturation Distance", Range(0 , 1)) = 1
-			_FogCubemap("Fog Cubemap", CUBE) = "white" {}
-			_FogStrength("Fog Strength", Range(0 , 1)) = 1
-			_FogStartDistance("Fog Start Distance", Range(0 , 100)) = 1
-			_FogEndDistance("Fog End Distance", Range(0 , 2000)) = 100
-			_FogExponent("Fog Exponent", Range(0 , 1)) = 1
-			_LightingRamp("Lighting Ramp", 2D) = "white" {}
-			_MainTex("MainTex", 2D) = "white" {}
+    Properties
+    {
+        _SaturationDistance("Saturation Distance", Range(0 , 1)) = 1
+        _FogCubemap("Fog Cubemap", CUBE) = "white" {}
+        _FogStrength("Fog Strength", Range(0 , 1)) = 1
+        _FogStartDistance("Fog Start Distance", Range(0 , 100)) = 1
+        _FogEndDistance("Fog End Distance", Range(0 , 2000)) = 100
+        _FogExponent("Fog Exponent", Range(0 , 1)) = 1
+        _LightingRamp("Lighting Ramp", 2D) = "white" {}
+        _MainTex("MainTex", 2D) = "white" {}
 
-			_Color("Color", Color) = (0,0,0,0)
-			_Overbrightening("Overbrightening", Range(0 , 2)) = 1
+        _Color("Color", Color) = (0,0,0,0)
+        _Overbrightening("Overbrightening", Range(0 , 2)) = 1
 
-			[HideInInspector] _texcoord("", 2D) = "white" {}
-		}
+        [HideInInspector] _texcoord("", 2D) = "white" {}
+    }
 
-			SubShader
-		{
-			Tags{ "RenderType" = "Opaque"  "Queue" = "Geometry+0" }
-			LOD 100
+    SubShader
+    {
+        Tags
+        {
+            "RenderType" = "Opaque" "Queue" = "Geometry+0"
+        }
+        LOD 100
 
-			CGINCLUDE
+        CGINCLUDE
 			#pragma target 3.0
 			ENDCG
-			Blend Off
-			AlphaToMask Off
-			Cull Back
-			ColorMask RGBA
-			ZWrite On
-			ZTest LEqual
-			Offset 0 , 0
+        Blend Off
+        AlphaToMask Off
+        Cull Back
+        ColorMask RGBA
+        ZWrite On
+        ZTest LEqual
+        Offset 0 , 0
 
-			Pass
-			{
-				Name "Base"
-				Tags { "LightMode" = "ForwardBase" }
-				CGPROGRAM
+        Pass
+        {
+            Name "Base"
+            Tags
+            {
+                "LightMode" = "ForwardBase"
+            }
+            CGPROGRAM
 
 				#ifndef UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX
 				//only defining to not throw compilation error over Unity 5.5
@@ -152,17 +158,20 @@ Shader "TheWorldBeyond/ToonFoggy"
 					return  half4(finalColor, 1.0);
 				}
 				ENDCG
-			}
+        }
 
-		////////////////////////////////////////////////////////////////////
-		// secondary lights
-		Pass
-		{
-			Tags { "LightMode" = "ForwardAdd" }
-			Blend One One
-			ZWrite Off
+        ////////////////////////////////////////////////////////////////////
+        // secondary lights
+        Pass
+        {
+            Tags
+            {
+                "LightMode" = "ForwardAdd"
+            }
+            Blend One One
+            ZWrite Off
 
-			CGPROGRAM
+            CGPROGRAM
 
 		#ifndef UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX
 			//only defining to not throw compilation error over Unity 5.5
@@ -263,9 +272,9 @@ Shader "TheWorldBeyond/ToonFoggy"
 				return  finalColor;
 			}
 			ENDCG
-		}
+        }
 
 
 
-	}
+    }
 }
