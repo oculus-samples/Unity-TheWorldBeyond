@@ -6,7 +6,9 @@ using UnityEngine;
 
 namespace TheWorldBeyond.GameManagement
 {
+#pragma warning disable CS0618 // Type or member is obsolete
     public class WorldBeyondLoader : OVRSceneModelLoader
+#pragma warning restore CS0618 // Type or member is obsolete
     {
         // only allow one attempt to load the Scene;
         // if Scene loading has failed a second time, assume the User has cancelled room setup, and implicitly the game

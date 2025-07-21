@@ -3,6 +3,7 @@
 using System.Collections.Generic;
 using TheWorldBeyond.SamplePrefabs;
 using UnityEngine;
+#pragma warning disable CS0618 // Type or member is obsolete
 
 namespace TheWorldBeyond.SampleScenes
 {

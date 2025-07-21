@@ -23,7 +23,9 @@ namespace TheWorldBeyond.GameManagement
         public static WorldBeyondManager Instance = null;
 
         [Header("Scene Preview")]
+#pragma warning disable CS0618 // Type or member is obsolete
         [SerializeField] private OVRSceneManager m_sceneManager;
+#pragma warning restore CS0618 // Type or member is obsolete
         [SerializeField] private OVRPassthroughLayer m_passthroughLayer;
         private bool m_sceneModelLoaded = false;
         private float m_floorHeight = 0.0f;
@@ -33,7 +35,9 @@ namespace TheWorldBeyond.GameManagement
         private int m_frameWait = 0;
 
         [HideInInspector]
+#pragma warning disable CS0618 // Type or member is obsolete
         public OVRSceneAnchor[] SceneAnchors;
+#pragma warning restore CS0618 // Type or member is obsolete
 
         [Header("Game Pieces")]
         public VirtualPet Pet;
@@ -726,7 +730,9 @@ namespace TheWorldBeyond.GameManagement
             {
                 // OVRSceneAnchors have already been instantiated from OVRSceneManager
                 // to avoid script execution conflicts, we do this once in the Update loop instead of directly when the SceneModelLoaded event is fired
+#pragma warning disable CS0618 // Type or member is obsolete
                 SceneAnchors = FindObjectsOfType<OVRSceneAnchor>();
+#pragma warning restore CS0618 // Type or member is obsolete
 
                 // WARNING: right now, a Scene is guaranteed to have closed walls
                 // if this ever changes, this logic needs to be revisited because the whole game fails (e.g. furniture with no walls)

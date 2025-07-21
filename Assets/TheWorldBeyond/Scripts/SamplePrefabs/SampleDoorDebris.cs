@@ -1,6 +1,7 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
 using UnityEngine;
+#pragma warning disable CS0618 // Type or member is obsolete
 
 namespace TheWorldBeyond.SamplePrefabs
 {

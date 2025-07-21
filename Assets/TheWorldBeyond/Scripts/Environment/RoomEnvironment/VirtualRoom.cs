@@ -11,6 +11,7 @@ using TheWorldBeyond.Utils;
 using UnityEngine;
 using UnityEngine.AI;
 using Random = UnityEngine.Random;
+#pragma warning disable CS0618 // Type or member is obsolete
 
 namespace TheWorldBeyond.Environment.RoomEnvironment
 {
