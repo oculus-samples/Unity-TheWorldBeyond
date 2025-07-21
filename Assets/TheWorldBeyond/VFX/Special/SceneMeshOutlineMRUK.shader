@@ -135,8 +135,7 @@ Shader "TheWorldBeyond/SceneMeshOutlineMRUK"
                 float glow = saturate((edgeGradient - 0.75)*4);
                 fixed4 edgeEffect = _EdgeColor * (stroke + pow(glow,4) + 0.1);
 
-                float edgeReveal = (i.vertWorld.y * 10) + (_EdgeTimeline * 11 * _CeilingHeight) - (
-                    _CeilingHeight * 10);
+                float edgeReveal = (i.vertWorld.y *10 ) + _EdgeTimeline * 10 * _CeilingHeight - _CeilingHeight * 5;
 
                 float4 col = edgeEffect * _EffectIntensity * _EdgeColor * saturate(edgeReveal);
                 float lightIntensity = distance(i.vertWorld, _EffectPosition) / _EffectRadius;

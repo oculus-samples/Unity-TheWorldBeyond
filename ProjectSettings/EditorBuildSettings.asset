@@ -6,20 +6,22 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/TheWorldBeyond.unity
+    path: Assets/TheWorldBeyond/Scenes/TheWorldBeyond.unity
     guid: d7d12450b65f14042af14efd70655fb5
   - enabled: 0
-    path: Assets/TheWorldBeyond/SampleScenes/PassthroughPet.unity
+    path: Assets/TheWorldBeyond/Scenes/PassthroughPet.unity
     guid: 201e3e597f8b54264b2ba97ba45dd5c9
   - enabled: 0
-    path: Assets/TheWorldBeyond/SampleScenes/PassthroughRoom.unity
+    path: Assets/TheWorldBeyond/Scenes/PassthroughRoom.unity
     guid: b92714560bf5f48139b72ec5beedaba4
   - enabled: 0
-    path: Assets/TheWorldBeyond/SampleScenes/VirtualFrames.unity
+    path: Assets/TheWorldBeyond/Scenes/VirtualFrames.unity
     guid: dc0be34a26e3249468a255ebed9883c5
   - enabled: 0
-    path: Assets/TheWorldBeyond/SampleScenes/VoiceTranscription.unity
+    path: Assets/TheWorldBeyond/Scenes/VoiceTranscription.unity
     guid: dd4852a789a744e1385bf914ae7671b4
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: 868607f3c8adc5640be127ed88803c8a, type: 2}
+    com.unity.xr.arfoundation.simulation_settings: {fileID: 11400000, guid: b8d02785b704857439a7453ff06099a2, type: 2}
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: b92733aa954264d489ecd59547a9c0ff, type: 2}
+    com.unity.xr.openxr.settings4: {fileID: 11400000, guid: 21fd9a0ffc0e4f648a0b612427810d05, type: 2}
