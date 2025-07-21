@@ -73,7 +73,6 @@ Shader "TheWorldBeyond/ToonFoggyClouds"
 					half4 worldNormal : TEXCOORD1;
 					half3 mainTexCoords : TEXCOORD2;
 					SHADOW_COORDS(3) // put shadows data into TEXCOORD 3
-
 					UNITY_VERTEX_INPUT_INSTANCE_ID
 					UNITY_VERTEX_OUTPUT_STEREO
 				};

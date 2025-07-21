@@ -73,8 +73,6 @@ Shader "TheWorldBeyond/ToonFoggy"
 					half2 uvMain : TEXCOORD2;
 					half2 uvDetail : TEXCOORD3;
 					half3 worldViewDirection : TEXCOORD4;
-
-
 					UNITY_VERTEX_INPUT_INSTANCE_ID
 					UNITY_VERTEX_OUTPUT_STEREO
 				};

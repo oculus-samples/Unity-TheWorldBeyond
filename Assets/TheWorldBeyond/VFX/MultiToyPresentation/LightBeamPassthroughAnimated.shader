@@ -33,6 +33,7 @@ Shader "TheWorldBeyond/LightBeamPassthroughAnimated" {
 				half2 uv : TEXCOORD0;
 				half3 normal : NORMAL;
 				half4 color : COLOR;
+            	UNITY_VERTEX_INPUT_INSTANCE_ID
             };
 
             struct v2f
@@ -42,6 +43,7 @@ Shader "TheWorldBeyond/LightBeamPassthroughAnimated" {
 				float3 worldPos : TEXCOORD1;
 				half3 worldNormal : TEXCOORD2;
 				half4 vertexColor : COLOR;
+            	UNITY_VERTEX_OUTPUT_STEREO
             };
 
             sampler2D _MainTex;
@@ -51,6 +53,9 @@ Shader "TheWorldBeyond/LightBeamPassthroughAnimated" {
             v2f vert(appdata v)
             {
                 v2f o;
+                UNITY_SETUP_INSTANCE_ID(v);
+                UNITY_INITIALIZE_OUTPUT(v2f, o);
+                UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
                 o.vertex = UnityObjectToClipPos(v.vertex + v.normal * _Inflation);
 				o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
@@ -104,6 +109,7 @@ Shader "TheWorldBeyond/LightBeamPassthroughAnimated" {
 				half2 uv : TEXCOORD0;
 				half3 normal : NORMAL;
 				half4 color : COLOR;
+            	UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 
 			struct v2f
@@ -113,6 +119,8 @@ Shader "TheWorldBeyond/LightBeamPassthroughAnimated" {
 				float3 worldPos : TEXCOORD1;
 				half3 worldNormal : TEXCOORD2;
 				half4 vertexColor : COLOR;
+				UNITY_VERTEX_INPUT_INSTANCE_ID
+				UNITY_VERTEX_OUTPUT_STEREO
 			};
 
 			sampler2D _MainTex;
@@ -123,6 +131,9 @@ Shader "TheWorldBeyond/LightBeamPassthroughAnimated" {
 			v2f vert(appdata v)
 			{
 				v2f o;
+				UNITY_SETUP_INSTANCE_ID(v);
+				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
+				UNITY_TRANSFER_INSTANCE_ID(v, o);
 				o.vertex = UnityObjectToClipPos(v.vertex + v.normal * _Inflation);
 				o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
 				o.uv = TRANSFORM_TEX(v.uv, _MainTex);

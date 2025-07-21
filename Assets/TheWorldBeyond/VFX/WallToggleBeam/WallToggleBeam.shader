@@ -27,6 +27,7 @@ Shader "TheWorldBeyond/WallToggleBeam" {
                 float4 vertex : POSITION;
                 half2 uv : TEXCOORD0;
 				half4 color : COLOR;
+            	UNITY_VERTEX_INPUT_INSTANCE_ID
             };
 
             struct v2f
@@ -35,6 +36,8 @@ Shader "TheWorldBeyond/WallToggleBeam" {
                 float4 vertex : SV_POSITION;
 				half4 color : COLOR;
 				float3 objectPos : TEXCOORD1;
+				UNITY_VERTEX_INPUT_INSTANCE_ID
+            	UNITY_VERTEX_OUTPUT_STEREO
             };
 
             sampler2D _MainTex;
@@ -44,6 +47,9 @@ Shader "TheWorldBeyond/WallToggleBeam" {
             v2f vert (appdata v)
             {
                 v2f o;
+                UNITY_SETUP_INSTANCE_ID(v);
+	            UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
+	            UNITY_TRANSFER_INSTANCE_ID(v, o);
                 o.vertex = UnityObjectToClipPos(v.vertex);
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 				o.color = v.color;

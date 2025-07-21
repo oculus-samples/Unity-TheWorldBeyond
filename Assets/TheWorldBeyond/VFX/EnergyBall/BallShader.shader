@@ -136,6 +136,7 @@ Shader "TheWorldBeyond/BallShader" {
 				float4 vertex : POSITION;
 				half4 color : COLOR;
 				half3 normal : NORMAL;
+				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 
 			struct v2f
@@ -143,6 +144,8 @@ Shader "TheWorldBeyond/BallShader" {
 				float2 uv : TEXCOORD0;
 				float4 vertex : SV_POSITION;
 				half3 normals : normals;
+				UNITY_VERTEX_INPUT_INSTANCE_ID
+				UNITY_VERTEX_OUTPUT_STEREO
 			};
 
 			uniform half _wobbleScale;
@@ -150,6 +153,9 @@ Shader "TheWorldBeyond/BallShader" {
 			v2f vert(appdata v)
 			{
 				v2f o;
+				UNITY_SETUP_INSTANCE_ID(v);
+				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
+				UNITY_TRANSFER_INSTANCE_ID(v, o);
 				o.normals = UnityObjectToWorldNormal(v.normal.xyz);
 				float3 worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
 				half4 wobbleVector = GetWobbleAmount(worldPos, _Time.y);

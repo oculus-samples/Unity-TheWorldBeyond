@@ -34,6 +34,7 @@ Shader "TheWorldBeyond/LightconeGlow" {
             {
                 float4 vertex : POSITION;
                 half2 uv : TEXCOORD0;
+            	UNITY_VERTEX_INPUT_INSTANCE_ID
             };
 
             struct v2f
@@ -45,6 +46,7 @@ Shader "TheWorldBeyond/LightconeGlow" {
                 float4 vertex : SV_POSITION;
 				float2 projPos : TEXCOORD3;
 				//float depth : DEPTH;
+            	UNITY_VERTEX_OUTPUT_STEREO
             };
 
             sampler2D _MainTex;
@@ -58,6 +60,9 @@ Shader "TheWorldBeyond/LightconeGlow" {
             {
                 v2f o;
                 o.vertex = UnityObjectToClipPos(v.vertex);
+                UNITY_SETUP_INSTANCE_ID(v);
+                UNITY_INITIALIZE_OUTPUT(v2f, o);
+                UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
                // o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 				o.uv = v.uv;
 

@@ -30,15 +30,23 @@ Shader "TheWorldBeyond/TitleStencilWriter"{
 			#pragma vertex vert
 			#pragma fragment frag
 
+			#include "UnityCG.cginc"
+
 			struct meshdata {
 				half4 vertex : POSITION;
+				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 			struct interpolators {
 				half4 pos : SV_POSITION;
+				UNITY_VERTEX_INPUT_INSTANCE_ID
+				UNITY_VERTEX_OUTPUT_STEREO
 			};
 
 			interpolators vert(meshdata v) {
 				interpolators o;
+				UNITY_SETUP_INSTANCE_ID(v);
+				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
+				UNITY_TRANSFER_INSTANCE_ID(v, o);
 				o.pos = UnityObjectToClipPos(v.vertex);
 				return o;
 			}

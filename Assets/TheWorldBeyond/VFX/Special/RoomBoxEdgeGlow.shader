@@ -28,6 +28,7 @@ Shader "TheWorldBeyond/RoomBoxEdgeGlow" {
                 float4 vertex : POSITION;
                 float2 uv : TEXCOORD0;
                 float4 color : COLOR;
+                UNITY_VERTEX_INPUT_INSTANCE_ID
             };
 
             struct v2f
@@ -36,6 +37,7 @@ Shader "TheWorldBeyond/RoomBoxEdgeGlow" {
                 float4 color : TEXCOORD1;
                 UNITY_FOG_COORDS(1)
                 float4 vertex : SV_POSITION;
+                UNITY_VERTEX_OUTPUT_STEREO
             };
 
             float4 _Color;
@@ -43,6 +45,9 @@ Shader "TheWorldBeyond/RoomBoxEdgeGlow" {
             v2f vert (appdata v)
             {
                 v2f o;
+				UNITY_SETUP_INSTANCE_ID(v);
+				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
+				UNITY_TRANSFER_INSTANCE_ID(v, o);
                 o.vertex = UnityObjectToClipPos(v.vertex);
                 o.uv = v.uv;
                 o.color = v.color;

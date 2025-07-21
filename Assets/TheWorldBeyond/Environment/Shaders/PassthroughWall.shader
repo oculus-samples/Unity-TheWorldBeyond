@@ -41,6 +41,7 @@ Shader "TheWorldBeyond/PassthroughWall" {
 							float2 uv : TEXCOORD0;
 							float3 normal : NORMAL;
 							float4 color : COLOR;
+							UNITY_VERTEX_INPUT_INSTANCE_ID
 						};
 
 						struct v2f
@@ -51,7 +52,7 @@ Shader "TheWorldBeyond/PassthroughWall" {
 							half3 objectScale : TEXCOORD2;
 							half4 sin : TEXCOORD3;
 							float4 vertexColor : COLOR;
-
+							UNITY_VERTEX_OUTPUT_STEREO
 						};
 
 						sampler2D _MainTex;
@@ -68,6 +69,9 @@ Shader "TheWorldBeyond/PassthroughWall" {
 						v2f vert(appdata v)
 						{
 							v2f o;
+							UNITY_SETUP_INSTANCE_ID(v);
+							UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
+							UNITY_TRANSFER_INSTANCE_ID(v, o);
 							o.vertex = UnityObjectToClipPos(v.vertex);
 							o.vertWorld = mul(unity_ObjectToWorld, v.vertex);
 							float4 origin = mul(unity_ObjectToWorld, float4(0.0, 0.0, 0.0, 1.0));

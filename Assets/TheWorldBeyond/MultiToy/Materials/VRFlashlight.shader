@@ -36,6 +36,7 @@ Shader "TheWorldBeyond/VRFlashlight" {
 							float2 uv : TEXCOORD0;
 							float3 normal : NORMAL;
 							float4 vertcol : COLOR;
+							UNITY_VERTEX_INPUT_INSTANCE_ID
 						};
 
 						struct v2f
@@ -44,6 +45,8 @@ Shader "TheWorldBeyond/VRFlashlight" {
 							float4 vertex : SV_POSITION;
 							float4 vertcol : TEXCOORD1;
 							float2 projPos : TEXCOORD2;
+							UNITY_VERTEX_INPUT_INSTANCE_ID
+                            UNITY_VERTEX_OUTPUT_STEREO
 							//float depth : DEPTH;
 						};
 
@@ -55,6 +58,9 @@ Shader "TheWorldBeyond/VRFlashlight" {
 						v2f vert(appdata v)
 						{
 							v2f o;
+                            UNITY_SETUP_INSTANCE_ID(v);
+				            UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
+				            UNITY_TRANSFER_INSTANCE_ID(v, o);
 							o.vertex = UnityObjectToClipPos(v.vertex);
 							float4 origin = mul(unity_ObjectToWorld, float4(0.0, 0.0, 0.0, 1.0));
 							o.uv = TRANSFORM_TEX(v.uv, _MainTex);

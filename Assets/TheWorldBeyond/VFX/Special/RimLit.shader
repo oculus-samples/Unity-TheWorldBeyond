@@ -26,6 +26,7 @@ Shader "TheWorldBeyond/RimLit" {
                 float4 vertex : POSITION;
                 float2 uv : TEXCOORD0;
 				float3 normal : NORMAL;
+                UNITY_VERTEX_INPUT_INSTANCE_ID
             };
 
             struct v2f
@@ -35,6 +36,7 @@ Shader "TheWorldBeyond/RimLit" {
                 float4 vertex : SV_POSITION;
 				float3 worldNormal : TEXCOORD1;
 				float3 viewDir: TEXCOORD2;
+                UNITY_VERTEX_OUTPUT_STEREO
             };
 
             float4 _Color;
@@ -43,6 +45,9 @@ Shader "TheWorldBeyond/RimLit" {
             v2f vert (appdata v)
             {
                 v2f o;
+				UNITY_SETUP_INSTANCE_ID(v);
+				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
+				UNITY_TRANSFER_INSTANCE_ID(v, o);
                 o.vertex = UnityObjectToClipPos(v.vertex);
 				o.uv = v.uv;
 				o.worldNormal = UnityObjectToWorldNormal(v.normal);
