@@ -121,8 +121,8 @@ namespace TheWorldBeyond.GameManagement
         public float FistValue = 0.0f;
         public HandVisual LeftHandVisual;
         public HandVisual RightHandVisual;
-        public HandWristOffset LeftPointerOffset;
-        public HandWristOffset RightPointerOffset;
+        public HandRootOffset LeftPointerOffset;
+        public HandRootOffset RightPointerOffset;
 
         public DistantInteractionLineVisual InteractionLineLeft;
         public DistantInteractionLineVisual InteractionLineRight;
