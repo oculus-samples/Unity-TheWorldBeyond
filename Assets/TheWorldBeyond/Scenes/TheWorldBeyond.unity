@@ -10462,6 +10462,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 102490448831091297, guid: 269ed706a871d414cad9c2f5a6030714, type: 3}
     - target: {fileID: 747806495401477012, guid: c813208e672e3074bbe118e1a9ee94fd, type: 3}
+      propertyPath: ActiveRoomsOnly
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 747806495401477012, guid: c813208e672e3074bbe118e1a9ee94fd, type: 3}
       propertyPath: PrefabOverrides.Array.size
       value: 0
       objectReference: {fileID: 0}
