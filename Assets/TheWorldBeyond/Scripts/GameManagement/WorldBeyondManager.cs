@@ -1,8 +1,10 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using JetBrains.Annotations;
+using Meta.XR.MRUtilityKit;
 using Oculus.Interaction;
 using Oculus.Interaction.DistanceReticles;
 using TheWorldBeyond.Audio;
@@ -23,9 +25,6 @@ namespace TheWorldBeyond.GameManagement
         public static WorldBeyondManager Instance = null;
 
         [Header("Scene Preview")]
-#pragma warning disable CS0618 // Type or member is obsolete
-        [SerializeField] private OVRSceneManager m_sceneManager;
-#pragma warning restore CS0618 // Type or member is obsolete
         [SerializeField] private OVRPassthroughLayer m_passthroughLayer;
         private bool m_sceneModelLoaded = false;
         private float m_floorHeight = 0.0f;
@@ -33,11 +32,6 @@ namespace TheWorldBeyond.GameManagement
         // after the Scene has been loaded successfuly, we still wait a frame before the data has "settled"
         // e.g. VolumeAndPlaneSwitcher needs to happen first, and script execution order also isn't fixed by default
         private int m_frameWait = 0;
-
-        [HideInInspector]
-#pragma warning disable CS0618 // Type or member is obsolete
-        public OVRSceneAnchor[] SceneAnchors;
-#pragma warning restore CS0618 // Type or member is obsolete
 
         [Header("Game Pieces")]
         public VirtualPet Pet;
@@ -190,11 +184,14 @@ namespace TheWorldBeyond.GameManagement
 #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN || UNITY_ANDROID
             OVRManager.eyeFovPremultipliedAlphaModeEnabled = false;
 #endif
-
-            if (MultiToy.Instance) MultiToy.Instance.InitializeToys();
+            if (MultiToy.Instance)
+            {
+                MultiToy.Instance.InitializeToys();
+                MultiToy.Instance.ChildLightCone(false);
+            }
             Pet.Initialize();
 
-            m_sceneManager.SceneModelLoadedSuccessfully += SceneModelLoaded;
+            MRUK.Instance.SceneLoadedEvent.AddListener(SceneModelLoaded);
         }
 
         public void Update()
@@ -266,7 +263,8 @@ namespace TheWorldBeyond.GameManagement
                 {
                     WorldBeyondTutorial.Instance.DisplayMessage(WorldBeyondTutorial.TutorialMessage.ERROR_USER_WALKED_OUTSIDE_OF_ROOM);
                 }
-                else if (WorldBeyondTutorial.Instance.CurrentMessage == WorldBeyondTutorial.TutorialMessage.ERROR_USER_WALKED_OUTSIDE_OF_ROOM)
+                else if (WorldBeyondTutorial.Instance.CurrentMessage == WorldBeyondTutorial.TutorialMessage.ERROR_USER_WALKED_OUTSIDE_OF_ROOM ||
+                         WorldBeyondTutorial.Instance.CurrentMessage == WorldBeyondTutorial.TutorialMessage.ERROR_USER_STARTED_OUTSIDE_OF_ROOM)
                 {
                     WorldBeyondTutorial.Instance.DisplayMessage(WorldBeyondTutorial.TutorialMessage.None);
                 }
@@ -469,6 +467,7 @@ namespace TheWorldBeyond.GameManagement
                     break;
                 case GameChapter.SearchForOppy:
                     VirtualRoom.Instance.HideEffectMesh();
+                    VirtualRoom.Instance.EffectMeshForFloorCeiling.HideMesh = false;
                     OppyDiscovered = false;
                     m_oppyDiscoveryCount = 0;
                     BallCount = STARTING_BALL_COUNT;
@@ -489,6 +488,7 @@ namespace TheWorldBeyond.GameManagement
                 case GameChapter.TheGreatBeyond:
                     AudioManager.SetSnapshot_TheGreatBeyond();
                     m_passthroughStylist.ResetPassthrough(0.1f);
+                    VirtualRoom.Instance.EffectMeshForFloorCeiling.HideMesh = true;
                     SetEnvironmentSaturation(IsGreyPassthrough() ? 0.0f : 1.0f);
                     if (IsGreyPassthrough()) _ = StartCoroutine(SaturateEnvironmentColor());
                     MusicManager.Instance.PlayMusic(MusicManager.Instance.PortalOpen);
@@ -506,6 +506,8 @@ namespace TheWorldBeyond.GameManagement
         /// </summary>
         private IEnumerator PlayIntroPassthrough()
         {
+            VirtualRoom.Instance.EffectMeshForFloorCeiling.HideMesh = true;
+
             m_backgroundFadeSphere.SetActive(false);
             // first, make everything black
             var darkPassthroughStyle = new PassthroughStylist.PassthroughStyle(
@@ -725,32 +727,15 @@ namespace TheWorldBeyond.GameManagement
                 m_frameWait++;
                 return;
             }
+            VrRoom.InitializeMRUK();
 
-            try
+            // even though loading has succeeded to this point, do some sanity checks
+            if (!VrRoom.IsPlayerInRoom())
             {
-                // OVRSceneAnchors have already been instantiated from OVRSceneManager
-                // to avoid script execution conflicts, we do this once in the Update loop instead of directly when the SceneModelLoaded event is fired
-#pragma warning disable CS0618 // Type or member is obsolete
-                SceneAnchors = FindObjectsOfType<OVRSceneAnchor>();
-#pragma warning restore CS0618 // Type or member is obsolete
-
-                // WARNING: right now, a Scene is guaranteed to have closed walls
-                // if this ever changes, this logic needs to be revisited because the whole game fails (e.g. furniture with no walls)
-                VrRoom.Initialize(SceneAnchors);
-
-                // even though loading has succeeded to this point, do some sanity checks
-                if (!VrRoom.IsPlayerInRoom())
-                {
-                    WorldBeyondTutorial.Instance.DisplayMessage(WorldBeyondTutorial.TutorialMessage.ERROR_USER_STARTED_OUTSIDE_OF_ROOM);
-                }
-                WorldBeyondEnvironment.Instance.Initialize();
-                ForceChapter(GameChapter.Title);
+                WorldBeyondTutorial.Instance.DisplayMessage(WorldBeyondTutorial.TutorialMessage.ERROR_USER_STARTED_OUTSIDE_OF_ROOM);
             }
-            catch
-            {
-                // if initialization messes up for some reason, quit the app
-                WorldBeyondTutorial.Instance.DisplayMessage(WorldBeyondTutorial.TutorialMessage.ERROR_NO_SCENE_DATA);
-            }
+            WorldBeyondEnvironment.Instance.Initialize();
+            ForceChapter(GameChapter.Title);
         }
 
         /// <summary>
@@ -1037,48 +1022,18 @@ namespace TheWorldBeyond.GameManagement
         /// </summary>
         public Vector3 GetRandomPetPosition()
         {
-            var floorPos = new Vector3(MainCamera.transform.position.x, GetFloorHeight(), MainCamera.transform.position.z);
-            var randomPos = MainCamera.transform.position - MainCamera.transform.forward;
+            var room = MRUK.Instance.GetCurrentRoom();
+            MRUK.Instance.GetCurrentRoom().GenerateRandomPositionOnSurface(MRUK.SurfaceType.FACING_UP, 0.1f,
+                new LabelFilter(MRUKAnchor.SceneLabels.FLOOR), out var pos, out var rot);
 
-            // shoot rays out from player, a few cm above ground
-            var curbHeight = floorPos + Vector3.up * 0.2f;
-            // startingVec isn't based on -camera.forward because we "sweep" 180 degrees in the loop below
-            var startingVec = new Vector3(-MainCamera.transform.right.x, curbHeight.y, -MainCamera.transform.right.z).normalized;
-
-            // return the farthest Position, behind player
-            // however, for each individual raycast, use the closest hit
-            // this avoids a bug where Oppy can spawn outside (from a ray aiming through a wall to another wall or wall edge)
-            var farthestOverallHit = 0.0f;
-            const float CAST_DISTANCE = 100.0f;
-            var sliceCount = 4;
-            for (var i = 0; i <= sliceCount; i++)
+            if (room.IsPositionInRoom(pos) && !room.IsPositionInSceneVolume(pos, 0.5f))
             {
-                LayerMask oppySpawnLayer = LayerMask.GetMask("RoomBox", "Furniture");
-                var closestRaycastHit = CAST_DISTANCE;
-                var candidatePosition = randomPos;
-                var roomboxHit = Physics.RaycastAll(curbHeight, startingVec, CAST_DISTANCE, oppySpawnLayer);
-                foreach (var hit in roomboxHit)
-                {
-                    var thisHit = Vector3.Distance(curbHeight, hit.point);
-                    if (thisHit < closestRaycastHit)
-                    {
-                        closestRaycastHit = thisHit;
-                        candidatePosition = hit.point - startingVec * 0.5f; // back off from the impact point to give Oppy space
-                    }
-                }
-
-                var distanceToHit = Vector3.Distance(curbHeight, candidatePosition);
-                if (distanceToHit > farthestOverallHit)
-                {
-                    farthestOverallHit = distanceToHit;
-                    randomPos = candidatePosition;
-                }
-
-                startingVec = Quaternion.Euler(0, -180.0f / sliceCount, 0) * startingVec;
+                return pos;
             }
 
-            randomPos = new Vector3(randomPos.x, GetFloorHeight(), randomPos.z);
-            return randomPos;
+            //fallback
+            return new Vector3(MainCamera.transform.position.x, GetFloorHeight(), MainCamera.transform.position.z);
+
         }
 
         /// <summary>
@@ -1086,66 +1041,17 @@ namespace TheWorldBeyond.GameManagement
         /// </summary>
         public Vector3 GetRandomBallPosition(ref int wallID)
         {
-            // default case; spawn it randomly on the floor, which has to exist
-            var randomPositions = new List<Vector3>();
-            var matchingWallID = new List<int>();
+            var room = MRUK.Instance.GetCurrentRoom();
+            MRUK.Instance.GetCurrentRoom().GenerateRandomPositionOnSurface(MRUK.SurfaceType.FACING_UP, 0.1f,
+                new LabelFilter(MRUKAnchor.SceneLabels.FLOOR), out var pos, out var rot);
 
-            const int NUM_SAMPLES = 8;
-            for (var i = 0; i < NUM_SAMPLES; i++)
+            if (room.IsPositionInRoom(pos) && !room.IsPositionInSceneVolume(pos, 0.1f))
             {
-                // try a random Position in front of player
-                var localX = Random.Range(-1.0f, 1.0f);
-                var localY = Random.Range(-1.0f, 1.0f);
-                var localZ = Random.Range(0.0f, 1.0f);
-                var randomVector = MainCamera.transform.rotation * new Vector3(localX, localY, localZ).normalized;
-                LayerMask ballSpawnLayer = LayerMask.GetMask("RoomBox", "Furniture");
-                var roomboxHit = Physics.RaycastAll(MultiToy.Instance.transform.position, randomVector, 100, ballSpawnLayer);
-                var closestSurface = 100.0f;
-                var foundSurface = false;
-                var bestPos = Vector3.zero;
-                var bestID = -1;
-                foreach (var hit in roomboxHit)
-                {
-                    var hitObj = hit.collider.gameObject;
-                    if (hitObj.GetComponent<WorldBeyondRoomObject>() && !hitObj.GetComponent<WorldBeyondRoomObject>().PassthroughWallActive)
-                    {
-                        // don't spawn hidden balls on open walls
-                        continue;
-                    }
-                    // need to find the closest impact, because hit order isn't guaranteed
-                    var thisHit = Vector3.Distance(MultiToy.Instance.transform.position, hit.point);
-                    if (thisHit < closestSurface)
-                    {
-                        foundSurface = true;
-                        closestSurface = thisHit;
-                        var surfId = -1;
-                        if (hitObj.GetComponent<WorldBeyondRoomObject>())
-                        {
-                            surfId = hitObj.GetComponent<WorldBeyondRoomObject>().SurfaceID;
-                        }
-                        bestID = surfId;
-                        bestPos = hit.point + hit.normal * 0.06f;
-                    }
-                }
-
-                if (foundSurface)
-                {
-                    randomPositions.Add(bestPos);
-                    matchingWallID.Add(bestID);
-                }
-                Debug.Log("TWB found ball Position: " + foundSurface);
+                return pos;
             }
 
-            // default Position, on the floor
-            var randomPos = VirtualRoom.Instance.GetSimpleFloorPosition() + Vector3.up * 0.05f;
-            if (randomPositions.Count > 0)
-            {
-                var randomSelection = Random.Range(0, randomPositions.Count);
-                randomPos = randomPositions[randomSelection];
-                wallID = matchingWallID[randomSelection];
-            }
-
-            return randomPos;
+            //fallback
+            return new Vector3(MainCamera.transform.position.x, GetFloorHeight(), MainCamera.transform.position.z);
         }
 
         /// <summary>
@@ -1153,46 +1059,16 @@ namespace TheWorldBeyond.GameManagement
         /// </summary>
         public Vector3 GetRandomToyPosition()
         {
-            // define guardian bounds or set bounds to 0 if guardian is disabled
-            var bounds = new Bounds(Vector3.zero, OVRManager.boundary?.GetConfigured() ?? false ? OVRManager.boundary.GetDimensions(OVRBoundary.BoundaryType.PlayArea) : Vector3.zero);
-            // default Position is where camera is. Shouldn't happen, but it's a fallback
-            var finalPos = new Vector3(MainCamera.transform.position.x, GetFloorHeight(), MainCamera.transform.position.z);
+            var room = MRUK.Instance.GetCurrentRoom();
+            MRUK.Instance.GetCurrentRoom().GenerateRandomPositionOnSurface(MRUK.SurfaceType.FACING_UP, 0.5f,
+                new LabelFilter(MRUKAnchor.SceneLabels.FLOOR), out var pos, out var rot);
 
-            // shoot rays out from player, a few cm above ground
-            var curbHeight = finalPos + Vector3.up * 0.1f;
-            var direction = MainCamera.transform.right;
-
-            // select the farthest candidate Position
-            var farthestPosition = 0.0f;
-            var sliceCount = 4;
-            for (var i = 0; i <= sliceCount; i++)
+            if (room.IsPositionInRoom(pos) && !room.IsPositionInSceneVolume(pos, 0.1f))
             {
-                LayerMask ballSpawnLayer = LayerMask.GetMask("RoomBox", "Furniture");
-                var ray = new Ray(curbHeight, direction);
-                var candidatePos = finalPos;
-
-                if (Physics.Raycast(ray, out var hit, 100, ballSpawnLayer))
-                {
-                    // get a halfway point, so beam isn't always flush against a wall
-                    var posMiddle = (curbHeight + hit.point) * 0.5f;
-                    // prevent from spawning outside the walls and guardian
-                    if (VrRoom.IsPositionInRoom(posMiddle, 0f) && (bounds.size.Equals(Vector3.zero) || bounds.Contains(posMiddle)))
-                    {
-                        candidatePos = posMiddle;
-                    }
-                }
-
-                var distanceToCandidate = Vector3.Distance(curbHeight, candidatePos);
-                if (distanceToCandidate > farthestPosition)
-                {
-                    farthestPosition = distanceToCandidate;
-                    finalPos = candidatePos;
-                }
-
-                direction = Quaternion.Euler(0, -180.0f / sliceCount, 0) * direction;
+                return new Vector3(pos.x, pos.y + 1f, pos.z);
             }
-
-            return MovePointAwayFromWalls(new Vector3(finalPos.x, 1.0f + GetFloorHeight(), finalPos.z), bounds);
+            // default Position is where camera is. Shouldn't happen, but it's a fallback
+            return new Vector3(MainCamera.transform.position.x, GetFloorHeight(), MainCamera.transform.position.z);
         }
 
         /// <summary>
@@ -1209,7 +1085,7 @@ namespace TheWorldBeyond.GameManagement
                 if (Physics.Raycast(point, direction, out _, 0.5f, ballSpawnLayer))
                 {
                     var safePos = point - direction * 0.5f;
-                    if (VrRoom.IsPositionInRoom(safePos, 0f) && (bounds.size.Equals(Vector3.zero) || bounds.Contains(safePos)))
+                    if (MRUK.Instance.GetCurrentRoom().IsPositionInRoom(safePos) && (bounds.size.Equals(Vector3.zero) || bounds.Contains(safePos)))
                     {
                         point = safePos;
                     }
@@ -1493,8 +1369,8 @@ namespace TheWorldBeyond.GameManagement
             }
             else
             {
-                handPos = OVRInput.GetLocalControllerPosition(GameController);
-                handRot = OVRInput.GetLocalControllerRotation(GameController);
+                handPos = GameController == OVRInput.Controller.LTouch ? LeftHandAnchor.position : RightHandAnchor.position;
+                handRot = GameController == OVRInput.Controller.LTouch ? LeftHandAnchor.rotation : RightHandAnchor.rotation;
             }
         }
 

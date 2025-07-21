@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "com.meta.xr.mrutilitykit": "77.0.0",
     "com.meta.xr.sdk.audio": "77.0.0",
     "com.meta.xr.sdk.core": "77.0.0",
     "com.meta.xr.sdk.interaction": "77.0.0",

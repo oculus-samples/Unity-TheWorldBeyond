@@ -1,6 +1,7 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
 using System.Collections;
+using Meta.XR.MRUtilityKit;
 using TheWorldBeyond.Environment.RoomEnvironment;
 using TheWorldBeyond.GameManagement;
 using UnityEngine;
@@ -51,6 +52,11 @@ namespace TheWorldBeyond.Environment
                 return;
             }
 
+            var floorAnchor = MRUK.Instance.GetCurrentRoom().FloorAnchor;
+            var polygon = floorAnchor.PlaneBoundary2D;
+            var bounds = VirtualRoom.Instance.GetObjBounds(GrassPrefab);
+            var bounds2d = new Vector2(bounds.size.x, bounds.size.z);
+
             m_worldObjects = new GameObject[GrassDensityMap.width, GrassDensityMap.height];
             m_cells = GrassDensityMap.width;
             var cellSize = MapCoverage / m_cells;
@@ -62,15 +68,25 @@ namespace TheWorldBeyond.Environment
                 {
                     var pixelColor = GrassDensityMap.GetPixel(x, y);
                     var spawnDebris = Random.Range(0.0f, 1.0f) <= pixelColor.r;
+                    if (!spawnDebris)
+                    {
+                        continue;
+                    }
                     var cellCenter = centerOffset + new Vector3(x * cellSize, 0, y * cellSize);
                     var randomOffset = new Vector3(Random.Range(-cHalf, cHalf), 0, Random.Range(-cHalf, cHalf));
+                    var randomSize = new Vector3(Random.Range(0.7f, 1.3f), Random.Range(0.5f, 1.5f), Random.Range(0.7f, 1.3f));
                     var desiredPosition = cellCenter + randomOffset + WorldBeyondManager.Instance.GetFloorHeight() * Vector3.up;
-                    if (!VirtualRoom.Instance.IsPositionInRoom(desiredPosition, 0.5f) && spawnDebris)
+
+                    bounds2d.x *= randomSize.x;
+                    bounds2d.y *= randomSize.z;
+                    var inRoom = VirtualRoom.Instance.IsPositionInPolygon(desiredPosition, bounds2d, polygon);
+
+                    if (!inRoom)
                     {
                         var newObj = Instantiate(GrassPrefab, EnvRoot.transform);
                         newObj.transform.position = desiredPosition;
                         newObj.transform.rotation = Quaternion.Euler(0, Random.Range(0, 360.0f), 0);
-                        newObj.transform.localScale = new Vector3(Random.Range(0.7f, 1.3f), Random.Range(0.5f, 1.5f), Random.Range(0.7f, 1.3f));
+                        newObj.transform.localScale = randomSize;
                         m_worldObjects[x, y] = newObj;
                     }
                     else
@@ -86,10 +102,16 @@ namespace TheWorldBeyond.Environment
         /// </summary>
         private void CullForegroundObjects()
         {
+            var floorAnchor = MRUK.Instance.GetCurrentRoom().FloorAnchor;
+            var polygon = floorAnchor.PlaneBoundary2D;
             var foregroundObjects = GetComponentsInChildren<ForegroundObject>();
             foreach (var obj in foregroundObjects)
             {
-                if (VirtualRoom.Instance.IsPositionInRoom(obj.transform.position, 2.0f))
+                var pos = obj.transform.position;
+                var bounds = VirtualRoom.Instance.GetObjBounds(obj.gameObject);
+                var bounds2d = new Vector2(bounds.size.x, bounds.size.z);
+                var inRoom = VirtualRoom.Instance.IsPositionInPolygon(pos, bounds2d, polygon);
+                if (inRoom)
                 {
                     Destroy(obj.gameObject);
                 }

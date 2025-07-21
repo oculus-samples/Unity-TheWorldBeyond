@@ -17,12 +17,7 @@ namespace TheWorldBeyond.GameManagement
 
         private static void DisplayNoSceneDataError()
         {
-            //Scene API is not supported through Oculus Link yet, don't show the "no scene data" error.
-#if UNITY_EDITOR
-            Debug.LogWarning("SceneAPI is not supported through Oculus Link yet.");
-#else
             WorldBeyondTutorial.Instance.DisplayMessage(WorldBeyondTutorial.TutorialMessage.ERROR_NO_SCENE_DATA);
-#endif
         }
 
         private IEnumerator AwaitSceneModel()

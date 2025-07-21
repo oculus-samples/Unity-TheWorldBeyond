@@ -3,34 +3,28 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
+using Meta.XR.MRUtilityKit;
 using TheWorldBeyond.Audio;
 using TheWorldBeyond.GameManagement;
 using TheWorldBeyond.Toy;
-using TheWorldBeyond.Utils;
 using UnityEngine;
 using UnityEngine.AI;
 using Random = UnityEngine.Random;
-#pragma warning disable CS0618 // Type or member is obsolete
 
 namespace TheWorldBeyond.Environment.RoomEnvironment
 {
     public class VirtualRoom : MonoBehaviour
     {
+        [SerializeField] private EffectMesh EffectMeshForIntroEffect;
+        [SerializeField] protected internal EffectMesh EffectMeshForFloorCeiling;
         public static VirtualRoom Instance = null;
 
-        public GameObject AnchorPrefab;
         public GameObject EdgePrefab;
         private bool m_roomOpen = false;
         private List<WorldBeyondRoomObject> m_roomboxFurnishings = new();
         private List<WorldBeyondRoomObject> m_roomboxWalls = new();
         public SceneMesher SceneMesher;
         private bool m_sceneMeshCreated = false;
-        private List<Vector3> m_cornerPoints = new();
-        private int m_roomFloorID;
-        private int m_roomCeilingID;
-        private float m_floorHeight = 0.0f;
-        private float m_wallHeight = 3.0f;
 
         // if an anchor is within this angle tolerance, snap it to be Gravity-aligned
         private float m_alignmentAngleThreshold = 5.0f;
@@ -38,14 +32,14 @@ namespace TheWorldBeyond.Environment.RoomEnvironment
         // drop the virtual world this far below the floor anchor
         private const float GROUND_DELTA = 0.01f;
 
-        // because of anchor imprecision, the room isn't watertight.
-        // this extends each surface to hide the cracks.
-        private const float EDGE_BUFFER = 0.02f;
         private List<GameObject> m_roomDebris = new();
         private MeshRenderer m_sceneMesh = null;
         private float m_effectRadius = 10.0f;
         public AnimationCurve EdgeIntensity;
-        private OVRSceneAnchor m_floorSceneAnchor = null;
+        private MRUKAnchor m_floorMRUKAnchor = null;
+        private MRUKAnchor m_ceilingMRUKAnchor = null;
+        private WorldBeyondRoomObject m_floorWBRO = null;
+        private WorldBeyondRoomObject m_ceilingWBRO = null;
 
         private void Awake()
         {
@@ -53,6 +47,99 @@ namespace TheWorldBeyond.Environment.RoomEnvironment
             {
                 Instance = this;
             }
+        }
+
+        public Bounds GetObjBounds(GameObject prefab)
+        {
+            Bounds bounds = new Bounds();
+            foreach (Renderer renderer in prefab.GetComponentsInChildren<Renderer>())
+            {
+                bounds.Encapsulate(renderer.bounds);
+            }
+            return bounds;
+        }
+
+        public bool IsPositionInPolygon(Vector2 position, Vector2 bounds, List<Vector2> polygon)
+        {
+            // Calculate the corners of the bounding box
+            Vector2 topLeft = position - bounds / 2;
+            Vector2 topRight = new Vector2(position.x + bounds.x / 2, position.y - bounds.y / 2);
+            Vector2 bottomLeft = new Vector2(position.x - bounds.x / 2, position.y + bounds.y / 2);
+            Vector2 bottomRight = position + bounds / 2;
+
+            // Check if any corner of the bounding box is inside the polygon
+            return IsPointInPolygon(topLeft, polygon) ||
+                   IsPointInPolygon(topRight, polygon) ||
+                   IsPointInPolygon(bottomLeft, polygon) ||
+                   IsPointInPolygon(bottomRight, polygon) ||
+                   IsEdgeIntersectingPolygon(topLeft, topRight, polygon) ||
+                   IsEdgeIntersectingPolygon(topRight, bottomRight, polygon) ||
+                   IsEdgeIntersectingPolygon(bottomRight, bottomLeft, polygon) ||
+                   IsEdgeIntersectingPolygon(bottomLeft, topLeft, polygon);
+        }
+
+        private static bool IsPointInPolygon(Vector2 point, List<Vector2> polygon)
+        {
+            int lineCrosses = 0;
+            for (int i = 0; i < polygon.Count; i++)
+            {
+                Vector2 p1 = polygon[i];
+                Vector2 p2 = polygon[(i + 1) % polygon.Count];
+
+                if (point.y > Mathf.Min(p1.y, p2.y) && point.y <= Mathf.Max(p1.y, p2.y))
+                {
+                    if (point.x <= Mathf.Max(p1.x, p2.x))
+                    {
+                        if (p1.y != p2.y)
+                        {
+                            var frac = (point.y - p1.y) / (p2.y - p1.y);
+                            var xIntersection = p1.x + frac * (p2.x - p1.x);
+                            if (p1.x == p2.x || point.x <= xIntersection)
+                            {
+                                lineCrosses++;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return (lineCrosses % 2) == 1;
+        }
+
+        private static bool IsEdgeIntersectingPolygon(Vector2 p1, Vector2 p2, List<Vector2> polygon)
+        {
+            foreach (var edge in GetEdges(polygon))
+            {
+                if (AreEdgesIntersecting(p1, p2, edge.Item1, edge.Item2))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static Tuple<Vector2, Vector2>[] GetEdges(List<Vector2> polygon)
+        {
+            Tuple<Vector2, Vector2>[] edges = new Tuple<Vector2, Vector2>[polygon.Count];
+            for (int i = 0; i < polygon.Count; i++)
+            {
+                edges[i] = new Tuple<Vector2, Vector2>(polygon[i], polygon[(i + 1) % polygon.Count]);
+            }
+
+            return edges;
+        }
+
+        private static bool AreEdgesIntersecting(Vector2 p1, Vector2 p2, Vector2 p3, Vector2 p4)
+        {
+            float denominator = (p1.x - p2.x) * (p3.y - p4.y) - (p1.y - p2.y) * (p3.x - p4.x);
+            if (denominator == 0)
+            {
+                return false; // lines are parallel
+            }
+            float t = ((p1.x - p3.x) * (p3.y - p4.y) - (p1.y - p3.y) * (p3.x - p4.x)) / denominator;
+            float u = -((p1.x - p2.x) * (p1.y - p3.y) - (p1.y - p2.y) * (p1.x - p3.x)) / denominator;
+            return t > 0 && t < 1 && u > 0 && u < 1;
         }
 
         /// <summary>
@@ -197,106 +284,77 @@ namespace TheWorldBeyond.Environment.RoomEnvironment
             AudioManager.SetRoomOpenness(Instance.GetRoomOpenAmount());
         }
 
-        private void SetChildrenScale(Transform parentTransform, Vector3 childScale)
+        public void InitializeMRUK()
         {
-            for (var j = 0; j < parentTransform.childCount; j++)
-            {
-                parentTransform.GetChild(j).localScale = childScale;
-            }
-        }
-
-        /// <summary>
-        /// Create the actual room surfaces, since the OVRSceneObject array contains just metadata.
-        /// Attach the instantiated walls/furniture to the anchors, to ensure they're fixed to the real world.
-        /// </summary>
-        public void Initialize(OVRSceneAnchor[] sceneAnchors)
-        {
-            m_roomboxWalls.Clear();
-
             var anchorsAsWBRO = new List<WorldBeyondRoomObject>();
             var doorsAndWindows = new List<GameObject>();
-            for (var i = 0; i < sceneAnchors.Length; i++)
+
+            m_floorMRUKAnchor = MRUK.Instance.GetCurrentRoom().FloorAnchor;
+            m_ceilingMRUKAnchor = MRUK.Instance.GetCurrentRoom().CeilingAnchor;
+            var anchors = MRUK.Instance.GetCurrentRoom().Anchors;
+
+            for (var i = 0; i < anchors.Count; i++)
             {
-                var instance = sceneAnchors[i];
-                if (instance.GetComponent<OVRSceneRoom>())
+                var anchor = anchors[i];
+                var wbro = anchor.gameObject.GetComponentInChildren<WorldBeyondRoomObject>();
+                if (wbro == null)
                 {
+                    //unsupported, new type for TWB (e.g. global mesh or hi-fi-stuff)
                     continue;
                 }
-                var classification = instance.GetComponent<OVRSemanticClassification>();
-                if (classification) Debug.Log(string.Format("TWB Anchor {0}: {1}", i, classification.Labels[0]));
-                var wbro = instance.GetComponent<WorldBeyondRoomObject>();
                 anchorsAsWBRO.Add(wbro);
-                wbro.Dimensions = instance.transform.GetChild(0).localScale;
-                if (classification.Contains(OVRSceneManager.Classification.WallFace) ||
-                    classification.Contains(OVRSceneManager.Classification.Floor) ||
-                    classification.Contains(OVRSceneManager.Classification.Ceiling))
+
+                if (anchor.Label is MRUKAnchor.SceneLabels.WALL_FACE or MRUKAnchor.SceneLabels.INVISIBLE_WALL_FACE or MRUKAnchor.SceneLabels.FLOOR or MRUKAnchor.SceneLabels.CEILING)
                 {
-                    // m_force-flatten it so there's no virtual/passthrough intersections
-                    instance.transform.rotation = GravityAligner.GetAlignedOrientation(instance.transform.rotation, m_alignmentAngleThreshold);
-
                     wbro.SurfaceID = m_roomboxWalls.Count;
-
-                    if (classification.Contains(OVRSceneManager.Classification.Floor))
-                    {
-                        m_roomFloorID = m_roomboxWalls.Count;
-
-                        // move the world slightly below the ground floor, so the virtual floor doesn't Z-fight
-                        WorldBeyondManager.Instance.MoveGroundFloor(instance.transform.position.y - GROUND_DELTA);
-                        m_floorHeight = instance.transform.position.y;
-                        m_floorSceneAnchor = instance;
-                    }
-                    else if (classification.Contains(OVRSceneManager.Classification.Ceiling))
-                    {
-                        m_roomCeilingID = m_roomboxWalls.Count;
-                    }
                     m_roomboxWalls.Add(wbro);
 
-                    if (classification.Contains(OVRSceneManager.Classification.WallFace))
+                    if (anchor.Label is MRUKAnchor.SceneLabels.WALL_FACE or MRUKAnchor.SceneLabels.INVISIBLE_WALL_FACE)
                     {
                         wbro.IsWall = true;
-
                         CreateWallBorderEffects(wbro);
                         CreateWallDebris(wbro);
                         CreateNavMeshObstacle(wbro);
                     }
-
-                    // the collider on the root anchor object is only used by the wall toy
                     if (wbro.GetComponent<BoxCollider>())
                     {
-                        wbro.GetComponent<BoxCollider>().size = new Vector3(wbro.Dimensions.x, wbro.Dimensions.y, 0.01f);
+                        wbro.GetComponent<BoxCollider>().size = new Vector3(transform.localScale.x, transform.localScale.y, 0.01f);
                     }
                 }
-                else if (instance.GetComponent<OVRSceneVolume>())
+                else
                 {
-                    wbro.IsFurniture = true;
-                    m_roomboxFurnishings.Add(wbro);
-
-                    // add as navmesh obstacles
-                    var bc = wbro.PassthroughMesh.GetComponent<BoxCollider>();
-                    if (bc && bc.gameObject.GetComponent<NavMeshObstacle>() == null)
+                    if (anchor.Label is MRUKAnchor.SceneLabels.DOOR_FRAME or MRUKAnchor.SceneLabels.WINDOW_FRAME
+                        or MRUKAnchor.SceneLabels.WALL_ART)
                     {
-                        var obstacle = bc.gameObject.AddComponent<NavMeshObstacle>();
-                        obstacle.carving = true;
-                        obstacle.shape = NavMeshObstacleShape.Box;
-                        obstacle.size = Vector3.one;
-                        obstacle.center = bc.center;
+                        doorsAndWindows.Add(anchor.gameObject);
                     }
-
-                    // the collider on the root anchor object is only used by the wall toy
-                    if (wbro.GetComponent<BoxCollider>() && wbro.transform.childCount > 0)
+                    else
                     {
-                        var objLocalScale = wbro.transform.GetChild(0).localScale;
-                        wbro.GetComponent<BoxCollider>().size = objLocalScale;
-                        wbro.GetComponent<BoxCollider>().center = -Vector3.forward * objLocalScale.z * 0.5f;
+                        wbro.IsFurniture = true;
+                        m_roomboxFurnishings.Add(wbro);
 
-                        CreateFurnitureDebris(instance.transform, objLocalScale);
+                        var bc = wbro.PassthroughMesh.GetComponent<BoxCollider>();
+                        if (bc && bc.gameObject.GetComponent<NavMeshObstacle>() == null)
+                        {
+                            var obstacle = bc.gameObject.AddComponent<NavMeshObstacle>();
+                            obstacle.carving = true;
+                            obstacle.shape = NavMeshObstacleShape.Box;
+                            obstacle.size = Vector3.one;
+                            obstacle.center = bc.center;
+                        }
+
+                        CreateFurnitureDebrisMRUK(anchor.transform, anchor.transform.localScale);
                     }
                 }
-                else if (classification.Contains(OVRSceneManager.Classification.DoorFrame) ||
-                   classification.Contains(OVRSceneManager.Classification.WindowFrame) ||
-                   classification.Contains(OVRSceneManager.Classification.WallArt))
+                switch (anchor.Label)
                 {
-                    doorsAndWindows.Add(instance.gameObject);
+                    case MRUKAnchor.SceneLabels.CEILING:
+                        m_ceilingWBRO = wbro;
+                        break;
+                    case MRUKAnchor.SceneLabels.FLOOR:
+                        m_floorWBRO = wbro;
+                        WorldBeyondManager.Instance.MoveGroundFloor(m_floorWBRO.transform.position.y - GROUND_DELTA);
+                        break;
                 }
             }
 
@@ -305,12 +363,14 @@ namespace TheWorldBeyond.Environment.RoomEnvironment
                 WorldBeyondTutorial.Instance.DisplayMessage(WorldBeyondTutorial.TutorialMessage.ERROR_NOT_ENOUGH_WALLS);
             }
 
-            m_cornerPoints = GetClockwiseFloorOutline(anchorsAsWBRO.ToArray());
 
-            CreatePolygonMesh(m_roomboxWalls, m_roomboxWalls[m_roomFloorID], false);
-            CreatePolygonMesh(m_roomboxWalls, m_roomboxWalls[m_roomCeilingID], true);
-
-            m_wallHeight = m_roomboxWalls[m_roomCeilingID].transform.position.y - m_roomboxWalls[m_roomFloorID].transform.position.y;
+            m_ceilingWBRO.PassthroughMesh.gameObject.GetComponent<MeshFilter>().mesh =
+                EffectMeshForFloorCeiling.EffectMeshObjects[m_ceilingMRUKAnchor].mesh;
+            m_floorWBRO.PassthroughMesh.gameObject.GetComponent<MeshFilter>().mesh =
+                EffectMeshForFloorCeiling.EffectMeshObjects[m_floorMRUKAnchor].mesh;
+            var rotation = new Quaternion(0, 0, 0, 0);
+            m_ceilingWBRO.PassthroughMesh.transform.localRotation = rotation;
+            m_floorWBRO.PassthroughMesh.transform.localRotation = rotation;
 
             CreateFloorCeilingBorderEffects();
 
@@ -326,7 +386,7 @@ namespace TheWorldBeyond.Environment.RoomEnvironment
 
             AudioManager.SetRoomOpenness(GetRoomOpenAmount());
 
-            CreateSpecialEffectMesh(anchorsAsWBRO.ToArray());
+            CreateSpecialEffectMesh();
 
             // doors and windows aren't used in the experience, because they would add complexity
             // they are however used in the special effect mesh, so must be deleted after that is created
@@ -386,42 +446,16 @@ namespace TheWorldBeyond.Environment.RoomEnvironment
         /// <summary>
         /// This creates the watertight single mesh, from all walls and furniture.
         /// </summary>
-        public void CreateSpecialEffectMesh(WorldBeyondRoomObject[] worldBeyondObjects)
+        public void CreateSpecialEffectMesh()
         {
-            // for simplicity, doors/windows have been excluded from the experience
-            // however, we'd still like them to render in this special effect mesh
-            var cubeFurniture = new List<Transform>();
-            var quadFurniture = new List<Transform>();
-            var doorsAndWindows = new List<GameObject>();
-            var ceilingHeight = 1.0f;
-            for (var i = 0; i < worldBeyondObjects.Length; i++)
-            {
-                var classification = worldBeyondObjects[i].GetComponent<OVRSemanticClassification>();
-                if (worldBeyondObjects[i].GetComponent<OVRSceneVolume>())
-                {
-                    // any Child will have correct scale
-                    cubeFurniture.Add(worldBeyondObjects[i].transform.GetChild(0));
-                }
-                else if (classification.Contains(OVRSceneManager.Classification.DoorFrame) ||
-                    classification.Contains(OVRSceneManager.Classification.WindowFrame))
-                {
-                    quadFurniture.Add(worldBeyondObjects[i].transform.GetChild(0));
-                    doorsAndWindows.Add(worldBeyondObjects[i].gameObject);
-                }
-                else if (classification.Contains(OVRSceneManager.Classification.Ceiling))
-                {
-                    ceilingHeight = worldBeyondObjects[i].transform.position.y;
-                }
-            }
-
             // create special effect mesh
             if (SceneMesher)
             {
                 try
                 {
-                    m_sceneMesh = SceneMesher.CreateSceneMesh(m_cornerPoints, cubeFurniture.ToArray(), quadFurniture.ToArray(), ceilingHeight);
+                    m_sceneMesh = SceneMesher.CreateSceneMesh(EffectMeshForIntroEffect, GetCeilingHeight());
                     // attach it to an anchor object so it sticks to the real world
-                    m_sceneMesh.transform.parent = m_floorSceneAnchor.transform;
+                    m_sceneMesh.transform.parent = m_floorMRUKAnchor.transform;
                     m_sceneMeshCreated = true;
                 }
                 catch
@@ -430,94 +464,6 @@ namespace TheWorldBeyond.Environment.RoomEnvironment
                     m_sceneMeshCreated = false;
                 }
             }
-        }
-
-        /// <summary>
-        /// The saved walls may not be clockwise, and they may not be in order.
-        /// </summary>
-        private List<Vector3> GetClockwiseFloorOutline(WorldBeyondRoomObject[] allFurniture)
-        {
-            var cornerPoints = new List<Vector3>();
-
-            if (null == m_floorSceneAnchor || !OVRPlugin.GetSpaceBoundary2D(m_floorSceneAnchor.Space, out var boundary))
-            {
-                // fall back to wall corner method
-                var justWalls = new List<WorldBeyondRoomObject>();
-                for (var i = 0; i < allFurniture.Length; i++)
-                {
-                    if (allFurniture[i].IsWall)
-                    {
-                        justWalls.Add(allFurniture[i]);
-                    }
-                }
-                var seedWall = 0;
-                for (var i = 0; i < justWalls.Count; i++)
-                {
-                    cornerPoints.Add(GetNextSplinePoint(ref seedWall, justWalls));
-                }
-
-                // Somehow, the number of walls in the floor outline is less than total walls. Data likely corrupt; prompt user to redo room.
-                if (cornerPoints.Count < justWalls.Count)
-                {
-                    WorldBeyondTutorial.Instance.DisplayMessage(WorldBeyondTutorial.TutorialMessage.ERROR_TOO_MANY_WALLS);
-                }
-            }
-            else
-            {
-                // Use the Scence API and floor scene anchor to get the cornor of the floor, and convert Vector2 to Vector3
-                cornerPoints = boundary.ToList()
-                    .ConvertAll(corner => new Vector3(-corner.x, corner.y, 0.0f));
-
-                // GetSpaceBoundary2D is in anchor-space
-                cornerPoints.Reverse();
-                for (var i = 0; i < cornerPoints.Count; i++)
-                {
-                    cornerPoints[i] = m_floorSceneAnchor.transform.TransformPoint(cornerPoints[i]);
-                }
-            }
-
-            return cornerPoints;
-        }
-
-        /// <summary>
-        /// Search for the next corner point for the clockwise room spline, using the wall transforms.
-        /// </summary>
-        private Vector3 GetNextSplinePoint(ref int thisID, List<WorldBeyondRoomObject> randomWalls)
-        {
-            var nextScale = randomWalls[thisID].GetComponent<WorldBeyondRoomObject>().Dimensions;
-
-            var halfScale = nextScale * 0.5f;
-            var bottomRight = randomWalls[thisID].transform.position - randomWalls[thisID].transform.up * halfScale.y - randomWalls[thisID].transform.right * halfScale.x;
-            var closestCornerDistance = 100.0f;
-            // When searching for a matching corner, the correct one should match positions. If they don't, assume there's a crack in the room.
-            // This should be an impossible scenario and likely means broken data from Room Setup.
-            const float DISTANCE_TOLERANCE = 0.1f;
-            var nextCorner = Vector3.zero;
-            var nextWallID = 0;
-            for (var i = 0; i < randomWalls.Count; i++)
-            {
-                // compare to bottom left point of other walls
-                if (i != thisID)
-                {
-                    var thisWallHalfScale = randomWalls[i].GetComponent<WorldBeyondRoomObject>().Dimensions * 0.5f;
-                    var bottomLeft = randomWalls[i].transform.position - randomWalls[i].transform.up * thisWallHalfScale.y + randomWalls[i].transform.right * thisWallHalfScale.x;
-                    var thisCornerDistance = Vector3.Distance(bottomLeft, bottomRight);
-                    if (thisCornerDistance < closestCornerDistance)
-                    {
-                        closestCornerDistance = thisCornerDistance;
-                        nextCorner = bottomLeft;
-                        nextWallID = i;
-                    }
-                }
-            }
-
-            if (closestCornerDistance > DISTANCE_TOLERANCE)
-            {
-                WorldBeyondTutorial.Instance.DisplayMessage(WorldBeyondTutorial.TutorialMessage.ERROR_ROOM_IS_OPEN);
-            }
-
-            thisID = nextWallID;
-            return nextCorner;
         }
 
         /// <summary>
@@ -565,87 +511,6 @@ namespace TheWorldBeyond.Environment.RoomEnvironment
         }
 
         /// <summary>
-        /// Replace the prefab's quad with a custom polygon, for an exact floor outline.
-        /// </summary>
-        private void CreatePolygonMesh(List<WorldBeyondRoomObject> roomSurfaces, WorldBeyondRoomObject srObject, bool flipNormal)
-        {
-            try
-            {
-                // to avoid precision issues resulting in tiny cracks along the floor/ceiling edges, we want to extend out the polygon by a small amount
-                for (var i = 0; i < m_cornerPoints.Count; i++)
-                {
-                    var startPos = m_cornerPoints[i];
-                    var endPos = (i == m_cornerPoints.Count - 1) ? m_cornerPoints[0] : m_cornerPoints[i + 1];
-                    var lastPos = (i == 0) ? m_cornerPoints[^1] : m_cornerPoints[i - 1];
-
-                    var insetDirection = SceneMesher.GetInsetDirection(lastPos, startPos, endPos);
-                    m_cornerPoints[i] = m_cornerPoints[i] - insetDirection * EDGE_BUFFER;
-                }
-
-                var polygonMesh = new Mesh();
-                var vertices = new Vector3[m_cornerPoints.Count];
-                var uvs = new Vector2[vertices.Length];
-                var colors = new Color32[vertices.Length];
-                var normals = new Vector3[vertices.Length];
-                var tangents = new Vector4[vertices.Length];
-                var triangles = new int[(m_cornerPoints.Count - 2) * 3];
-
-                for (var i = 0; i < m_cornerPoints.Count; i++)
-                {
-                    // transform vertex positions first
-                    var offsetPoint = new Vector3(m_cornerPoints[i].x, srObject.PassthroughMesh.transform.position.y, m_cornerPoints[i].z);
-
-                    vertices[i] = srObject.PassthroughMesh.transform.InverseTransformPoint(offsetPoint);
-                    uvs[i] = new Vector2(m_cornerPoints[i].x, m_cornerPoints[i].z);
-                    colors[i] = Color.white;
-                    normals[i] = -Vector3.forward;
-                    tangents[i] = new Vector4(1, 0, 0, 1);
-                }
-
-                // triangulate
-                var points2d = new List<Vector2>(m_cornerPoints.Count);
-                for (var i = 0; i < m_cornerPoints.Count; i++)
-                {
-                    points2d.Add(new Vector2(m_cornerPoints[i].x, m_cornerPoints[i].z));
-                }
-
-                var triangulator = new Triangulator(points2d.ToArray());
-                var indices = triangulator.Triangulate();
-                var indexCounter = 0;
-                for (var j = 0; j < m_cornerPoints.Count - 2; j++)
-                {
-                    var id0 = indices[j * 3];
-                    var id1 = indices[j * 3 + 1];
-                    var id2 = indices[j * 3 + 2];
-
-                    triangles[indexCounter++] = id0;
-                    triangles[indexCounter++] = flipNormal ? id2 : id1;
-                    triangles[indexCounter++] = flipNormal ? id1 : id2;
-                }
-
-
-                // assign
-                polygonMesh.Clear();
-                polygonMesh.name = "polygonMesh";
-                polygonMesh.vertices = vertices;
-                polygonMesh.uv = uvs;
-                polygonMesh.colors32 = colors;
-                polygonMesh.normals = normals;
-                polygonMesh.tangents = tangents;
-                polygonMesh.triangles = triangles;
-                if (srObject.PassthroughMesh.gameObject.GetComponent<MeshFilter>())
-                {
-                    srObject.PassthroughMesh.gameObject.GetComponent<MeshFilter>().mesh = polygonMesh;
-                }
-            }
-            catch (IndexOutOfRangeException exception)
-            {
-                Debug.LogError("Error parsing walls, are the walls intersecting? " + exception.Message);
-                WorldBeyondTutorial.Instance.DisplayMessage(WorldBeyondTutorial.TutorialMessage.ERROR_INTERSECTING_WALLS);
-            }
-        }
-
-        /// <summary>
         /// Create and initialize the 4 particle/border effects for each wall.
         /// </summary>
         private void CreateWallBorderEffects(WorldBeyondRoomObject wallObject)
@@ -689,7 +554,7 @@ namespace TheWorldBeyond.Environment.RoomEnvironment
                 }
                 var floorFrame = Instantiate(EdgePrefab);
                 var ceilingFrame = Instantiate(EdgePrefab);
-                var refTransform = m_roomboxWalls[i].PassthroughMesh.transform;
+                var refTransform = m_roomboxWalls[i].transform;
                 var wallOut = -m_roomboxWalls[i].transform.forward;
                 var worldUp = Vector3.up;
                 Vector3.OrthoNormalize(ref wallOut, ref worldUp);
@@ -703,21 +568,22 @@ namespace TheWorldBeyond.Environment.RoomEnvironment
                 ceilingFrame.transform.position = refTransform.position + refTransform.up * refTransform.localScale.y * 0.5f;
 
                 var floorEdge = floorFrame.GetComponent<WallEdge>();
-                floorEdge.ParentSurface = m_roomboxWalls[m_roomFloorID];
+                floorEdge.ParentSurface = m_floorWBRO;
                 floorEdge.AdjustParticleSystemRateAndSize(refTransform.localScale.x);
-                floorEdge.transform.parent = m_roomboxWalls[m_roomFloorID].transform;
+                floorEdge.transform.parent = m_floorWBRO.transform;
                 floorEdges.Add(floorEdge);
 
                 var ceilingEdge = ceilingFrame.GetComponent<WallEdge>();
-                ceilingEdge.ParentSurface = m_roomboxWalls[m_roomCeilingID];
+                ceilingEdge.ParentSurface = m_ceilingWBRO;
                 ceilingEdge.AdjustParticleSystemRateAndSize(refTransform.localScale.x);
-                ceilingEdge.transform.parent = m_roomboxWalls[m_roomCeilingID].transform;
+                ceilingEdge.transform.parent = m_ceilingWBRO.transform;
                 ceilingEdges.Add(ceilingEdge);
             }
 
-            m_roomboxWalls[m_roomCeilingID].WallEdges.AddRange(ceilingEdges);
-            m_roomboxWalls[m_roomFloorID].WallEdges.AddRange(floorEdges);
+            m_ceilingWBRO.WallEdges.AddRange(ceilingEdges);
+            m_floorWBRO.WallEdges.AddRange(floorEdges);
         }
+
 
         /// <summary>
         /// Grass shrubs around the base of the wall that appear when it's removed.
@@ -765,9 +631,9 @@ namespace TheWorldBeyond.Environment.RoomEnvironment
         /// <summary>
         /// Grass shrubs that surround the bases of furniture, that hide if all walls are closed.
         /// </summary>
-        private void CreateFurnitureDebris(Transform child, Vector3 scl)
+        private void CreateFurnitureDebrisMRUK(Transform child, Vector3 scl)
         {
-            var basePos = new Vector3(child.position.x, m_floorHeight, child.position.z);
+            var basePos = new Vector3(child.position.x, m_floorMRUKAnchor.transform.position.y, child.position.z);
             for (var j = 0; j < 12; j++)
             {
                 var debris = Instantiate(WorldBeyondEnvironment.Instance.GrassPrefab);
@@ -833,7 +699,7 @@ namespace TheWorldBeyond.Environment.RoomEnvironment
             if (m_roomboxWalls.Count < 2) return Vector3.zero;
 
             // to be extra safe, spawn it wherever the player is
-            var floor = m_roomboxWalls[m_roomFloorID];
+            var floor = m_floorMRUKAnchor;
             if (!floor) return Vector3.zero;
             var floorPos = new Vector3(WorldBeyondManager.Instance.MainCamera.transform.position.x, floor.transform.position.y, WorldBeyondManager.Instance.MainCamera.transform.position.z);
             return floorPos;
@@ -876,7 +742,7 @@ namespace TheWorldBeyond.Environment.RoomEnvironment
         /// </summary>
         public float GetCeilingHeight()
         {
-            return m_wallHeight;
+            return m_ceilingMRUKAnchor.transform.position.y - m_floorMRUKAnchor.transform.position.y;
         }
 
         /// <summary>
@@ -945,42 +811,6 @@ namespace TheWorldBeyond.Environment.RoomEnvironment
             }
         }
 
-        /// <summary>
-        /// Simple bounding-box test to see if a Position (with buffer radius) is in the room. Ignores height.
-        /// </summary>
-        public bool IsPositionInRoom(Vector3 pos, float positionBuffer, bool alsoCheckVertical = false)
-        {
-            var xMin = 0.0f;
-            var xMax = 0.0f;
-            var zMin = 0.0f;
-            var zMax = 0.0f;
-            var anyWall = 0;
-            for (var i = 0; i < m_roomboxWalls.Count; i++)
-            {
-                if (!m_roomboxWalls[i].IsWall)
-                {
-                    continue;
-                }
-                anyWall = i;
-                var wallRight = -m_roomboxWalls[i].transform.right;
-                var wallScale = m_roomboxWalls[i].PassthroughMesh.transform.localScale;
-                var pos1 = m_roomboxWalls[i].transform.position - wallRight * wallScale.x * 0.5f;
-                _ = m_roomboxWalls[i].transform.position + wallRight * wallScale.x * 0.5f;
-                if (pos1.x < xMin) xMin = pos1.x;
-                if (pos1.x > xMax) xMax = pos1.x;
-                if (pos1.z < zMin) zMin = pos1.z;
-                if (pos1.z > zMax) zMax = pos1.z;
-            }
-            var inRoom = pos.x > xMin - positionBuffer && pos.x < xMax + positionBuffer && pos.z > zMin - positionBuffer && pos.z < zMax + positionBuffer;
-            if (alsoCheckVertical)
-            {
-                var floorPos = (m_roomboxWalls[anyWall].transform.position - Vector3.up * m_roomboxWalls[anyWall].PassthroughMesh.transform.localScale.y * 0.5f).y;
-                var ceilingPos = (m_roomboxWalls[anyWall].transform.position + Vector3.up * m_roomboxWalls[anyWall].PassthroughMesh.transform.localScale.y * 0.5f).y;
-                inRoom &= pos.y > floorPos + positionBuffer;
-                inRoom &= pos.y < ceilingPos - positionBuffer;
-            }
-            return inRoom;
-        }
 
         /// <summary>
         /// Point-in-polygon test to see if Position is in room
@@ -988,57 +818,9 @@ namespace TheWorldBeyond.Environment.RoomEnvironment
         public bool IsPlayerInRoom()
         {
             var cameraPos = WorldBeyondManager.Instance.MainCamera.transform.position;
-            cameraPos = new Vector3(cameraPos.x, m_cornerPoints[0].y, cameraPos.z);
-            // Shooting a ray from player to the right (X+), count how many walls it intersects.
-            // If the count is odd, the player is in the room
-            // Unfortunately we can't use Physics.RaycastAll, because the collision may not match the mesh, resulting in wrong counts
-            var lineCrosses = 0;
-            for (var i = 0; i < m_cornerPoints.Count; i++)
-            {
-                var startPos = m_cornerPoints[i];
-                var endPos = (i == m_cornerPoints.Count - 1) ? m_cornerPoints[0] : m_cornerPoints[i + 1];
-
-                // get bounding box of line segment
-                var xMin = startPos.x < endPos.x ? startPos.x : endPos.x;
-                var xMax = startPos.x > endPos.x ? startPos.x : endPos.x;
-                var zMin = startPos.z < endPos.z ? startPos.z : endPos.z;
-                var zMax = startPos.z > endPos.z ? startPos.z : endPos.z;
-                var lowestPoint = startPos.z < endPos.z ? startPos : endPos;
-                var highestPoint = startPos.z > endPos.z ? startPos : endPos;
-
-                // it's vertically within the bounds, so it might cross
-                if (cameraPos.z <= zMax &&
-                    cameraPos.z >= zMin)
-                {
-                    if (cameraPos.x <= xMin)
-                    {
-                        // it's completely to the left of this line segment's bounds, so must intersect
-                        lineCrosses++;
-                    }
-                    else if (cameraPos.x < xMax)
-                    {
-                        // it's within the bounds, so further calculation is needed
-                        var lineVec = (highestPoint - lowestPoint).normalized;
-                        var camVec = (cameraPos - lowestPoint).normalized;
-                        // polarity of cross product defines which side the point is on
-                        if (Vector3.Cross(lineVec, camVec).y < 0)
-                        {
-                            lineCrosses++;
-                        }
-                    }
-                    // else it's completely to the right of the bounds, so it definitely doesn't cross
-                }
-            }
-            return (lineCrosses % 2) == 1;
+            return MRUK.Instance.GetCurrentRoom().IsPositionInRoom(cameraPos);
         }
 
-        /// <summary>
-        /// Check if this surface is the floor.
-        /// </summary>
-        public bool IsFloor(int surfaceID)
-        {
-            return surfaceID == m_roomFloorID;
-        }
 
         /// <summary>
         /// During the intro, apply a different material to the room

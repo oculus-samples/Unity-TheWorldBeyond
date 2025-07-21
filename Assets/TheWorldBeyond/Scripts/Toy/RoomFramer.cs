@@ -1,6 +1,7 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
 using System.Collections;
+using Meta.XR.MRUtilityKit;
 using TheWorldBeyond.Audio;
 using TheWorldBeyond.Environment;
 using TheWorldBeyond.Environment.RoomEnvironment;
@@ -129,16 +130,20 @@ namespace TheWorldBeyond.Toy
                     closestHit = thisHit;
                     targetPoint = hit.point + hit.normal * 0.02f;
                     m_hoveredNormal = hit.normal;
-                    var rbs = hitObj.GetComponent<WorldBeyondRoomObject>();
+                    var rbs = hitObj.GetComponentInChildren<WorldBeyondRoomObject>();
+                    var mruk = hitObj.GetComponent<MRUKAnchor>();
                     if (rbs)
                     {
                         if (rbs.IsFurniture)
                         {
                             hoveringWall = HoveredObject.Furnishing;
                         }
-                        else if (VirtualRoom.Instance.IsFloor(rbs.SurfaceID))
+                        else if (mruk)
                         {
-                            hoveringWall = HoveredObject.Floor;
+                            if (mruk.Label == MRUKAnchor.SceneLabels.FLOOR)
+                            {
+                                hoveringWall = HoveredObject.Floor;
+                            }
                         }
                         else
                         {
