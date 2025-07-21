@@ -292,7 +292,8 @@ namespace TheWorldBeyond.Environment.RoomEnvironment
                     }
                 }
                 else if (classification.Contains(OVRSceneManager.Classification.DoorFrame) ||
-                   classification.Contains(OVRSceneManager.Classification.WindowFrame))
+                   classification.Contains(OVRSceneManager.Classification.WindowFrame) ||
+                   classification.Contains(OVRSceneManager.Classification.WallArt))
                 {
                     doorsAndWindows.Add(instance.gameObject);
                 }
