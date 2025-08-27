@@ -15,6 +15,7 @@ using TheWorldBeyond.Environment.RoomEnvironment;
 using TheWorldBeyond.Toy;
 using TheWorldBeyond.Utils;
 using TheWorldBeyond.VFX;
+using Unity.Mathematics;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -962,11 +963,11 @@ namespace TheWorldBeyond.GameManagement
             {
                 Pet.PrepareInitialDiscoveryAnim();
                 Pet.SetMaterialSaturation(IsGreyPassthrough() ? 0.0f : 1.0f);
-                var hiddenBall = Instantiate(BallPrefab);
+                var hiddenBall = Instantiate(BallPrefab, spawnPos + Pet.transform.right * 0.05f + Vector3.up * 0.06f, quaternion.identity);
+                m_hiddenBallPosition = hiddenBall.transform.position;
                 m_hiddenBallCollectable = hiddenBall.GetComponent<BallCollectable>();
-                m_hiddenBallPosition = spawnPos + Pet.transform.right * 0.05f + Vector3.up * 0.06f;
-                m_hiddenBallCollectable.PlaceHiddenBall(m_hiddenBallPosition, 0);
                 m_hiddenBallCollectable.SetState(BallCollectable.BallStatus.Unavailable);
+                m_hiddenBallCollectable.PlaceHiddenBall(hiddenBall.transform.position, -1);
             }
         }
 
@@ -978,9 +979,9 @@ namespace TheWorldBeyond.GameManagement
             // if spawning on a wall, track the id:
             // if the wall is toggled off, we need to destroy the ball
             var wallID = -1;
-            var hiddenBall = Instantiate(BallPrefab);
+            var hiddenBall = Instantiate(BallPrefab, GetRandomBallPosition(), quaternion.identity);
+            m_hiddenBallPosition = hiddenBall.transform.position;
             m_hiddenBallCollectable = hiddenBall.GetComponent<BallCollectable>();
-            m_hiddenBallPosition = GetRandomBallPosition(ref wallID);
             m_hiddenBallCollectable.PlaceHiddenBall(m_hiddenBallPosition, wallID);
         }
 
@@ -1018,57 +1019,55 @@ namespace TheWorldBeyond.GameManagement
         }
 
         /// <summary>
-        /// Find a Position in the room to place Oppy.
+        /// Helper to find a random position on the floor surface with retry and fallback.
         /// </summary>
-        public Vector3 GetRandomPetPosition()
+        /// <param name=\"maxAttempts\">Maximum retry attempts.</param>
+        /// <param name=\"surfaceOffset\">Vertical offset to apply to the position.</param>
+        /// <param name=\"sceneVolumePadding\">Padding for scene volume check.</param>
+        /// <param name=\"attempt\">Current attempt count for recursion.</param>
+        /// <returns>Valid position or fallback position.</returns>
+        private Vector3 GetRandomPositionOnFloor(
+            int maxAttempts = 10,
+            float surfaceOffset = 0f,
+            float sceneVolumePadding = 0.1f,
+            int attempt = 0)
         {
             var room = MRUK.Instance.GetCurrentRoom();
-            MRUK.Instance.GetCurrentRoom().GenerateRandomPositionOnSurface(MRUK.SurfaceType.FACING_UP, 0.1f,
+            MRUK.Instance.GetCurrentRoom().GenerateRandomPositionOnSurface(
+                MRUK.SurfaceType.FACING_UP, 0.1f,
                 new LabelFilter(MRUKAnchor.SceneLabels.FLOOR), out var pos, out var rot);
-
-            if (room.IsPositionInRoom(pos) && !room.IsPositionInSceneVolume(pos, 0.5f))
+            if (room.IsPositionInRoom(pos) && !room.IsPositionInSceneVolume(pos, sceneVolumePadding))
             {
-                return pos;
+                return new Vector3(pos.x, pos.y + surfaceOffset, pos.z);
             }
-
-            //fallback
+            if (attempt < maxAttempts - 1)
+            {
+                return GetRandomPositionOnFloor(maxAttempts, surfaceOffset, sceneVolumePadding, attempt + 1);
+            }
+            // Fallback after max attempts
             return new Vector3(MainCamera.transform.position.x, GetFloorHeight(), MainCamera.transform.position.z);
-
         }
-
+        /// <summary>
+        /// Find a Position in the room to place Oppy.
+        /// </summary>
+        public Vector3 GetRandomPetPosition(int attempt = 0)
+        {
+            return GetRandomPositionOnFloor(maxAttempts: 10, surfaceOffset: 0f, sceneVolumePadding: 0.5f, attempt);
+        }
         /// <summary>
         /// Find a room surface upon which to spawn a hidden ball.
         /// </summary>
-        public Vector3 GetRandomBallPosition(ref int wallID)
+        public Vector3 GetRandomBallPosition(int attempt = 0)
         {
-            var room = MRUK.Instance.GetCurrentRoom();
-            MRUK.Instance.GetCurrentRoom().GenerateRandomPositionOnSurface(MRUK.SurfaceType.FACING_UP, 0.1f,
-                new LabelFilter(MRUKAnchor.SceneLabels.FLOOR), out var pos, out var rot);
-
-            if (room.IsPositionInRoom(pos) && !room.IsPositionInSceneVolume(pos, 0.1f))
-            {
-                return pos;
-            }
-
-            //fallback
-            return new Vector3(MainCamera.transform.position.x, GetFloorHeight(), MainCamera.transform.position.z);
+            var pos = GetRandomPositionOnFloor(maxAttempts: 10, surfaceOffset: 0f, sceneVolumePadding: 0.1f, attempt);
+            return pos;
         }
-
         /// <summary>
         /// Find a clear space on the floor to place the light beam/Multitoy.
         /// </summary>
-        public Vector3 GetRandomToyPosition()
+        public Vector3 GetRandomToyPosition(int attempt = 0)
         {
-            var room = MRUK.Instance.GetCurrentRoom();
-            MRUK.Instance.GetCurrentRoom().GenerateRandomPositionOnSurface(MRUK.SurfaceType.FACING_UP, 0.5f,
-                new LabelFilter(MRUKAnchor.SceneLabels.FLOOR), out var pos, out var rot);
-
-            if (room.IsPositionInRoom(pos) && !room.IsPositionInSceneVolume(pos, 0.1f))
-            {
-                return new Vector3(pos.x, pos.y + 1f, pos.z);
-            }
-            // default Position is where camera is. Shouldn't happen, but it's a fallback
-            return new Vector3(MainCamera.transform.position.x, GetFloorHeight(), MainCamera.transform.position.z);
+            return GetRandomPositionOnFloor(maxAttempts: 10, surfaceOffset: 1f, sceneVolumePadding: 0.1f, attempt);
         }
 
         /// <summary>
@@ -1251,7 +1250,7 @@ namespace TheWorldBeyond.GameManagement
         /// </summary>
         public void AddBallToWorld(BallCollectable newBall)
         {
-            newBall.gameObject.transform.parent = m_ballContainer;
+            newBall.gameObject.transform.SetParent(m_ballContainer, true);
         }
 
         /// <summary>

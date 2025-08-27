@@ -7,8 +7,12 @@ In this sample project, you'll learn how to take advantage of our Presence Platf
 The majority of TheWorldBeyond is licensed under [MIT LICENSE](./LICENSE), however files from [Text Mesh Pro](http://www.unity3d.com/legal/licenses/Unity_Companion_License) are licensed under their respective licensing terms.
 
 ## Requirements
-* Unity 2020.3.18f1 or higher
+* Unity 6000.0.50f1 or higher
 * Mac or Windows
+
+## Remarks
+* When prompted to update the hand tracking settings, choose "keep OVRHands".
+* During build of the APK you may get prompted about "Unsupported Input Handling". Choose "Yes" (Ignore and continue).
 
 ## Getting Started
 * *PCs:* You can run the Unity Editor using [Link](https://developers.meta.com/horizon/documentation/unity/unity-link) if you are on a PC. Keep in mind that the Passthrough image only appears in the headset. For Scene API, room data must exist before connecting the device; disconnect Link, run Room Setup on your Quest, then reconnect Link.
@@ -34,7 +38,9 @@ A traditional pre-fabricated game level doesn't work in mixed reality because th
 * The largest playable space that Guardian can encompass is 15x15m. Everything outside of this space can be static and hand-crafted, but everything within it should be dynamic since every home's play area is different. You should create any objects in the playable space directly or indirectly from the scene or cull them from the scene.
 
 ## Using the Scene Directly
-[*OVRSceneManager*](https://developers.meta.com/horizon/reference/unity/latest/class_o_v_r_scene_manager) is used to spawn walls and cubes, which you use directly in the *WorldBeyondManager*. The system creates a polygon mesh for the floor and ceiling by referencing these anchors. Particles line the wall edges and get revealed when a wall is "opened." Additionally, a *NavMeshObstacle* component is on the wall and furniture prefabs so that Oppy can navigate around them. Please see [`VirtualRoom.Initialize()`](https://github.com/oculus-samples/Unity-TheWorldBeyond/blob/main/Assets/Scripts/VirtualRoom.cs#L212) for more information.
+
+[MRUK](https://developers.meta.com/horizon/documentation/unity/unity-mr-utility-kit-overview/) is a utility kit that provides a set of tools to help you build mixed reality experiences. The *MRUK* package is included in this project.
+Navigate to the link for the documentation to learn more about the *MRUK* package. You use MRUK directly in the *WorldBeyondManager*. The system creates a polygon mesh for the floor and ceiling by referencing these anchors. Particles line the wall edges and get revealed when a wall is "opened." Additionally, a *NavMeshObstacle* component is on the wall and furniture prefabs so that Oppy can navigate around them. Please see [`VirtualRoom.InitializeMRUK()`](https://github.com/oculus-samples/Unity-TheWorldBeyond/blob/main/Assets/TheWorldBeyond/Scripts/Environment/RoomEnvironment/VirtualRoom.cs#L287) for more information.
 
 ## Using the Scene Indirectly
 Grass shrubs spawn in a grid on the play area, except within the bounding box of the room. A density map defines the probability of grass appearing in a grid cell as long as it appears outside the room. See [`WorldBeyondEnvironment.SpawnObjectsWithMap()`](https://github.com/oculus-samples/Unity-TheWorldBeyond/blob/main/Assets/Scripts/WorldBeyondEnvironment.cs#L61)for more information. Other objects, such as trees and rocks, are pre-littered around the space and use the [`VirtualRoom.IsPositionInRoom()`](https://github.com/oculus-samples/Unity-TheWorldBeyond/blob/main/Assets/Scripts/VirtualRoom.cs#L987) function to get deactivated when the game starts. Grass shrubs are also placed around the base of furniture and walls. The system reveals these shrubs when you open any wall. [`VirtualRoom.CreateFurnitureDebris()`](https://github.com/oculus-samples/Unity-TheWorldBeyond/blob/main/Assets/Scripts/VirtualRoom.cs#L818) handles this functionality.

@@ -44,8 +44,8 @@ namespace TheWorldBeyond.Audio
         // Start is called before the first frame update
         private void Start()
         {
-            AmbSfxList = FindObjectsOfType<AmbSfx>();
-            m_audioListener = FindObjectOfType<AudioListener>();
+            AmbSfxList = FindObjectsByType<AmbSfx>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            m_audioListener = FindFirstObjectByType<AudioListener>();
         }
 
         public void SetEnabled(bool isEnabled = true)

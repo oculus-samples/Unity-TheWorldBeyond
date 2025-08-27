@@ -33,7 +33,6 @@ namespace TheWorldBeyond.Audio
         [NonSerialized] public SoundEntry CurrentSound;
 
         [Header("Snapshot Transitions")]
-        private static int s_currentPoolIndex = 0;  // Index of the currently playing m_audioSource from the pool
         public AudioMixer AudioMixer;
         public AudioMixerGroup DefaultOutputMixerGroup;
         public int TransitionTimeToTitle = 1;

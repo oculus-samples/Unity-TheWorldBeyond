@@ -205,7 +205,7 @@ namespace TheWorldBeyond.VFX
 
         public bool HasBallRested()
         {
-            return RigidBody.velocity.magnitude < VELOCITY_REST_THRESH;
+            return RigidBody.linearVelocity.magnitude < VELOCITY_REST_THRESH;
         }
 
         public void AbsorbBall()
@@ -214,7 +214,7 @@ namespace TheWorldBeyond.VFX
             m_absorbTimer = 0.0f;
             WallID = -1;
             RigidBody.isKinematic = true;
-            RigidBody.velocity = Vector3.zero;
+            RigidBody.linearVelocity = Vector3.zero;
             MultiToy.Instance.FlashlightAbsorb_1.Play();
             SfxBallLoop.SetVolume(0);
             ShellObject.enabled = false;
@@ -352,7 +352,7 @@ namespace TheWorldBeyond.VFX
         {
             // make sure this was an intentional shot, as opposed to a light graze
             var impactNormal = collision.GetContact(0).normal;
-            var velocity = RigidBody.velocity;
+            var velocity = RigidBody.linearVelocity;
 
             // velocity can be inverted, since physics is polled at a different rate
             // to account for this, accept either velocity (before or after collision)

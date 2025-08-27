@@ -81,7 +81,7 @@ namespace TheWorldBeyond.Audio
             PositionToPlayAt.x = new_x;
             PositionToPlayAt.y = new_y;
             PositionToPlayAt.z = new_z;
-            Debug.LogWarning($"[{name}] - Original Position: {m_positionOriginal} <::::> Randomized Position: {PositionToPlayAt}");
+            Debug.Log($"[{name}] - Original Position: {m_positionOriginal} <::::> Randomized Position: {PositionToPlayAt}");
         }
 
         public void Play()

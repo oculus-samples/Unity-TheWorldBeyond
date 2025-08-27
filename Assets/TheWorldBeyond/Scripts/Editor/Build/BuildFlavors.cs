@@ -2,6 +2,7 @@
 
 using System.IO;
 using UnityEditor;
+using UnityEditor.Build;
 
 public class BuildFlavors
 {
@@ -34,23 +35,23 @@ public class BuildFlavors
 
     public static void Android(AndroidArchitecture architecture)
     {
-        string previousAppIdentifier = PlayerSettings.GetApplicationIdentifier(BuildTargetGroup.Android);
+        var previousAppIdentifier = PlayerSettings.GetApplicationIdentifier(NamedBuildTarget.Android);
         PlayerSettings.Android.targetArchitectures = architecture;
         var friendlyPrint = architecture == AndroidArchitecture.ARMv7 ? "32" : "64";
         var implementation = architecture == AndroidArchitecture.ARM64 ? ScriptingImplementation.IL2CPP : ScriptingImplementation.Mono2x;
-        PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, implementation);
-        BuildPlayerOptions buildOptions = new BuildPlayerOptions()
+        PlayerSettings.SetScriptingBackend(NamedBuildTarget.Android, implementation);
+        var buildOptions = new BuildPlayerOptions
         {
             locationPathName = string.Format("builds/{0}_{1}.apk", ApkAppName, friendlyPrint),
             scenes = projectScenes,
             target = BuildTarget.Android,
             targetGroup = BuildTargetGroup.Android,
+            options = new BuildOptions()
         };
-        buildOptions.options = new BuildOptions();
         try
         {
             var error = BuildPipeline.BuildPlayer(buildOptions);
-            PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.Android, previousAppIdentifier);
+            PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Android, previousAppIdentifier);
             HandleBuildError.Check(error);
         }
         catch

@@ -52,7 +52,7 @@ namespace TheWorldBeyond.Audio
         private void Start()
         {
             SoundEntryList = new List<SoundEntry>();
-            m_audioListener = FindObjectOfType<AudioListener>();
+            m_audioListener = FindFirstObjectByType<AudioListener>();
         }
 
         // Update is called once per frame

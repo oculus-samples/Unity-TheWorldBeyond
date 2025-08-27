@@ -23,7 +23,7 @@ namespace TheWorldBeyond.SamplePrefabs
 
             SpawnImpactDebris(collision.GetContact(0).point + impactNormal * 0.005f, Quaternion.LookRotation(-impactNormal));
 
-            var impactDot = Mathf.Abs(Vector3.Dot(impactNormal, m_rigidBody.velocity.normalized));
+            var impactDot = Mathf.Abs(Vector3.Dot(impactNormal, m_rigidBody.linearVelocity.normalized));
             if (impactDot > 0.7f)
             {
                 m_bounceSound.time = 0.0f;

@@ -26,9 +26,6 @@ namespace TheWorldBeyond.Environment.RoomEnvironment
         public SceneMesher SceneMesher;
         private bool m_sceneMeshCreated = false;
 
-        // if an anchor is within this angle tolerance, snap it to be Gravity-aligned
-        private float m_alignmentAngleThreshold = 5.0f;
-
         // drop the virtual world this far below the floor anchor
         private const float GROUND_DELTA = 0.01f;
 

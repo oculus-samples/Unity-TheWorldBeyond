@@ -324,7 +324,7 @@ namespace TheWorldBeyond.Character.Oppy
                 // once close enough, start the eat animation & lock the ball in
                 else if (ballDirectionToOppy.magnitude <= 0.5f
                     && !ballBC.RigidBody.isKinematic
-                    && ballBC.RigidBody.velocity.magnitude <= 0.5f
+                    && ballBC.RigidBody.linearVelocity.magnitude <= 0.5f
                     && m_eatCooldown >= 1.0f)
                 {
                     m_animator.SetBool("Eating", true);

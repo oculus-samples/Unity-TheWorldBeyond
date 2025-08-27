@@ -131,7 +131,7 @@ namespace TheWorldBeyond.Toy
                     targetPoint = hit.point + hit.normal * 0.02f;
                     m_hoveredNormal = hit.normal;
                     var rbs = hitObj.GetComponentInChildren<WorldBeyondRoomObject>();
-                    var mruk = hitObj.GetComponent<MRUKAnchor>();
+                    var mruk = hitObj.GetComponentInChildren<MRUKAnchor>();
                     if (rbs)
                     {
                         if (rbs.IsFurniture)
@@ -140,8 +140,12 @@ namespace TheWorldBeyond.Toy
                         }
                         else if (mruk)
                         {
-                            if (mruk.Label == MRUKAnchor.SceneLabels.FLOOR)
+                            if (mruk.Label is MRUKAnchor.SceneLabels.FLOOR or MRUKAnchor.SceneLabels.CEILING)
                             {
+                                if (rbs.CanBeToggled())
+                                {
+                                    m_hoveredSurface = rbs;
+                                }
                                 hoveringWall = HoveredObject.Floor;
                             }
                         }
@@ -162,10 +166,6 @@ namespace TheWorldBeyond.Toy
             }
 
             m_hoveredPoint = Vector3.Lerp(m_hoveredPoint, targetPoint, 0.1f);
-            if (hoveringWall != HoveredObject.Wall)
-            {
-                m_hoveredSurface = null;
-            }
 
             return hoveringWall;
         }
