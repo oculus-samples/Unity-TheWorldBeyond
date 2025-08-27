@@ -3,18 +3,18 @@
 using Unity.AI.Navigation;
 using UnityEngine;
 using UnityEngine.AI;
-#pragma warning disable CS0618 // Type or member is obsolete
 
 namespace TheWorldBeyond.SampleScenes
 {
     public class SamplePetExperience : MonoBehaviour
     {
-        public OVRSceneManager SceneManager;
         private bool m_roomReady = false;
 
         // build the nav mesh when Scene is detected
         public NavMeshSurface Ground;
         public NavMeshAgent Agent;
+
+        public Transform RightHandAnchor;
 
         // the point on the ground where your controller points
         public Transform TargetingIcon;
@@ -22,13 +22,10 @@ namespace TheWorldBeyond.SampleScenes
 
         private void Awake()
         {
-            _ = Agent.SetDestination(Vector3.zero);
             Agent.updateRotation = false;
-
-            SceneManager.SceneModelLoadedSuccessfully += InitializeRoom;
         }
 
-        private void InitializeRoom()
+        public void InitializeRoom()
         {
             Ground.BuildNavMesh();
             m_roomReady = true;
@@ -41,9 +38,9 @@ namespace TheWorldBeyond.SampleScenes
                 return;
             }
 
-            var rayPos = OVRInput.GetLocalControllerPosition(OVRInput.Controller.RTouch);
-            var rayFwd = OVRInput.GetLocalControllerRotation(OVRInput.Controller.RTouch) * Vector3.forward;
-            if (Physics.Raycast(rayPos, rayFwd, out var hitInfo, 1000.0f, SceneLayer))
+            var rayPos = RightHandAnchor.position;
+            var rayFwd = RightHandAnchor.rotation * Vector3.forward;
+            if (Physics.Raycast(rayPos, rayFwd, out var hitInfo, 1000.0f))
             {
                 // if hitting a vertical surface, drop quad to the floor
                 var iconHeight = Mathf.Abs(Vector3.Dot(Vector3.up, hitInfo.normal)) < 0.5f ? 0 : hitInfo.point.y;

@@ -1,7 +1,7 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.MRUtilityKit;
 using UnityEngine;
-#pragma warning disable CS0618 // Type or member is obsolete
 
 namespace TheWorldBeyond.SamplePrefabs
 {
@@ -15,17 +15,15 @@ namespace TheWorldBeyond.SamplePrefabs
 
         private void Update()
         {
-            if (!m_anchorInitialized)
-            {
-                if (gameObject.GetComponent<OVRScenePlane>() && gameObject.GetComponent<OVRSemanticClassification>())
-                {
-                    if (gameObject.GetComponent<OVRSemanticClassification>().Contains(OVRSceneManager.Classification.DoorFrame))
-                    {
-                        SpawnDebris(gameObject.GetComponent<OVRScenePlane>().Dimensions);
-                        m_anchorInitialized = true;
-                    }
-                }
-            }
+            if (m_anchorInitialized) return;
+
+            if (!gameObject.GetComponentInParent<MRUKAnchor>()) return;
+
+            var anchor = gameObject.GetComponentInParent<MRUKAnchor>();
+            if (anchor.Label != MRUKAnchor.SceneLabels.DOOR_FRAME) return;
+
+            SpawnDebris(anchor.PlaneBoundary2D[0]);
+            m_anchorInitialized = true;
         }
 
         private void SpawnDebris(Vector2 doorDimensions)

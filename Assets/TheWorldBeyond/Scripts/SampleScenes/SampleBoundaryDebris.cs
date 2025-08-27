@@ -1,14 +1,13 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
 using System.Collections.Generic;
+using Meta.XR.MRUtilityKit;
 using UnityEngine;
-#pragma warning disable CS0618 // Type or member is obsolete
 
 namespace TheWorldBeyond.SampleScenes
 {
     public class SampleBoundaryDebris : MonoBehaviour
     {
-        public OVRSceneManager SceneManager;
         public GameObject[] DebrisPrefabs;
 
         // roughly how far apart the debris are from each other
@@ -23,36 +22,22 @@ namespace TheWorldBeyond.SampleScenes
         private int m_cellCount = 20;
         private List<Vector3> m_cornerPoints = new();
 
-        private void Awake()
-        {
-            SceneManager.SceneModelLoadedSuccessfully += CreateDebris;
-        }
 
-        private void CreateDebris()
+        public void CreateDebris()
         {
-            var sceneAnchors = FindObjectsOfType<OVRSceneAnchor>();
-            if (sceneAnchors != null)
+            foreach (var anchor in MRUK.Instance.GetCurrentRoom().Anchors)
             {
-                for (var i = 0; i < sceneAnchors.Length; i++)
+                if (anchor.Label is MRUKAnchor.SceneLabels.FLOOR)
                 {
-                    var instance = sceneAnchors[i];
-                    var classification = instance.GetComponent<OVRSemanticClassification>();
-
-                    if (classification.Contains(OVRSceneManager.Classification.Floor))
+                    m_cornerPoints.Clear();
+                    for (var j = 0; j < anchor.PlaneBoundary2D.Count; j++)
                     {
-                        if (OVRPlugin.GetSpaceBoundary2D(instance.Space, out var boundaryVertices))
-                        {
-                            m_cornerPoints.Clear();
-                            for (var j = 0; j < boundaryVertices.Length; j++)
-                            {
-                                var vertPos = new Vector3(-boundaryVertices[j].x, boundaryVertices[j].y, 0.0f);
-                                // use world Position
-                                m_cornerPoints.Add(instance.transform.TransformPoint(vertPos));
-                            }
-                            CreateBoundaryDebris(instance.transform, m_cornerPoints.ToArray());
-                            CreateExteriorDebris(instance.transform);
-                        }
+                        var vertPos = new Vector3(-anchor.PlaneBoundary2D[j].x, anchor.PlaneBoundary2D[j].y, 0.0f);
+                        // use world Position
+                        m_cornerPoints.Add(anchor.transform.TransformPoint(vertPos));
                     }
+                    CreateBoundaryDebris(anchor.transform, m_cornerPoints.ToArray());
+                    CreateExteriorDebris(anchor.transform);
                 }
             }
         }
@@ -120,7 +105,7 @@ namespace TheWorldBeyond.SampleScenes
                     var desiredPosition = cellCenter + randomOffset;
 
                     // only spawn an object if the Position is outside of the room
-                    if (spawnDebris && !IsPositionInRoom(desiredPosition))
+                    if (spawnDebris && !MRUK.Instance.GetCurrentRoom().IsPositionInRoom(desiredPosition))
                     {
                         // shrink object, based on distance from grid center
                         var distanceSize = Mathf.Abs(Vector3.Distance(roomCenter, desiredPosition));
@@ -149,54 +134,6 @@ namespace TheWorldBeyond.SampleScenes
             newObj.transform.rotation = Quaternion.Euler(0, Random.Range(0, 360.0f), 0);
             newObj.transform.localScale = Vector3.one * uniformScale;
             return newObj;
-        }
-
-        /// <summary>
-        /// Given a world Position, test if it is within the floor outline (along horizontal dimensions)
-        /// </summary>
-        private bool IsPositionInRoom(Vector3 worldPosition)
-        {
-            // Shooting a ray from worldPosition to the right (X+), count how many walls it intersects.
-            // If the count is odd, the Position is in the room
-            // Unfortunately we can't use Physics.RaycastAll, because the collision may not match the mesh, resulting in wrong counts
-            var lineCrosses = 0;
-            for (var i = 0; i < m_cornerPoints.Count; i++)
-            {
-                var startPos = m_cornerPoints[i];
-                var endPos = (i == m_cornerPoints.Count - 1) ? m_cornerPoints[0] : m_cornerPoints[i + 1];
-
-                // get bounding box of line segment
-                var xMin = startPos.x < endPos.x ? startPos.x : endPos.x;
-                var xMax = startPos.x > endPos.x ? startPos.x : endPos.x;
-                var zMin = startPos.z < endPos.z ? startPos.z : endPos.z;
-                var zMax = startPos.z > endPos.z ? startPos.z : endPos.z;
-                var lowestPoint = startPos.z < endPos.z ? startPos : endPos;
-                var highestPoint = startPos.z > endPos.z ? startPos : endPos;
-
-                // it's vertically within the bounds, so it might cross
-                if (worldPosition.z <= zMax &&
-                    worldPosition.z >= zMin)
-                {
-                    if (worldPosition.x <= xMin)
-                    {
-                        // it's completely to the left of this line segment's bounds, so it must intersect
-                        lineCrosses++;
-                    }
-                    else if (worldPosition.x < xMax)
-                    {
-                        // it's within the bounds, so further calculation is needed
-                        var lineVec = (highestPoint - lowestPoint).normalized;
-                        var camVec = (worldPosition - lowestPoint).normalized;
-                        // polarity of cross product defines which side the point is on
-                        if (Vector3.Cross(lineVec, camVec).y < 0)
-                        {
-                            lineCrosses++;
-                        }
-                    }
-                    // else it's completely to the right of the bounds, so it definitely doesn't cross
-                }
-            }
-            return (lineCrosses % 2) == 1;
         }
     }
 }
