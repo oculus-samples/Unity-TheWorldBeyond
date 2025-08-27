@@ -485,3 +485,4 @@ InputManager:
     type: 2
     axis: 4
     joyNum: 0
+  m_UsePhysicalKeys: 1

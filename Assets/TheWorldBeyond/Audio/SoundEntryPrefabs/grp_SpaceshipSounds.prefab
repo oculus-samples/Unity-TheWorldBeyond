@@ -24,14 +24,15 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 126274595626089829}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4383070521489576861}
   - {fileID: 7231409240431399329}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &-6494286905617966229
 AudioSource:
@@ -44,6 +45,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: -8091588921327040546, guid: 7389918f17108844bbf62c06ef6bcb8c, type: 2}
   m_audioClip: {fileID: 8300000, guid: 208fb7480504181499b00700d9c4caf3, type: 3}
+  m_Resource: {fileID: 8300000, guid: 208fb7480504181499b00700d9c4caf3, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -134,6 +136,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 1504269853561166304}
     m_Modifications:
     - target: {fileID: -3466516174423997717, guid: f18e0423c07e2164299ca8776cded861, type: 3}
@@ -193,6 +196,9 @@ PrefabInstance:
       value: sfx_ufo_takeoff
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f18e0423c07e2164299ca8776cded861, type: 3}
 --- !u!4 &7231409240431399329 stripped
 Transform:
@@ -204,6 +210,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 1504269853561166304}
     m_Modifications:
     - target: {fileID: -3466516174423997717, guid: d7c7eb0b3e240c34285ea2e176a040aa, type: 3}
@@ -275,6 +282,9 @@ PrefabInstance:
       value: sfx_ufo_idle_lp
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d7c7eb0b3e240c34285ea2e176a040aa, type: 3}
 --- !u!4 &4383070521489576861 stripped
 Transform:

@@ -25,13 +25,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 356003868942021027}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6719793174246905442}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5822002302799684268
 MonoBehaviour:
@@ -53,8 +54,8 @@ MonoBehaviour:
   TheGreatBeyondFadeInTimeSeconds: 1
   TheGreatBeyondDelayStopSeconds: 1
   TheGreatBeyondFadeOutTimeSeconds: 5
-  audioSourceStinger: {fileID: 0}
-  theGreatBeyondLoopSource: {fileID: 0}
+  AudioSourceStinger: {fileID: 0}
+  TheGreatBeyondLoopSource: {fileID: 0}
 --- !u!82 &909956316186164873
 AudioSource:
   m_ObjectHideFlags: 0
@@ -66,6 +67,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 8117682362802713393, guid: 7389918f17108844bbf62c06ef6bcb8c, type: 2}
   m_audioClip: {fileID: 8300000, guid: 8c0758670587e7e46a7c5ee700f68a7a, type: 3}
+  m_Resource: {fileID: 8300000, guid: 8c0758670587e7e46a7c5ee700f68a7a, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -175,12 +177,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4666810608220681813}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3535368774507356161}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &7673798053218345424
 AudioSource:
@@ -193,6 +196,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 4422226110701370349, guid: 7389918f17108844bbf62c06ef6bcb8c, type: 2}
   m_audioClip: {fileID: 8300000, guid: 645ce328666190d489af0924f6b08bed, type: 3}
+  m_Resource: {fileID: 8300000, guid: 645ce328666190d489af0924f6b08bed, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1

@@ -45,7 +45,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 767d9276fe17cb242be9d19856167730, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AnchorPrefab: {fileID: 4350422998566360405, guid: af5e4d497301619449e0573c9155a296, type: 3}
+  EffectMeshForIntroEffect: {fileID: 0}
+  EffectMeshForFloorCeiling: {fileID: 0}
   EdgePrefab: {fileID: 2926639975604320003, guid: 976511d7c653df3419c672342c6de9e3, type: 3}
   SceneMesher: {fileID: 7410720407653810764}
   EdgeIntensity:
@@ -94,9 +95,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MeshMaterial: {fileID: 2100000, guid: 79615458149184b47a963a27b26fd6d9, type: 2}
-  CreateDebugRoom: 0
-  BorderSize: 0.1
-  MappingInWorldUnits: 0
-  DebugSplinePoints: []
-  DebugFurnishings: []
-  DebugQuads: []

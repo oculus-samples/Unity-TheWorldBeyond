@@ -63,5 +63,7 @@ MonoBehaviour:
     m_CubemapFaceSize: 16
   m_AnchorDiscoveryParams:
     m_MinTimeUntilUpdate: 0.2
+  m_BoundingBoxDiscoveryParams:
+    m_TrackingUpdateInterval: 0.09
   m_UseXRay: 1
   m_FlipXRayDirection: 0

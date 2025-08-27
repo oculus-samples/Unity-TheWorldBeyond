@@ -1,14 +1,15 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
 --- !u!134 &13400000
-PhysicMaterial:
+PhysicsMaterial:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: BallMat
-  dynamicFriction: 1
-  staticFriction: 1
-  bounciness: 0.7
-  frictionCombine: 3
-  bounceCombine: 3
+  serializedVersion: 2
+  m_DynamicFriction: 1
+  m_StaticFriction: 1
+  m_Bounciness: 0.7
+  m_FrictionCombine: 3
+  m_BounceCombine: 3

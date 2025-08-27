@@ -39,3 +39,4 @@ Material:
     - _FloorColor: {r: 0.3443396, g: 0.56641805, b: 1, a: 1}
     - _LightPosition: {r: 0, g: 1000, b: 0, a: 1}
   m_BuildTextureStacks: []
+  m_AllowLocking: 1
