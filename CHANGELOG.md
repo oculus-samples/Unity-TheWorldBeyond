@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## 01/26/2026
+
+### Updates
+
+* Update to Unity 6000.0.59f2
+
 ## 8/25/2025
 
 ### Updates
