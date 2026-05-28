@@ -87,3 +87,9 @@ The majority of TheWorldBeyond is licensed under [MIT LICENSE](./LICENSE); files
 ## Contribution
 
 See the [CONTRIBUTING](./CONTRIBUTING.md) file for information on how to contribute.
+
+## AI coding agents
+
+This repo is wired up for AI coding agents — `AGENTS.md`, `.vscode/extensions.json`, `.mcp.json`, `.cursor/rules/`, and a few client-specific dotfiles surface the **Meta Horizon** VS Code/Cursor extension, the `hzdb` MCP server, and the Meta Quest skill set automatically.
+
+Full toolchain, including Unity skills and per-client install instructions: [github.com/meta-quest/agentic-tools](https://github.com/meta-quest/agentic-tools).
